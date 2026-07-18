@@ -3,27 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>節奏卡片 · 4拍4</title>
+    <title>節奏卡片 · 雙模式</title>
     <style>
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-
         body {
             background: radial-gradient(circle at 20% 30%, #1a2639, #0b0f1a);
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-family: 'Segoe UI', 'Poppins', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
             padding: 1.2rem;
             margin: 0;
         }
-
         .app {
-            max-width: 860px;
+            max-width: 900px;
             width: 100%;
             background: rgba(18, 28, 46, 0.7);
             backdrop-filter: blur(10px);
@@ -32,338 +30,404 @@
             padding: 2rem 1.8rem 2.5rem;
             box-shadow: 0 30px 50px -15px #000000cc, inset 0 0 0 1px rgba(255, 215, 150, 0.08);
             border: 1px solid rgba(255, 215, 150, 0.06);
-            transition: all 0.25s;
         }
-
         .header {
             display: flex;
             align-items: center;
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 0.6rem 1rem;
-            margin-bottom: 0.2rem;
+            margin-bottom: 0.5rem;
         }
-
         .title-group {
             display: flex;
             align-items: center;
             gap: 0.5rem;
         }
-
         .title-group h1 {
             font-weight: 500;
             font-size: 1.8rem;
             letter-spacing: 1px;
-            color: #f0e9e0;
-            text-shadow: 0 2px 6px #00000066;
             background: linear-gradient(135deg, #f7e9d7, #d4c9b8);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-
-        .title-group span {
-            font-size: 1.9rem;
-            line-height: 1;
-        }
-
+        .title-group span { font-size: 1.9rem; }
         .badge {
-            background: rgba(255, 200, 100, 0.12);
-            border: 1px solid rgba(255, 200, 100, 0.2);
+            background: rgba(255,200,100,0.12);
+            border: 1px solid rgba(255,200,100,0.2);
             padding: 0.2rem 1rem;
             border-radius: 40px;
             font-size: 0.75rem;
             color: #d4c9b8;
             letter-spacing: 2px;
-            backdrop-filter: blur(2px);
-            white-space: nowrap;
         }
-
         .bpm-section {
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            background: rgba(0, 0, 0, 0.35);
+            background: rgba(0,0,0,0.35);
             padding: 0.25rem 1rem 0.25rem 1.2rem;
             border-radius: 60px;
-            border: 1px solid rgba(255, 215, 150, 0.1);
+            border: 1px solid rgba(255,215,150,0.1);
         }
-
-        .bpm-section label {
-            color: #b8ad9a;
-            font-weight: 300;
-            letter-spacing: 1px;
-            font-size: 0.8rem;
-        }
-
+        .bpm-section label { color: #b8ad9a; font-weight: 300; font-size: 0.8rem; letter-spacing: 1px; }
         .bpm-section input[type="range"] {
-            width: 110px;
-            height: 4px;
-            -webkit-appearance: none;
-            appearance: none;
+            width: 110px; height: 4px;
+            -webkit-appearance: none; appearance: none;
             background: linear-gradient(90deg, #f5b87e, #f7d9a0);
             border-radius: 4px;
             outline: none;
-            transition: opacity 0.2s;
         }
-
         .bpm-section input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
+            -webkit-appearance: none; appearance: none;
+            width: 16px; height: 16px;
             background: #f7e1c0;
             border-radius: 50%;
-            box-shadow: 0 0 12px #f7b87eaa, 0 0 4px #00000066;
+            box-shadow: 0 0 12px #f7b87eaa;
             border: 1px solid #ffdbb5;
             cursor: pointer;
-            transition: 0.1s;
         }
-
-        .bpm-section input[type="range"]::-webkit-slider-thumb:hover {
-            transform: scale(1.12);
-            background: #ffeacb;
-        }
-
         .bpm-value {
             min-width: 40px;
             font-weight: 600;
             color: #f7dec0;
             font-size: 1.1rem;
             text-align: center;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 0.1rem 0.2rem;
-            border-radius: 20px;
         }
 
-        .card-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1.4rem;
-            margin: 2rem 0 2rem;
-        }
-
-        .card {
-            background: rgba(26, 38, 60, 0.7);
-            backdrop-filter: blur(4px);
-            -webkit-backdrop-filter: blur(4px);
-            border-radius: 2.5rem;
-            padding: 1.5rem 0.5rem 1.8rem;
-            text-align: center;
-            cursor: pointer;
-            box-shadow: 0 10px 20px -8px #00000099, inset 0 0 0 1px rgba(255, 215, 150, 0.05);
-            border: 1px solid rgba(255, 215, 150, 0.03);
-            transition: transform 0.15s ease, box-shadow 0.25s ease, background 0.2s;
+        /* 模式切換 */
+        .mode-switch {
             display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.3rem;
-            user-select: none;
-            position: relative;
+            gap: 0.8rem;
+            justify-content: center;
+            margin: 0.8rem 0 1.2rem;
         }
-
-        .card:hover {
-            transform: translateY(-3px);
-            background: rgba(34, 48, 74, 0.8);
-            box-shadow: 0 14px 28px -10px #000000cc, inset 0 0 0 1px rgba(255, 215, 150, 0.15);
+        .mode-btn {
+            background: rgba(30,42,64,0.5);
+            border: 1px solid rgba(255,215,150,0.1);
+            color: #9a8b7a;
+            padding: 0.5rem 1.8rem;
+            border-radius: 60px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: inherit;
+            letter-spacing: 0.5px;
         }
-
-        .card:active {
-            transform: scale(0.97);
+        .mode-btn.active {
+            background: rgba(255,215,150,0.15);
+            border-color: #f7c68b88;
+            color: #f7dec0;
+            box-shadow: 0 0 20px #f7b87e33;
         }
+        .mode-btn:hover { background: rgba(255,215,150,0.08); }
 
-        /* 卡片序號標記 */
-        .card-number {
-            position: absolute;
-            top: 12px;
-            left: 16px;
-            background: rgba(255, 215, 150, 0.15);
-            border: 1px solid rgba(255, 215, 150, 0.2);
-            color: #d4c9b8;
+        /* 節奏庫 (自訂模式) */
+        .library-area {
+            background: rgba(0,0,0,0.25);
+            border-radius: 2rem;
+            padding: 1.2rem 1.2rem 0.8rem;
+            margin-bottom: 1.2rem;
+            border: 1px solid rgba(255,215,150,0.05);
+            display: none;
+        }
+        .library-area.visible { display: block; }
+        .library-title {
+            color: #8a7e6b;
             font-size: 0.75rem;
-            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 0.8rem;
+            text-align: center;
+        }
+        .library-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 0.8rem;
+        }
+        .library-card {
+            background: rgba(26,38,60,0.6);
+            border-radius: 1.5rem;
+            padding: 0.8rem 0.3rem 1rem;
+            text-align: center;
+            cursor: grab;
+            border: 1px solid rgba(255,215,150,0.06);
+            transition: transform 0.15s, box-shadow 0.2s;
+            user-select: none;
+        }
+        .library-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px #00000055;
+            border-color: rgba(255,215,150,0.15);
+        }
+        .library-card:active { cursor: grabbing; }
+        .library-card .card-name {
+            font-size: 0.85rem;
+            color: #e3d7c8;
+            margin-bottom: 0.2rem;
+        }
+        .library-card .beat-pattern {
+            display: flex;
+            justify-content: center;
+            gap: 0.4rem;
+        }
+        .library-card .beat-dot {
             width: 28px;
             height: 28px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.2s;
-            letter-spacing: 0;
+            font-size: 0.8rem;
+            background: rgba(30,40,60,0.6);
+            color: #9a8b7a;
+            border: 1px solid rgba(255,215,150,0.03);
+        }
+        .library-card .beat-dot.accent {
+            background: radial-gradient(circle at 40% 35%, #f7c68b, #d48c4a);
+            color: #1a1f2a;
+            box-shadow: 0 0 8px #f7b87e66;
+        }
+        .library-card .beat-dot.light {
+            background: radial-gradient(circle at 40% 35%, #3a4862, #1e2638);
+            color: #6a7a92;
         }
 
-        .card-number.active {
-            background: rgba(255, 215, 150, 0.35);
-            border-color: #f7c68b;
-            color: #f7dec0;
-            box-shadow: 0 0 20px #f7b87e55;
+        /* 卡片區域 (共用) */
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.2rem;
+            margin: 0.8rem 0 1.2rem;
+            min-height: 200px;
         }
-
-        .card-number.played {
-            background: rgba(74, 122, 90, 0.3);
-            border-color: #4a7a5a88;
-            color: #6aae7a;
-        }
-
-        .card-name {
-            font-size: 1.2rem;
-            font-weight: 400;
-            letter-spacing: 1px;
-            color: #e3d7c8;
-            text-shadow: 0 2px 4px #00000055;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 0.2rem 1.2rem;
-            border-radius: 40px;
-            display: inline-block;
-            backdrop-filter: blur(2px);
-            margin-top: 0.2rem;
-        }
-
-        .beat-pattern {
+        .card {
+            background: rgba(26,38,60,0.7);
+            backdrop-filter: blur(4px);
+            border-radius: 2.2rem;
+            padding: 1.2rem 0.5rem 1.5rem;
+            text-align: center;
+            cursor: default;
+            box-shadow: 0 10px 20px -8px #00000099, inset 0 0 0 1px rgba(255,215,150,0.05);
+            border: 1px solid rgba(255,215,150,0.03);
+            transition: transform 0.15s, box-shadow 0.25s, background 0.2s, opacity 0.3s;
             display: flex;
-            justify-content: center;
-            gap: 0.9rem;
-            margin: 0.3rem 0 0.2rem;
-            flex-wrap: wrap;
-            padding: 0 0.2rem;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.2rem;
+            position: relative;
+            min-height: 140px;
         }
-
-        .beat-dot {
-            width: 44px;
-            height: 44px;
+        .card.droppable {
+            border: 2px dashed rgba(255,215,150,0.2);
+            background: rgba(26,38,60,0.4);
+        }
+        .card.droppable.drag-over {
+            border-color: #f7c68b88;
+            background: rgba(44,62,94,0.6);
+            box-shadow: 0 0 30px #f7b87e33;
+        }
+        .card .card-number {
+            position: absolute;
+            top: 10px;
+            left: 14px;
+            background: rgba(255,215,150,0.12);
+            border: 1px solid rgba(255,215,150,0.15);
+            color: #8a7e6b;
+            font-size: 0.7rem;
+            font-weight: 600;
+            width: 26px;
+            height: 26px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.2rem;
+            transition: all 0.2s;
+        }
+        .card .card-number.active {
+            background: rgba(255,215,150,0.3);
+            border-color: #f7c68b;
+            color: #f7dec0;
+            box-shadow: 0 0 20px #f7b87e55;
+        }
+        .card .card-number.played {
+            background: rgba(74,122,90,0.3);
+            border-color: #4a7a5a88;
+            color: #6aae7a;
+        }
+        .card .card-number.empty-num {
+            color: #4a5a6a;
+            border-color: rgba(255,215,150,0.05);
+        }
+        .card .card-name {
+            font-size: 1.1rem;
+            font-weight: 400;
+            color: #e3d7c8;
+            background: rgba(0,0,0,0.2);
+            padding: 0.1rem 1rem;
+            border-radius: 40px;
+            display: inline-block;
+            margin-top: 0.2rem;
+        }
+        .card .card-name.empty-name {
+            color: #4a5a6a;
             font-weight: 300;
-            background: rgba(30, 40, 60, 0.6);
+            font-size: 0.85rem;
+        }
+        .card .beat-pattern {
+            display: flex;
+            justify-content: center;
+            gap: 0.7rem;
+            margin: 0.2rem 0;
+        }
+        .card .beat-dot {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            background: rgba(30,40,60,0.6);
             color: #9a8b7a;
             transition: all 0.1s ease;
-            box-shadow: inset 0 0 0 1px rgba(255, 215, 150, 0.1);
-            border: 1px solid rgba(255, 215, 150, 0.03);
+            border: 1px solid rgba(255,215,150,0.03);
         }
-
-        .beat-dot.accent {
+        .card .beat-dot.accent {
             background: radial-gradient(circle at 40% 35%, #f7c68b, #d48c4a);
             color: #1a1f2a;
-            box-shadow: 0 0 12px #f7b87e88, inset 0 0 0 1px #ffddb0;
+            box-shadow: 0 0 12px #f7b87e66;
             border-color: #f7c68b;
         }
-
-        .beat-dot.light {
+        .card .beat-dot.light {
             background: radial-gradient(circle at 40% 35%, #3a4862, #1e2638);
             color: #6a7a92;
-            box-shadow: inset 0 0 0 1px #4a5a7266;
             border-color: #2e3a4e;
         }
-
-        .beat-dot.playing {
+        .card .beat-dot.playing {
             transform: scale(1.6);
-            box-shadow: 0 0 28px #f7c68be0, 0 0 60px #f7b87e66, inset 0 0 0 1px #ffe1b0;
+            box-shadow: 0 0 28px #f7c68be0, 0 0 60px #f7b87e66;
             transition: all 0.06s ease;
             z-index: 5;
             position: relative;
         }
+        .card .remove-btn {
+            position: absolute;
+            top: 8px;
+            right: 12px;
+            background: rgba(200,80,60,0.2);
+            border: none;
+            color: #8a6a5a;
+            font-size: 0.8rem;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            opacity: 0;
+        }
+        .card:hover .remove-btn { opacity: 0.7; }
+        .card .remove-btn:hover {
+            background: rgba(200,80,60,0.4);
+            color: #f7a080;
+            opacity: 1;
+        }
 
-        /* 卡片播放狀態 */
+        /* 播放狀態 */
         .card.playing-card {
-            background: rgba(44, 62, 94, 0.9);
+            background: rgba(44,62,94,0.9);
             border-color: #f7c68b88;
             box-shadow: 0 0 40px #f7b87e44, inset 0 0 0 1px #f7c68b66;
             transform: scale(1.02);
         }
-
         .card.played-card {
             border-color: #4a7a5a88;
             box-shadow: 0 0 20px #4a7a5a33;
-            opacity: 0.75;
+            opacity: 0.7;
+        }
+        .card.waiting-card { opacity: 0.5; }
+        .card.clickable { cursor: pointer; }
+        .card.clickable:hover {
+            transform: translateY(-3px);
+            background: rgba(34,48,74,0.8);
+            box-shadow: 0 14px 28px -10px #000000cc, inset 0 0 0 1px rgba(255,215,150,0.15);
         }
 
-        .card.played-card .card-number {
-            background: rgba(74, 122, 90, 0.4);
-            border-color: #4a7a5aaa;
-            color: #7ac48a;
-        }
-
-        .card.waiting-card {
-            opacity: 0.5;
-        }
-
+        /* 控制 */
         .controls {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 1rem 1.5rem;
-            margin: 0.8rem 0 1.2rem;
+            gap: 0.8rem 1.2rem;
+            margin: 0.5rem 0 1rem;
         }
-
         .btn {
-            background: rgba(30, 42, 64, 0.7);
-            backdrop-filter: blur(4px);
-            border: 1px solid rgba(255, 215, 150, 0.1);
+            background: rgba(30,42,64,0.7);
+            border: 1px solid rgba(255,215,150,0.1);
             color: #e3d7c8;
-            padding: 0.6rem 1.8rem;
+            padding: 0.5rem 1.5rem;
             border-radius: 60px;
-            font-size: 0.95rem;
-            font-weight: 400;
-            letter-spacing: 1px;
+            font-size: 0.9rem;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
             gap: 0.5rem;
-            box-shadow: 0 4px 8px #00000033;
             font-family: inherit;
+            box-shadow: 0 4px 8px #00000033;
         }
-
         .btn:hover {
-            background: rgba(50, 68, 100, 0.8);
+            background: rgba(50,68,100,0.8);
             border-color: #f7c68b66;
             transform: translateY(-2px);
-            box-shadow: 0 8px 16px #00000055;
         }
-
-        .btn:active {
-            transform: scale(0.96);
-        }
-
+        .btn:active { transform: scale(0.96); }
         .btn-primary {
             background: linear-gradient(145deg, #d48c4a, #b06d35);
             border-color: #f7c68b88;
             color: #1a1f2a;
             font-weight: 500;
         }
-
         .btn-primary:hover {
             background: linear-gradient(145deg, #e7a05a, #c07d40);
             border-color: #f7d6a0;
             color: #0b0f1a;
         }
-
-        .btn-icon {
-            font-size: 1.2rem;
-            line-height: 1;
+        .btn-secondary {
+            background: rgba(60,50,80,0.4);
+            border-color: rgba(255,215,150,0.05);
         }
+        .btn-danger {
+            background: rgba(180,70,50,0.3);
+            border-color: rgba(200,80,60,0.2);
+            color: #d4a090;
+        }
+        .btn-danger:hover {
+            background: rgba(180,70,50,0.5);
+            border-color: rgba(200,80,60,0.4);
+        }
+        .btn-icon { font-size: 1.1rem; line-height: 1; }
 
+        /* 進度 */
         .progress-area {
             display: flex;
             align-items: center;
             gap: 0.8rem;
-            margin: 0.5rem 0 0.2rem;
-            padding: 0.2rem 0.2rem;
+            margin: 0.3rem 0 0.2rem;
         }
-
         .progress-track {
             flex: 1;
             height: 6px;
-            background: rgba(60, 70, 90, 0.5);
+            background: rgba(60,70,90,0.5);
             border-radius: 20px;
             overflow: hidden;
             box-shadow: inset 0 0 6px #00000055;
         }
-
         .progress-fill {
             width: 0%;
             height: 100%;
@@ -372,7 +436,6 @@
             transition: width 0.08s linear;
             box-shadow: 0 0 16px #f7b87e77;
         }
-
         .progress-label {
             color: #b8ad9a;
             font-size: 0.75rem;
@@ -381,85 +444,41 @@
             text-align: right;
             font-weight: 300;
         }
-
         .status-text {
             color: #a0937e;
             font-size: 0.85rem;
             font-weight: 300;
             letter-spacing: 0.5px;
             text-align: center;
-            border-top: 1px solid rgba(255, 215, 150, 0.04);
-            padding-top: 1.2rem;
+            border-top: 1px solid rgba(255,215,150,0.04);
+            padding-top: 1rem;
             margin-top: 0.6rem;
         }
-
-        .status-text strong {
-            color: #f7dec0;
-            font-weight: 400;
-        }
+        .status-text strong { color: #f7dec0; font-weight: 400; }
 
         @media (max-width: 600px) {
-            .app {
-                padding: 1.5rem 1rem 2rem;
-                border-radius: 2.5rem;
-            }
-            .card-grid {
-                gap: 1rem;
-            }
-            .beat-dot {
-                width: 38px;
-                height: 38px;
-                font-size: 1rem;
-            }
-            .title-group h1 {
-                font-size: 1.4rem;
-            }
-            .bpm-section input[type="range"] {
-                width: 80px;
-            }
-            .controls {
-                gap: 0.7rem;
-            }
-            .btn {
-                padding: 0.4rem 1.2rem;
-                font-size: 0.85rem;
-            }
-            .card-number {
-                width: 24px;
-                height: 24px;
-                font-size: 0.65rem;
-                top: 8px;
-                left: 10px;
-            }
+            .app { padding: 1.2rem 0.8rem 1.5rem; border-radius: 2.5rem; }
+            .card-grid { gap: 0.8rem; }
+            .card .beat-dot { width: 34px; height: 34px; font-size: 0.9rem; }
+            .library-grid { grid-template-columns: repeat(2, 1fr); }
+            .library-card .beat-dot { width: 24px; height: 24px; font-size: 0.7rem; }
+            .bpm-section input[type="range"] { width: 70px; }
+            .controls { gap: 0.5rem; }
+            .btn { padding: 0.4rem 1rem; font-size: 0.8rem; }
+            .mode-btn { padding: 0.4rem 1.2rem; font-size: 0.8rem; }
         }
-
         @media (max-width: 440px) {
-            .beat-dot {
-                width: 32px;
-                height: 32px;
-                font-size: 0.8rem;
-            }
-            .card-name {
-                font-size: 1rem;
-            }
-            .header {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            .bpm-section {
-                justify-content: space-between;
-            }
+            .card .beat-dot { width: 28px; height: 28px; font-size: 0.75rem; }
+            .card .card-name { font-size: 0.9rem; }
+            .header { flex-direction: column; align-items: stretch; }
+            .bpm-section { justify-content: space-between; }
         }
     </style>
 </head>
 <body>
 <div class="app" id="app">
     <div class="header">
-        <div class="title-group">
-            <span>🥁</span>
-            <h1>節奏卡片</h1>
-            <span class="badge">4/4</span>
-        </div>
+        <div class="title-group"><span>🥁</span><h1>節奏卡片</h1><span class="badge">4/4</span></div>
         <div class="bpm-section">
             <label for="bpmSlider">BPM</label>
             <input type="range" id="bpmSlider" min="80" max="160" value="120" step="1">
@@ -467,535 +486,622 @@
         </div>
     </div>
 
+    <!-- 模式切換 -->
+    <div class="mode-switch">
+        <button class="mode-btn active" data-mode="shuffle" id="modeShuffle">🎲 隨機模式</button>
+        <button class="mode-btn" data-mode="custom" id="modeCustom">✏️ 自訂模式</button>
+    </div>
+
+    <!-- 節奏庫 (自訂模式) -->
+    <div class="library-area" id="libraryArea">
+        <div class="library-title">⬇ 拖放至下方槽位 (可重複使用)</div>
+        <div class="library-grid" id="libraryGrid"></div>
+    </div>
+
+    <!-- 卡片區域 -->
     <div class="card-grid" id="cardGrid"></div>
 
+    <!-- 控制 -->
     <div class="controls">
-        <button class="btn btn-primary" id="playPauseBtn">
-            <span class="btn-icon">▶</span> <span id="playPauseLabel">播放</span>
-        </button>
-        <button class="btn" id="shuffleBtn">
-            <span class="btn-icon">🔄</span> 洗牌
-        </button>
-        <button class="btn" id="resetBtn">
-            <span class="btn-icon">⟳</span> 重設
-        </button>
+        <button class="btn btn-primary" id="playPauseBtn"><span class="btn-icon">▶</span> <span id="playPauseLabel">播放</span></button>
+        <button class="btn" id="shuffleBtn"><span class="btn-icon">🔄</span> 洗牌</button>
+        <button class="btn btn-danger" id="clearBtn" style="display:none;"><span class="btn-icon">🗑</span> 清空序列</button>
     </div>
 
     <div class="progress-area">
-        <span style="color:#8a7e6b; font-size:0.75rem;">▍</span>
-        <div class="progress-track">
-            <div class="progress-fill" id="progressFill" style="width:0%;"></div>
-        </div>
+        <span style="color:#8a7e6b;font-size:0.75rem;">▍</span>
+        <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
         <span class="progress-label" id="progressLabel">0 / 16</span>
     </div>
-
-    <div class="status-text" id="statusText">
-        🎵 點擊 <strong>播放</strong> 依序聽 4 張卡片 · 共 4 小節
-    </div>
+    <div class="status-text" id="statusText">🎵 選擇模式開始練習</div>
 </div>
 
 <script>
-    (function() {
-        // ---------- 節奏資料 ----------
-        const RHYTHM_LIBRARY = [
-            { id: 'rock', name: '基本搖滾', pattern: ['accent', 'light', 'light', 'light'] },
-            { id: 'bass', name: '行走貝斯', pattern: ['accent', 'light', 'accent', 'light'] },
-            { id: 'syncop', name: '切分節奏', pattern: ['light', 'accent', 'light', 'accent'] },
-            { id: 'full', name: '滿拍衝刺', pattern: ['accent', 'accent', 'accent', 'accent'] }
-        ];
+(function(){
+    // ----- 節奏庫 -----
+    const RHYTHM_LIBRARY = [
+        { id: 'rock', name: '基本搖滾', pattern: ['accent','light','light','light'] },
+        { id: 'bass', name: '行走貝斯', pattern: ['accent','light','accent','light'] },
+        { id: 'syncop', name: '切分節奏', pattern: ['light','accent','light','accent'] },
+        { id: 'full', name: '滿拍衝刺', pattern: ['accent','accent','accent','accent'] }
+    ];
 
-        // DOM
-        const grid = document.getElementById('cardGrid');
-        const playPauseBtn = document.getElementById('playPauseBtn');
-        const playPauseLabel = document.getElementById('playPauseLabel');
-        const shuffleBtn = document.getElementById('shuffleBtn');
-        const resetBtn = document.getElementById('resetBtn');
-        const bpmSlider = document.getElementById('bpmSlider');
-        const bpmDisplay = document.getElementById('bpmDisplay');
-        const progressFill = document.getElementById('progressFill');
-        const progressLabel = document.getElementById('progressLabel');
-        const statusText = document.getElementById('statusText');
+    // ----- DOM -----
+    const grid = document.getElementById('cardGrid');
+    const libraryGrid = document.getElementById('libraryGrid');
+    const libraryArea = document.getElementById('libraryArea');
+    const playBtn = document.getElementById('playPauseBtn');
+    const playLabel = document.getElementById('playPauseLabel');
+    const shuffleBtn = document.getElementById('shuffleBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const bpmSlider = document.getElementById('bpmSlider');
+    const bpmDisplay = document.getElementById('bpmDisplay');
+    const progressFill = document.getElementById('progressFill');
+    const progressLabel = document.getElementById('progressLabel');
+    const statusText = document.getElementById('statusText');
+    const modeShuffle = document.getElementById('modeShuffle');
+    const modeCustom = document.getElementById('modeCustom');
 
-        let audioCtx = null;
-        let isPlaying = false;
-        let timerId = null;
-        let currentCards = [];
-        let playOrder = [];           // 4 個 card id，按播放順序
-        let currentBeatIndex = 0;     // 0~15
-        const totalBeats = 16;
-        let bpm = 120;
-        let beatInterval = 500;
+    // ----- 狀態 -----
+    let audioCtx = null;
+    let isPlaying = false;
+    let timerId = null;
+    let currentMode = 'shuffle'; // 'shuffle' | 'custom'
+    let currentCards = [];       // 當前卡片物件陣列 (4個)
+    let customSequence = [null, null, null, null]; // 自訂模式: 4個槽位, null=空
+    let playOrder = [];          // 4個card id
+    let currentBeatIndex = 0;
+    const TOTAL_BEATS = 16;
+    let bpm = 120;
+    let beatInterval = 500;
+    let cardElements = {};
 
-        // DOM 卡片元素對照
-        let cardElements = {};
+    // ----- 音效 -----
+    function initAudioCtx() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        if (audioCtx.state === 'suspended') audioCtx.resume();
+        return audioCtx;
+    }
+    function playAccent(vol=0.55) {
+        try {
+            const ctx = initAudioCtx();
+            const now = ctx.currentTime;
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(120, now);
+            osc.frequency.exponentialRampToValueAtTime(55, now+0.08);
+            gain.gain.setValueAtTime(vol, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now+0.12);
+            osc.connect(gain); gain.connect(ctx.destination);
+            osc.start(now); osc.stop(now+0.12);
+            const bufSize = ctx.sampleRate * 0.04;
+            const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+            const data = buf.getChannelData(0);
+            for (let i=0; i<bufSize; i++) data[i] = (Math.random()*2-1)*Math.exp(-i/(bufSize*0.3));
+            const noise = ctx.createBufferSource();
+            noise.buffer = buf;
+            const ng = ctx.createGain();
+            ng.gain.setValueAtTime(vol*0.35, now);
+            ng.gain.exponentialRampToValueAtTime(0.001, now+0.04);
+            noise.connect(ng); ng.connect(ctx.destination);
+            noise.start(now); noise.stop(now+0.04);
+        } catch(e) {}
+    }
+    function playLight() {}
 
-        // ---------- 音效 ----------
-        function initAudioContext() {
-            if (!audioCtx) {
-                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            if (audioCtx.state === 'suspended') {
-                audioCtx.resume();
-            }
-            return audioCtx;
-        }
+    function playBeat(type) {
+        if (type === 'accent') playAccent(0.55);
+        else playLight();
+    }
 
-        function playAccent(volume = 0.55) {
-            try {
-                const ctx = initAudioContext();
-                const now = ctx.currentTime;
-                const osc = ctx.createOscillator();
-                const gain = ctx.createGain();
-                osc.type = 'sine';
-                osc.frequency.setValueAtTime(120, now);
-                osc.frequency.exponentialRampToValueAtTime(55, now + 0.08);
-                gain.gain.setValueAtTime(volume, now);
-                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
-                osc.connect(gain);
-                gain.connect(ctx.destination);
-                osc.start(now);
-                osc.stop(now + 0.12);
+    // ----- 工具 -----
+    function findCard(id) { return currentCards.find(c => c.id === id) || null; }
+    function getCardDots(cardId) {
+        const el = cardElements[cardId];
+        if (!el) return null;
+        return el.querySelectorAll('.beat-dot');
+    }
 
-                const bufferSize = ctx.sampleRate * 0.04;
-                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-                const data = buffer.getChannelData(0);
-                for (let i = 0; i < bufferSize; i++) {
-                    data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.3));
-                }
-                const noise = ctx.createBufferSource();
-                noise.buffer = buffer;
-                const noiseGain = ctx.createGain();
-                noiseGain.gain.setValueAtTime(volume * 0.35, now);
-                noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
-                noise.connect(noiseGain);
-                noiseGain.connect(ctx.destination);
-                noise.start(now);
-                noise.stop(now + 0.04);
-            } catch (e) { /* 靜默忽略 */ }
-        }
+    // ----- 渲染：節奏庫 (自訂模式) -----
+    function renderLibrary() {
+        libraryGrid.innerHTML = '';
+        RHYTHM_LIBRARY.forEach(card => {
+            const div = document.createElement('div');
+            div.className = 'library-card';
+            div.draggable = true;
+            div.dataset.cardId = card.id;
+            div.innerHTML = `
+                <div class="card-name">${card.name}</div>
+                <div class="beat-pattern">
+                    ${card.pattern.map(p => `<div class="beat-dot ${p}">${p==='accent'?'◉':'○'}</div>`).join('')}
+                </div>
+            `;
+            // 拖放事件
+            div.addEventListener('dragstart', e => {
+                e.dataTransfer.setData('text/plain', card.id);
+                e.dataTransfer.effectAllowed = 'copy';
+            });
+            libraryGrid.appendChild(div);
+        });
+    }
 
-        function playLight() {
-            // 無聲
-        }
+    // ----- 渲染卡片 (共用) -----
+    function renderCards(cards, mode) {
+        grid.innerHTML = '';
+        cardElements = {};
+        const isCustom = (mode === 'custom');
 
-        function playBeat(type) {
-            if (type === 'accent') {
-                playAccent(0.55);
+        cards.forEach((card, idx) => {
+            const isEmpty = (card === null);
+            const cardData = isEmpty ? null : card;
+
+            const div = document.createElement('div');
+            div.className = 'card';
+            if (isCustom) {
+                div.classList.add('droppable');
+                div.dataset.slotIndex = idx;
             } else {
-                playLight();
+                div.classList.add('clickable');
             }
-        }
+            div.dataset.cardId = isEmpty ? '' : cardData.id;
+            div.dataset.index = idx;
 
-        // ---------- 渲染 ----------
-        function renderCards(cards) {
-            grid.innerHTML = '';
-            cardElements = {};
-            cards.forEach((card, idx) => {
-                const cardDiv = document.createElement('div');
-                cardDiv.className = 'card';
-                cardDiv.dataset.cardId = card.id;
-                cardDiv.dataset.index = idx;
+            // 序號
+            const num = document.createElement('div');
+            num.className = 'card-number';
+            if (isEmpty) num.classList.add('empty-num');
+            num.textContent = idx + 1;
+            div.appendChild(num);
 
-                // 序號標記 (1~4)
-                const numberSpan = document.createElement('div');
-                numberSpan.className = 'card-number';
-                numberSpan.textContent = idx + 1;
-                cardDiv.appendChild(numberSpan);
+            // 名稱
+            const name = document.createElement('div');
+            name.className = 'card-name';
+            if (isEmpty) {
+                name.classList.add('empty-name');
+                name.textContent = '⬇ 拖入節奏';
+            } else {
+                name.textContent = cardData.name;
+            }
+            div.appendChild(name);
 
-                const nameSpan = document.createElement('div');
-                nameSpan.className = 'card-name';
-                nameSpan.textContent = card.name;
-
-                const patternDiv = document.createElement('div');
-                patternDiv.className = 'beat-pattern';
-
-                card.pattern.forEach((type, i) => {
+            // 拍子
+            const pattern = document.createElement('div');
+            pattern.className = 'beat-pattern';
+            if (isEmpty) {
+                for (let i=0; i<4; i++) {
                     const dot = document.createElement('div');
-                    dot.className = `beat-dot ${type}`;
-                    dot.dataset.beatIndex = i;
-                    dot.textContent = type === 'accent' ? '◉' : '○';
-                    patternDiv.appendChild(dot);
+                    dot.className = 'beat-dot light';
+                    dot.textContent = '○';
+                    pattern.appendChild(dot);
+                }
+            } else {
+                cardData.pattern.forEach(p => {
+                    const dot = document.createElement('div');
+                    dot.className = `beat-dot ${p}`;
+                    dot.textContent = p === 'accent' ? '◉' : '○';
+                    pattern.appendChild(dot);
                 });
+            }
+            div.appendChild(pattern);
 
-                cardDiv.appendChild(nameSpan);
-                cardDiv.appendChild(patternDiv);
-
-                cardDiv.addEventListener('click', function(e) {
+            // 移除按鈕 (自訂模式)
+            if (isCustom) {
+                const rm = document.createElement('button');
+                rm.className = 'remove-btn';
+                rm.innerHTML = '✕';
+                rm.title = '移除此節奏';
+                rm.addEventListener('click', e => {
                     e.stopPropagation();
-                    // 點擊卡片：從該卡片開始播放 (該卡片 → 後續卡片)
+                    const slot = parseInt(div.dataset.slotIndex);
+                    clearSlot(slot);
+                });
+                div.appendChild(rm);
+            }
+
+            // 點擊 (隨機模式)
+            if (!isCustom) {
+                div.addEventListener('click', function() {
                     const id = this.dataset.cardId;
-                    playFromCard(id);
+                    if (id) playFromCard(id);
                 });
-
-                grid.appendChild(cardDiv);
-                cardElements[card.id] = cardDiv;
-            });
-
-            // 更新播放順序 = 畫面排列順序
-            updatePlayOrderFromLayout();
-        }
-
-        // 根據畫面排列順序更新 playOrder
-        function updatePlayOrderFromLayout() {
-            const cardEls = document.querySelectorAll('.card');
-            playOrder = [];
-            cardEls.forEach(el => {
-                playOrder.push(el.dataset.cardId);
-            });
-        }
-
-        function findCardById(id) {
-            return currentCards.find(c => c.id === id) || null;
-        }
-
-        function clearAllHighlights() {
-            document.querySelectorAll('.card').forEach(c => {
-                c.classList.remove('playing-card', 'played-card', 'waiting-card');
-            });
-            document.querySelectorAll('.card-number').forEach(n => {
-                n.classList.remove('active', 'played');
-            });
-            document.querySelectorAll('.beat-dot').forEach(d => {
-                d.classList.remove('playing');
-            });
-        }
-
-        function resetCardStates() {
-            clearAllHighlights();
-            // 重新標記序號
-            document.querySelectorAll('.card-number').forEach((n, idx) => {
-                n.textContent = idx + 1;
-                n.classList.remove('active', 'played');
-            });
-        }
-
-        function updateProgress(beatIndex, total = 16) {
-            const percent = ((beatIndex + 1) / total) * 100;
-            progressFill.style.width = Math.min(percent, 100) + '%';
-            const measure = Math.floor(beatIndex / 4) + 1;
-            const beat = (beatIndex % 4) + 1;
-            progressLabel.textContent = `小節 ${measure}/4 · 拍 ${beat}/4`;
-        }
-
-        function resetProgress() {
-            progressFill.style.width = '0%';
-            progressLabel.textContent = '小節 0/4 · 拍 0/4';
-        }
-
-        function updatePlayPauseButton() {
-            if (isPlaying) {
-                playPauseLabel.textContent = '暫停';
-                playPauseBtn.querySelector('.btn-icon').textContent = '⏸';
-            } else {
-                playPauseLabel.textContent = '播放';
-                playPauseBtn.querySelector('.btn-icon').textContent = '▶';
             }
+
+            // 拖放事件 (自訂模式)
+            if (isCustom) {
+                div.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'copy';
+                    div.classList.add('drag-over');
+                });
+                div.addEventListener('dragleave', e => {
+                    div.classList.remove('drag-over');
+                });
+                div.addEventListener('drop', e => {
+                    e.preventDefault();
+                    div.classList.remove('drag-over');
+                    const cardId = e.dataTransfer.getData('text/plain');
+                    if (cardId) {
+                        const slot = parseInt(div.dataset.slotIndex);
+                        placeCardInSlot(slot, cardId);
+                    }
+                });
+            }
+
+            grid.appendChild(div);
+            if (!isEmpty) cardElements[cardData.id] = div;
+        });
+
+        // 更新播放順序
+        updatePlayOrderFromUI();
+    }
+
+    // ----- 更新播放順序 (從UI讀取) -----
+    function updatePlayOrderFromUI() {
+        const els = document.querySelectorAll('.card');
+        playOrder = [];
+        els.forEach(el => {
+            const id = el.dataset.cardId;
+            if (id) playOrder.push(id);
+        });
+        // 過濾掉空位
+        playOrder = playOrder.filter(id => id !== '');
+    }
+
+    // ----- 自訂模式：槽位操作 -----
+    function placeCardInSlot(slot, cardId) {
+        if (slot < 0 || slot > 3) return;
+        const card = RHYTHM_LIBRARY.find(c => c.id === cardId);
+        if (!card) return;
+        customSequence[slot] = { ...card }; // 複製一份
+        // 更新 currentCards
+        currentCards = customSequence.map(c => c ? { ...c } : null);
+        renderCards(currentCards, 'custom');
+        updatePlayOrderFromUI();
+        statusText.textContent = `✏️ 已放入「${card.name}」到位置 ${slot+1}`;
+        // 如果有播放中，停止
+        if (isPlaying) stopPlayback(false);
+    }
+
+    function clearSlot(slot) {
+        if (slot < 0 || slot > 3) return;
+        customSequence[slot] = null;
+        currentCards = customSequence.map(c => c ? { ...c } : null);
+        renderCards(currentCards, 'custom');
+        updatePlayOrderFromUI();
+        statusText.textContent = `🗑 已清空位置 ${slot+1}`;
+        if (isPlaying) stopPlayback(false);
+    }
+
+    function clearAllSlots() {
+        customSequence = [null, null, null, null];
+        currentCards = [null, null, null, null];
+        renderCards(currentCards, 'custom');
+        updatePlayOrderFromUI();
+        statusText.textContent = '🗑 已清空所有槽位';
+        if (isPlaying) stopPlayback(false);
+    }
+
+    // ----- 隨機模式 -----
+    function shuffleRandom() {
+        if (isPlaying) stopPlayback(false);
+        const shuffled = [...RHYTHM_LIBRARY];
+        for (let i=shuffled.length-1; i>0; i--) {
+            const j = Math.floor(Math.random()*(i+1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
         }
+        currentCards = shuffled.slice(0,4).map(c => ({ ...c }));
+        renderCards(currentCards, 'shuffle');
+        updatePlayOrderFromUI();
+        resetCardStates();
+        resetProgress();
+        statusText.textContent = '🎲 已隨機排列 · 點擊卡片或按播放';
+        if (isPlaying) { isPlaying=false; updatePlayBtn(); }
+        updatePlayBtn();
+    }
 
-        // ---------- 核心播放 ----------
-        function playFromCard(startCardId) {
-            // 停止任何正在播放
-            stopPlayback(false);
+    // ----- 模式切換 -----
+    function setMode(mode) {
+        if (mode === currentMode) return;
+        if (isPlaying) stopPlayback(false);
 
-            // 確保 playOrder 是正確的
-            updatePlayOrderFromLayout();
+        currentMode = mode;
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
 
-            // 找到起始卡片在 playOrder 中的位置
-            const startIndex = playOrder.indexOf(startCardId);
-            if (startIndex === -1) return;
-
-            // 重新排列 playOrder: 從 startIndex 開始
-            const newOrder = [
-                ...playOrder.slice(startIndex),
-                ...playOrder.slice(0, startIndex)
-            ];
-            playOrder = newOrder;
-
-            // 重置所有卡片狀態
-            clearAllHighlights();
+        if (mode === 'shuffle') {
+            libraryArea.classList.remove('visible');
+            clearBtn.style.display = 'none';
+            shuffleBtn.style.display = 'inline-flex';
+            // 如果 customSequence 有內容，複製到 currentCards
+            // 但 shuffle 模式應該重新隨機
+            shuffleRandom();
+        } else {
+            libraryArea.classList.add('visible');
+            clearBtn.style.display = 'inline-flex';
+            shuffleBtn.style.display = 'none';
+            // 載入 customSequence
+            currentCards = customSequence.map(c => c ? { ...c } : null);
+            renderCards(currentCards, 'custom');
+            updatePlayOrderFromUI();
+            resetCardStates();
             resetProgress();
+            statusText.textContent = '✏️ 自訂模式 · 從上方拖放節奏到槽位';
+            if (isPlaying) { isPlaying=false; updatePlayBtn(); }
+            updatePlayBtn();
+        }
+    }
 
-            // 更新卡片序號標記 (顯示新的順序 1,2,3,4)
-            document.querySelectorAll('.card').forEach((el, idx) => {
-                const num = el.querySelector('.card-number');
-                if (num) {
-                    num.textContent = idx + 1;
-                    num.classList.remove('active', 'played');
-                }
-                // 標記等待中的卡片
-                if (idx > 0) {
-                    el.classList.add('waiting-card');
-                }
-            });
+    // ----- 播放核心 -----
+    function playFromCard(startCardId) {
+        if (isPlaying) stopPlayback(false);
 
-            // 標記第一張為 playing
-            const firstId = playOrder[0];
-            const firstEl = cardElements[firstId];
-            if (firstEl) {
-                firstEl.classList.remove('waiting-card');
-                firstEl.classList.add('playing-card');
-                const num = firstEl.querySelector('.card-number');
-                if (num) num.classList.add('active');
+        // 確保 playOrder 正確
+        updatePlayOrderFromUI();
+
+        // 找起始位置
+        let startIdx = playOrder.indexOf(startCardId);
+        if (startIdx === -1) {
+            if (playOrder.length > 0) startIdx = 0;
+            else return;
+        }
+
+        // 重排順序
+        const newOrder = [
+            ...playOrder.slice(startIdx),
+            ...playOrder.slice(0, startIdx)
+        ];
+        playOrder = newOrder;
+
+        // 檢查是否有空位
+        if (playOrder.some(id => id === '')) {
+            statusText.textContent = '⚠️ 有槽位為空，請補齊節奏';
+            return;
+        }
+
+        // 重置UI
+        clearAllHighlights();
+        resetProgress();
+
+        // 標記序號
+        document.querySelectorAll('.card').forEach((el, idx) => {
+            const num = el.querySelector('.card-number');
+            if (num) {
+                num.textContent = idx + 1;
+                num.classList.remove('active', 'played');
             }
+            el.classList.remove('playing-card', 'played-card', 'waiting-card');
+            if (idx > 0) el.classList.add('waiting-card');
+        });
 
-            const firstCard = findCardById(firstId);
-            if (!firstCard) return;
+        const firstId = playOrder[0];
+        const firstCard = findCard(firstId);
+        if (!firstCard) return;
 
-            currentBeatIndex = 0;
-            isPlaying = true;
-            updatePlayPauseButton();
+        const firstEl = cardElements[firstId];
+        if (firstEl) {
+            firstEl.classList.remove('waiting-card');
+            firstEl.classList.add('playing-card');
+            const num = firstEl.querySelector('.card-number');
+            if (num) num.classList.add('active');
+        }
 
-            statusText.innerHTML = `▶ 播放中：小節 1/4 · <strong>${firstCard.name}</strong>`;
+        currentBeatIndex = 0;
+        isPlaying = true;
+        updatePlayBtn();
+        statusText.innerHTML = `▶ 播放中：小節 1/4 · <strong>${firstCard.name}</strong>`;
 
-            // 取得所有卡片的 dot 元素
-            const allCardDots = {};
-            document.querySelectorAll('.card').forEach(el => {
-                const id = el.dataset.cardId;
-                const dots = el.querySelectorAll('.beat-dot');
-                allCardDots[id] = dots;
-            });
+        const allDots = {};
+        document.querySelectorAll('.card').forEach(el => {
+            const id = el.dataset.cardId;
+            if (id) allDots[id] = el.querySelectorAll('.beat-dot');
+        });
 
-            // 播放第 0 拍
-            const firstDots = allCardDots[firstId];
-            if (firstDots && firstDots.length > 0) {
-                firstDots[0].classList.add('playing');
-            }
-            const firstType = firstCard.pattern[0];
-            playBeat(firstType);
-            updateProgress(0);
+        // 第一拍
+        const dots = allDots[firstId];
+        if (dots && dots.length) dots[0].classList.add('playing');
+        playBeat(firstCard.pattern[0]);
+        updateProgress(0);
 
-            let beatCounter = 1;
-            const intervalMs = beatInterval;
+        let beatCounter = 1;
+        const intervalMs = beatInterval;
 
-            timerId = setInterval(() => {
-                if (beatCounter >= totalBeats) {
-                    // 全部播完
-                    stopPlayback(false);
-                    statusText.innerHTML = `✅ 4 小節播放完畢！`;
-                    document.querySelectorAll('.card').forEach(el => {
-                        el.classList.remove('playing-card', 'waiting-card');
-                        el.classList.add('played-card');
-                        const num = el.querySelector('.card-number');
-                        if (num) {
-                            num.classList.remove('active');
-                            num.classList.add('played');
-                        }
-                    });
-                    document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
-                    updateProgress(totalBeats - 1);
-                    return;
-                }
-
-                // 計算目前是哪個小節 (0~3) 和哪一拍 (0~3)
-                const measureIndex = Math.floor(beatCounter / 4);
-                const beatInMeasure = beatCounter % 4;
-                const currentCardId = playOrder[measureIndex];
-                const currentCard = findCardById(currentCardId);
-                if (!currentCard) return;
-
-                // 清除所有 dots 的高亮
-                document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
-
-                // 更新卡片高亮
-                document.querySelectorAll('.card').forEach((el, idx) => {
+        timerId = setInterval(() => {
+            if (beatCounter >= TOTAL_BEATS) {
+                stopPlayback(false);
+                statusText.innerHTML = `✅ 4 小節播放完畢！`;
+                document.querySelectorAll('.card').forEach(el => {
                     el.classList.remove('playing-card', 'waiting-card');
+                    el.classList.add('played-card');
                     const num = el.querySelector('.card-number');
-                    if (num) num.classList.remove('active');
-                    if (idx === measureIndex) {
-                        el.classList.add('playing-card');
-                        if (num) num.classList.add('active');
-                    } else if (idx > measureIndex) {
-                        el.classList.add('waiting-card');
-                    } else {
-                        el.classList.add('played-card');
-                        if (num) {
-                            num.classList.remove('active');
-                            num.classList.add('played');
-                        }
-                    }
+                    if (num) { num.classList.remove('active'); num.classList.add('played'); }
                 });
+                document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
+                updateProgress(TOTAL_BEATS-1);
+                return;
+            }
 
-                // 高亮對應卡片的對應拍
-                const targetDots = allCardDots[currentCardId];
-                if (targetDots && targetDots.length > 0) {
-                    const dot = targetDots[beatInMeasure];
-                    if (dot) dot.classList.add('playing');
-                }
+            const measureIdx = Math.floor(beatCounter / 4);
+            const beatInMeasure = beatCounter % 4;
+            const cid = playOrder[measureIdx];
+            const card = findCard(cid);
+            if (!card) { beatCounter++; return; }
 
-                // 播放聲音
-                const beatType = currentCard.pattern[beatInMeasure];
-                playBeat(beatType);
+            document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
 
-                // 更新進度
-                updateProgress(beatCounter);
-
-                // 更新狀態文字
-                statusText.innerHTML = `▶ 播放中：小節 ${measureIndex+1}/4 · <strong>${currentCard.name}</strong>`;
-
-                beatCounter++;
-            }, intervalMs);
-        }
-
-        // 依照目前 playOrder 從頭播放
-        function playFullSequence() {
-            if (playOrder.length === 0) return;
-            // 先重置卡片序號顯示
+            // 更新卡片狀態
             document.querySelectorAll('.card').forEach((el, idx) => {
+                el.classList.remove('playing-card', 'waiting-card');
                 const num = el.querySelector('.card-number');
-                if (num) num.textContent = idx + 1;
-            });
-            playFromCard(playOrder[0]);
-        }
-
-        // ---------- 停止播放 ----------
-        function stopPlayback(keepState = false) {
-            if (timerId) {
-                clearInterval(timerId);
-                timerId = null;
-            }
-            isPlaying = false;
-            if (!keepState) {
-                updatePlayPauseButton();
-            }
-        }
-
-        // ---------- 切換播放/暫停 ----------
-        function togglePlayPause() {
-            if (isPlaying) {
-                stopPlayback(true);
-                isPlaying = false;
-                updatePlayPauseButton();
-                statusText.innerHTML = '⏸ 已暫停';
-            } else {
-                // 如果有卡片已播放完畢（played-card），重新開始
-                const playedCards = document.querySelectorAll('.card.played-card');
-                if (playedCards.length === 4) {
-                    // 全部已播放完，從頭開始
-                    resetCardStates();
-                    resetProgress();
-                    document.querySelectorAll('.card').forEach(el => {
-                        el.classList.remove('played-card');
-                        const num = el.querySelector('.card-number');
-                        if (num) num.classList.remove('played');
-                    });
-                    playFullSequence();
+                if (num) num.classList.remove('active');
+                if (idx === measureIdx) {
+                    el.classList.add('playing-card');
+                    if (num) num.classList.add('active');
+                } else if (idx > measureIdx) {
+                    el.classList.add('waiting-card');
                 } else {
-                    // 找目前正在播放或等待的卡片
-                    const activeCard = document.querySelector('.card.playing-card');
-                    if (activeCard) {
-                        const id = activeCard.dataset.cardId;
-                        // 重新從該卡片開始
-                        playFromCard(id);
+                    el.classList.add('played-card');
+                    if (num) { num.classList.remove('active'); num.classList.add('played'); }
+                }
+            });
+
+            const targetDots = allDots[cid];
+            if (targetDots && targetDots.length) {
+                const dot = targetDots[beatInMeasure];
+                if (dot) dot.classList.add('playing');
+            }
+
+            playBeat(card.pattern[beatInMeasure]);
+            updateProgress(beatCounter);
+            statusText.innerHTML = `▶ 播放中：小節 ${measureIdx+1}/4 · <strong>${card.name}</strong>`;
+
+            beatCounter++;
+        }, intervalMs);
+    }
+
+    function playFullSequence() {
+        updatePlayOrderFromUI();
+        if (playOrder.length === 0 || playOrder.every(id => id === '')) {
+            statusText.textContent = '⚠️ 請先設定節奏序列';
+            return;
+        }
+        if (playOrder.some(id => id === '')) {
+            statusText.textContent = '⚠️ 有槽位為空，請補齊';
+            return;
+        }
+        playFromCard(playOrder[0]);
+    }
+
+    // ----- 控制 -----
+    function stopPlayback(keepState=false) {
+        if (timerId) { clearInterval(timerId); timerId = null; }
+        isPlaying = false;
+        if (!keepState) updatePlayBtn();
+    }
+
+    function togglePlayPause() {
+        if (isPlaying) {
+            stopPlayback(true);
+            isPlaying = false;
+            updatePlayBtn();
+            statusText.textContent = '⏸ 已暫停';
+        } else {
+            // 檢查模式
+            if (currentMode === 'shuffle') {
+                // 隨機模式：找第一個卡片或已播放的卡片
+                const active = document.querySelector('.card.playing-card');
+                if (active && active.dataset.cardId) {
+                    playFromCard(active.dataset.cardId);
+                } else {
+                    // 找第一個有內容的卡片
+                    const first = document.querySelector('.card:not(.played-card)');
+                    if (first && first.dataset.cardId) {
+                        playFromCard(first.dataset.cardId);
                     } else {
-                        // 沒有任何卡片在播放，從第一張開始
-                        playFullSequence();
+                        // 全部已播完，從頭
+                        const all = document.querySelectorAll('.card');
+                        for (let el of all) {
+                            if (el.dataset.cardId) {
+                                playFromCard(el.dataset.cardId);
+                                return;
+                            }
+                        }
+                        statusText.textContent = '⚠️ 沒有可播放的節奏';
                     }
                 }
+            } else {
+                // 自訂模式
+                playFullSequence();
             }
         }
+    }
 
-        // ---------- 洗牌 ----------
-        function shuffleCards() {
-            if (isPlaying) {
+    function updatePlayBtn() {
+        if (isPlaying) {
+            playLabel.textContent = '暫停';
+            playBtn.querySelector('.btn-icon').textContent = '⏸';
+        } else {
+            playLabel.textContent = '播放';
+            playBtn.querySelector('.btn-icon').textContent = '▶';
+        }
+    }
+
+    // ----- UI輔助 -----
+    function clearAllHighlights() {
+        document.querySelectorAll('.card').forEach(c => {
+            c.classList.remove('playing-card', 'played-card', 'waiting-card');
+        });
+        document.querySelectorAll('.card-number').forEach(n => {
+            n.classList.remove('active', 'played');
+        });
+        document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
+    }
+
+    function resetCardStates() {
+        clearAllHighlights();
+        document.querySelectorAll('.card-number').forEach((n, idx) => {
+            n.textContent = idx + 1;
+            n.classList.remove('active', 'played');
+        });
+    }
+
+    function resetProgress() {
+        progressFill.style.width = '0%';
+        progressLabel.textContent = '小節 0/4 · 拍 0/4';
+    }
+
+    function updateProgress(beatIndex) {
+        const pct = ((beatIndex+1)/TOTAL_BEATS)*100;
+        progressFill.style.width = Math.min(pct, 100)+'%';
+        const m = Math.floor(beatIndex/4)+1;
+        const b = (beatIndex%4)+1;
+        progressLabel.textContent = `小節 ${m}/4 · 拍 ${b}/4`;
+    }
+
+    // ----- BPM -----
+    function updateBpm(val) {
+        bpm = Math.min(160, Math.max(80, Number(val)));
+        bpmDisplay.textContent = bpm;
+        beatInterval = 60000 / bpm;
+        if (isPlaying) {
+            const active = document.querySelector('.card.playing-card');
+            if (active && active.dataset.cardId) {
+                const id = active.dataset.cardId;
                 stopPlayback(false);
-            }
-            const shuffled = [...RHYTHM_LIBRARY];
-            for (let i = shuffled.length - 1; i > 0; i--) {
-                const j = Math.floor(Math.random() * (i + 1));
-                [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-            }
-            currentCards = shuffled.slice(0, 4);
-            renderCards(currentCards);
-            resetCardStates();
-            resetProgress();
-            statusText.innerHTML = '🎲 已洗牌 · 點擊「播放」依序聽 4 張卡片';
-            if (isPlaying) {
-                isPlaying = false;
-                updatePlayPauseButton();
-            }
-            updatePlayPauseButton();
-        }
-
-        // ---------- 重設 ----------
-        function resetAll() {
-            if (isPlaying) {
-                stopPlayback(false);
-            }
-            // 重新排列為當前卡片順序
-            updatePlayOrderFromLayout();
-            resetCardStates();
-            resetProgress();
-            document.querySelectorAll('.card').forEach(el => {
-                el.classList.remove('played-card', 'playing-card', 'waiting-card');
-                const num = el.querySelector('.card-number');
-                if (num) num.classList.remove('active', 'played');
-            });
-            document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
-            statusText.innerHTML = '🔄 已重設 · 點擊「播放」開始';
-            if (isPlaying) {
-                isPlaying = false;
-                updatePlayPauseButton();
-            }
-            updatePlayPauseButton();
-        }
-
-        // ---------- BPM ----------
-        function updateBpm(value) {
-            bpm = Math.min(160, Math.max(80, Number(value)));
-            bpmDisplay.textContent = bpm;
-            beatInterval = 60000 / bpm;
-            if (isPlaying) {
-                // 重啟播放以套用新 BPM
-                const playingCardEl = document.querySelector('.card.playing-card');
-                if (playingCardEl) {
-                    const id = playingCardEl.dataset.cardId;
-                    stopPlayback(false);
-                    setTimeout(() => {
-                        playFromCard(id);
-                    }, 50);
-                }
+                setTimeout(() => playFromCard(id), 50);
             }
         }
+    }
 
-        // ---------- 初始化 ----------
-        function init() {
-            shuffleCards();
+    // ----- 初始化 -----
+    function init() {
+        // 初始：隨機模式
+        currentMode = 'shuffle';
+        document.querySelectorAll('.mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'shuffle'));
+        shuffleRandom();
+        renderLibrary();
 
-            bpmSlider.addEventListener('input', function(e) {
-                const val = e.target.value;
-                bpmDisplay.textContent = val;
-                updateBpm(val);
-            });
+        // 事件
+        modeShuffle.addEventListener('click', () => setMode('shuffle'));
+        modeCustom.addEventListener('click', () => setMode('custom'));
 
-            playPauseBtn.addEventListener('click', function(e) {
+        playBtn.addEventListener('click', togglePlayPause);
+        shuffleBtn.addEventListener('click', () => { if (currentMode === 'shuffle') shuffleRandom(); });
+        clearBtn.addEventListener('click', clearAllSlots);
+
+        bpmSlider.addEventListener('input', e => updateBpm(e.target.value));
+
+        document.addEventListener('keydown', e => {
+            if (e.key === ' ' || e.code === 'Space') {
                 e.preventDefault();
                 togglePlayPause();
-            });
+            }
+        });
 
-            shuffleBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                shuffleCards();
-            });
+        document.addEventListener('click', () => initAudioCtx(), { once: true });
+    }
 
-            resetBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                resetAll();
-            });
-
-            document.addEventListener('keydown', function(e) {
-                if (e.key === ' ' || e.code === 'Space') {
-                    e.preventDefault();
-                    togglePlayPause();
-                }
-            });
-
-            document.addEventListener('click', function initCtx() {
-                initAudioContext();
-            }, { once: true });
-        }
-
-        init();
-    })();
+    init();
+})();
 </script>
 </body>
 </html>
