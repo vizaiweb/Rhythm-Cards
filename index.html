@@ -157,8 +157,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.5rem;
+            gap: 0.3rem;
             user-select: none;
+            position: relative;
         }
 
         .card:hover {
@@ -169,6 +170,39 @@
 
         .card:active {
             transform: scale(0.97);
+        }
+
+        /* 卡片序號標記 */
+        .card-number {
+            position: absolute;
+            top: 12px;
+            left: 16px;
+            background: rgba(255, 215, 150, 0.15);
+            border: 1px solid rgba(255, 215, 150, 0.2);
+            color: #d4c9b8;
+            font-size: 0.75rem;
+            font-weight: 600;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            letter-spacing: 0;
+        }
+
+        .card-number.active {
+            background: rgba(255, 215, 150, 0.35);
+            border-color: #f7c68b;
+            color: #f7dec0;
+            box-shadow: 0 0 20px #f7b87e55;
+        }
+
+        .card-number.played {
+            background: rgba(74, 122, 90, 0.3);
+            border-color: #4a7a5a88;
+            color: #6aae7a;
         }
 
         .card-name {
@@ -182,6 +216,7 @@
             border-radius: 40px;
             display: inline-block;
             backdrop-filter: blur(2px);
+            margin-top: 0.2rem;
         }
 
         .beat-pattern {
@@ -231,16 +266,28 @@
             position: relative;
         }
 
+        /* 卡片播放狀態 */
         .card.playing-card {
-            background: rgba(44, 62, 94, 0.85);
-            border-color: #f7c68b66;
-            box-shadow: 0 0 30px #f7b87e33, inset 0 0 0 1px #f7c68b55;
+            background: rgba(44, 62, 94, 0.9);
+            border-color: #f7c68b88;
+            box-shadow: 0 0 40px #f7b87e44, inset 0 0 0 1px #f7c68b66;
+            transform: scale(1.02);
         }
 
         .card.played-card {
             border-color: #4a7a5a88;
             box-shadow: 0 0 20px #4a7a5a33;
-            opacity: 0.7;
+            opacity: 0.75;
+        }
+
+        .card.played-card .card-number {
+            background: rgba(74, 122, 90, 0.4);
+            border-color: #4a7a5aaa;
+            color: #7ac48a;
+        }
+
+        .card.waiting-card {
+            opacity: 0.5;
         }
 
         .controls {
@@ -330,7 +377,7 @@
             color: #b8ad9a;
             font-size: 0.75rem;
             letter-spacing: 1px;
-            min-width: 80px;
+            min-width: 100px;
             text-align: right;
             font-weight: 300;
         }
@@ -377,6 +424,13 @@
                 padding: 0.4rem 1.2rem;
                 font-size: 0.85rem;
             }
+            .card-number {
+                width: 24px;
+                height: 24px;
+                font-size: 0.65rem;
+                top: 8px;
+                left: 10px;
+            }
         }
 
         @media (max-width: 440px) {
@@ -422,6 +476,9 @@
         <button class="btn" id="shuffleBtn">
             <span class="btn-icon">🔄</span> 洗牌
         </button>
+        <button class="btn" id="resetBtn">
+            <span class="btn-icon">⟳</span> 重設
+        </button>
     </div>
 
     <div class="progress-area">
@@ -433,7 +490,7 @@
     </div>
 
     <div class="status-text" id="statusText">
-        🎵 點擊卡片或按 <strong>播放</strong> 聽 4 小節連續節奏
+        🎵 點擊 <strong>播放</strong> 依序聽 4 張卡片 · 共 4 小節
     </div>
 </div>
 
@@ -452,6 +509,7 @@
         const playPauseBtn = document.getElementById('playPauseBtn');
         const playPauseLabel = document.getElementById('playPauseLabel');
         const shuffleBtn = document.getElementById('shuffleBtn');
+        const resetBtn = document.getElementById('resetBtn');
         const bpmSlider = document.getElementById('bpmSlider');
         const bpmDisplay = document.getElementById('bpmDisplay');
         const progressFill = document.getElementById('progressFill');
@@ -462,11 +520,14 @@
         let isPlaying = false;
         let timerId = null;
         let currentCards = [];
-        let currentOrder = [];          // 播放順序：4個卡片id
-        let currentBeatIndex = 0;       // 0~15 (4小節 x 4拍)
-        let totalBeats = 16;
+        let playOrder = [];           // 4 個 card id，按播放順序
+        let currentBeatIndex = 0;     // 0~15
+        const totalBeats = 16;
         let bpm = 120;
         let beatInterval = 500;
+
+        // DOM 卡片元素對照
+        let cardElements = {};
 
         // ---------- 音效 ----------
         function initAudioContext() {
@@ -479,7 +540,6 @@
             return audioCtx;
         }
 
-        // 只有 accent (◉) 有聲，light (○) 無聲
         function playAccent(volume = 0.55) {
             try {
                 const ctx = initAudioContext();
@@ -514,7 +574,6 @@
             } catch (e) { /* 靜默忽略 */ }
         }
 
-        // light 完全無聲 (但保留函數以備未來擴充)
         function playLight() {
             // 無聲
         }
@@ -523,18 +582,25 @@
             if (type === 'accent') {
                 playAccent(0.55);
             } else {
-                playLight(); // 無聲
+                playLight();
             }
         }
 
         // ---------- 渲染 ----------
         function renderCards(cards) {
             grid.innerHTML = '';
+            cardElements = {};
             cards.forEach((card, idx) => {
                 const cardDiv = document.createElement('div');
                 cardDiv.className = 'card';
                 cardDiv.dataset.cardId = card.id;
                 cardDiv.dataset.index = idx;
+
+                // 序號標記 (1~4)
+                const numberSpan = document.createElement('div');
+                numberSpan.className = 'card-number';
+                numberSpan.textContent = idx + 1;
+                cardDiv.appendChild(numberSpan);
 
                 const nameSpan = document.createElement('div');
                 nameSpan.className = 'card-name';
@@ -556,12 +622,25 @@
 
                 cardDiv.addEventListener('click', function(e) {
                     e.stopPropagation();
+                    // 點擊卡片：從該卡片開始播放 (該卡片 → 後續卡片)
                     const id = this.dataset.cardId;
-                    // 點擊卡片立即播放該卡片的4小節 (4次重複)
-                    playCardSequence(id);
+                    playFromCard(id);
                 });
 
                 grid.appendChild(cardDiv);
+                cardElements[card.id] = cardDiv;
+            });
+
+            // 更新播放順序 = 畫面排列順序
+            updatePlayOrderFromLayout();
+        }
+
+        // 根據畫面排列順序更新 playOrder
+        function updatePlayOrderFromLayout() {
+            const cardEls = document.querySelectorAll('.card');
+            playOrder = [];
+            cardEls.forEach(el => {
+                playOrder.push(el.dataset.cardId);
             });
         }
 
@@ -571,22 +650,36 @@
 
         function clearAllHighlights() {
             document.querySelectorAll('.card').forEach(c => {
-                c.classList.remove('playing-card', 'played-card');
+                c.classList.remove('playing-card', 'played-card', 'waiting-card');
+            });
+            document.querySelectorAll('.card-number').forEach(n => {
+                n.classList.remove('active', 'played');
             });
             document.querySelectorAll('.beat-dot').forEach(d => {
                 d.classList.remove('playing');
             });
         }
 
+        function resetCardStates() {
+            clearAllHighlights();
+            // 重新標記序號
+            document.querySelectorAll('.card-number').forEach((n, idx) => {
+                n.textContent = idx + 1;
+                n.classList.remove('active', 'played');
+            });
+        }
+
         function updateProgress(beatIndex, total = 16) {
             const percent = ((beatIndex + 1) / total) * 100;
             progressFill.style.width = Math.min(percent, 100) + '%';
-            progressLabel.textContent = `${Math.min(beatIndex + 1, total)} / ${total}`;
+            const measure = Math.floor(beatIndex / 4) + 1;
+            const beat = (beatIndex % 4) + 1;
+            progressLabel.textContent = `小節 ${measure}/4 · 拍 ${beat}/4`;
         }
 
         function resetProgress() {
             progressFill.style.width = '0%';
-            progressLabel.textContent = '0 / 16';
+            progressLabel.textContent = '小節 0/4 · 拍 0/4';
         }
 
         function updatePlayPauseButton() {
@@ -599,33 +692,62 @@
             }
         }
 
-        // ---------- 核心：4小節連續播放 ----------
-        function playCardSequence(cardId) {
+        // ---------- 核心播放 ----------
+        function playFromCard(startCardId) {
             // 停止任何正在播放
             stopPlayback(false);
 
-            const card = findCardById(cardId);
-            if (!card) return;
+            // 確保 playOrder 是正確的
+            updatePlayOrderFromLayout();
 
-            // 建立播放順序：4個小節，全部同一個卡片
-            currentOrder = [cardId, cardId, cardId, cardId];
+            // 找到起始卡片在 playOrder 中的位置
+            const startIndex = playOrder.indexOf(startCardId);
+            if (startIndex === -1) return;
+
+            // 重新排列 playOrder: 從 startIndex 開始
+            const newOrder = [
+                ...playOrder.slice(startIndex),
+                ...playOrder.slice(0, startIndex)
+            ];
+            playOrder = newOrder;
+
+            // 重置所有卡片狀態
+            clearAllHighlights();
+            resetProgress();
+
+            // 更新卡片序號標記 (顯示新的順序 1,2,3,4)
+            document.querySelectorAll('.card').forEach((el, idx) => {
+                const num = el.querySelector('.card-number');
+                if (num) {
+                    num.textContent = idx + 1;
+                    num.classList.remove('active', 'played');
+                }
+                // 標記等待中的卡片
+                if (idx > 0) {
+                    el.classList.add('waiting-card');
+                }
+            });
+
+            // 標記第一張為 playing
+            const firstId = playOrder[0];
+            const firstEl = cardElements[firstId];
+            if (firstEl) {
+                firstEl.classList.remove('waiting-card');
+                firstEl.classList.add('playing-card');
+                const num = firstEl.querySelector('.card-number');
+                if (num) num.classList.add('active');
+            }
+
+            const firstCard = findCardById(firstId);
+            if (!firstCard) return;
+
             currentBeatIndex = 0;
             isPlaying = true;
             updatePlayPauseButton();
 
-            clearAllHighlights();
-            resetProgress();
+            statusText.innerHTML = `▶ 播放中：小節 1/4 · <strong>${firstCard.name}</strong>`;
 
-            // 標記所有卡片為非活躍，只 highlight 目標卡片
-            document.querySelectorAll('.card').forEach(el => {
-                if (el.dataset.cardId === cardId) {
-                    el.classList.add('playing-card');
-                }
-            });
-
-            statusText.innerHTML = `▶ 播放中：<strong>${card.name}</strong> · 4 小節`;
-
-            // 取得所有卡片的 dot 元素 (用於視覺)
+            // 取得所有卡片的 dot 元素
             const allCardDots = {};
             document.querySelectorAll('.card').forEach(el => {
                 const id = el.dataset.cardId;
@@ -633,32 +755,32 @@
                 allCardDots[id] = dots;
             });
 
-            // 播放第 0 拍 (第一個小節的第一拍)
-            const firstDots = allCardDots[cardId];
+            // 播放第 0 拍
+            const firstDots = allCardDots[firstId];
             if (firstDots && firstDots.length > 0) {
                 firstDots[0].classList.add('playing');
             }
-            // 播放聲音 (accent 有聲, light 無聲)
-            const firstType = card.pattern[0];
+            const firstType = firstCard.pattern[0];
             playBeat(firstType);
             updateProgress(0);
 
-            let beatCounter = 1; // 下一拍 index = 1
+            let beatCounter = 1;
             const intervalMs = beatInterval;
 
             timerId = setInterval(() => {
                 if (beatCounter >= totalBeats) {
-                    // 16 拍全部播完
+                    // 全部播完
                     stopPlayback(false);
-                    statusText.innerHTML = `✅ 4 小節播放完畢：<strong>${card.name}</strong>`;
-                    // 把卡片標記為已播放
+                    statusText.innerHTML = `✅ 4 小節播放完畢！`;
                     document.querySelectorAll('.card').forEach(el => {
-                        if (el.dataset.cardId === cardId) {
-                            el.classList.remove('playing-card');
-                            el.classList.add('played-card');
+                        el.classList.remove('playing-card', 'waiting-card');
+                        el.classList.add('played-card');
+                        const num = el.querySelector('.card-number');
+                        if (num) {
+                            num.classList.remove('active');
+                            num.classList.add('played');
                         }
                     });
-                    // 清除所有 dots 高亮
                     document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
                     updateProgress(totalBeats - 1);
                     return;
@@ -667,29 +789,62 @@
                 // 計算目前是哪個小節 (0~3) 和哪一拍 (0~3)
                 const measureIndex = Math.floor(beatCounter / 4);
                 const beatInMeasure = beatCounter % 4;
-                const currentCardIdForBeat = currentOrder[measureIndex];
-                const currentCard = findCardById(currentCardIdForBeat);
+                const currentCardId = playOrder[measureIndex];
+                const currentCard = findCardById(currentCardId);
                 if (!currentCard) return;
 
                 // 清除所有 dots 的高亮
                 document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
 
+                // 更新卡片高亮
+                document.querySelectorAll('.card').forEach((el, idx) => {
+                    el.classList.remove('playing-card', 'waiting-card');
+                    const num = el.querySelector('.card-number');
+                    if (num) num.classList.remove('active');
+                    if (idx === measureIndex) {
+                        el.classList.add('playing-card');
+                        if (num) num.classList.add('active');
+                    } else if (idx > measureIndex) {
+                        el.classList.add('waiting-card');
+                    } else {
+                        el.classList.add('played-card');
+                        if (num) {
+                            num.classList.remove('active');
+                            num.classList.add('played');
+                        }
+                    }
+                });
+
                 // 高亮對應卡片的對應拍
-                const targetDots = allCardDots[currentCardIdForBeat];
+                const targetDots = allCardDots[currentCardId];
                 if (targetDots && targetDots.length > 0) {
                     const dot = targetDots[beatInMeasure];
                     if (dot) dot.classList.add('playing');
                 }
 
-                // 播放聲音 (accent 有聲, light 無聲)
+                // 播放聲音
                 const beatType = currentCard.pattern[beatInMeasure];
                 playBeat(beatType);
 
                 // 更新進度
                 updateProgress(beatCounter);
 
+                // 更新狀態文字
+                statusText.innerHTML = `▶ 播放中：小節 ${measureIndex+1}/4 · <strong>${currentCard.name}</strong>`;
+
                 beatCounter++;
             }, intervalMs);
+        }
+
+        // 依照目前 playOrder 從頭播放
+        function playFullSequence() {
+            if (playOrder.length === 0) return;
+            // 先重置卡片序號顯示
+            document.querySelectorAll('.card').forEach((el, idx) => {
+                const num = el.querySelector('.card-number');
+                if (num) num.textContent = idx + 1;
+            });
+            playFromCard(playOrder[0]);
         }
 
         // ---------- 停止播放 ----------
@@ -701,34 +856,40 @@
             isPlaying = false;
             if (!keepState) {
                 updatePlayPauseButton();
-                // 不要自動清除高亮，讓視覺保留
             }
         }
 
         // ---------- 切換播放/暫停 ----------
         function togglePlayPause() {
             if (isPlaying) {
-                // 暫停
                 stopPlayback(true);
                 isPlaying = false;
                 updatePlayPauseButton();
                 statusText.innerHTML = '⏸ 已暫停';
-                // 保留高亮
             } else {
-                // 播放：找第一張卡片，或上次播放的卡片
-                let targetId = null;
-                // 檢查是否有卡片被標記為 playing-card 或 played-card
-                const activeCard = document.querySelector('.card.playing-card, .card.played-card');
-                if (activeCard) {
-                    targetId = activeCard.dataset.cardId;
+                // 如果有卡片已播放完畢（played-card），重新開始
+                const playedCards = document.querySelectorAll('.card.played-card');
+                if (playedCards.length === 4) {
+                    // 全部已播放完，從頭開始
+                    resetCardStates();
+                    resetProgress();
+                    document.querySelectorAll('.card').forEach(el => {
+                        el.classList.remove('played-card');
+                        const num = el.querySelector('.card-number');
+                        if (num) num.classList.remove('played');
+                    });
+                    playFullSequence();
                 } else {
-                    // 取第一張
-                    if (currentCards.length > 0) {
-                        targetId = currentCards[0].id;
+                    // 找目前正在播放或等待的卡片
+                    const activeCard = document.querySelector('.card.playing-card');
+                    if (activeCard) {
+                        const id = activeCard.dataset.cardId;
+                        // 重新從該卡片開始
+                        playFromCard(id);
+                    } else {
+                        // 沒有任何卡片在播放，從第一張開始
+                        playFullSequence();
                     }
-                }
-                if (targetId) {
-                    playCardSequence(targetId);
                 }
             }
         }
@@ -745,9 +906,32 @@
             }
             currentCards = shuffled.slice(0, 4);
             renderCards(currentCards);
-            clearAllHighlights();
+            resetCardStates();
             resetProgress();
-            statusText.innerHTML = '🎲 已洗牌 · 點擊卡片播放 4 小節';
+            statusText.innerHTML = '🎲 已洗牌 · 點擊「播放」依序聽 4 張卡片';
+            if (isPlaying) {
+                isPlaying = false;
+                updatePlayPauseButton();
+            }
+            updatePlayPauseButton();
+        }
+
+        // ---------- 重設 ----------
+        function resetAll() {
+            if (isPlaying) {
+                stopPlayback(false);
+            }
+            // 重新排列為當前卡片順序
+            updatePlayOrderFromLayout();
+            resetCardStates();
+            resetProgress();
+            document.querySelectorAll('.card').forEach(el => {
+                el.classList.remove('played-card', 'playing-card', 'waiting-card');
+                const num = el.querySelector('.card-number');
+                if (num) num.classList.remove('active', 'played');
+            });
+            document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
+            statusText.innerHTML = '🔄 已重設 · 點擊「播放」開始';
             if (isPlaying) {
                 isPlaying = false;
                 updatePlayPauseButton();
@@ -767,7 +951,7 @@
                     const id = playingCardEl.dataset.cardId;
                     stopPlayback(false);
                     setTimeout(() => {
-                        playCardSequence(id);
+                        playFromCard(id);
                     }, 50);
                 }
             }
@@ -791,6 +975,11 @@
             shuffleBtn.addEventListener('click', function(e) {
                 e.preventDefault();
                 shuffleCards();
+            });
+
+            resetBtn.addEventListener('click', function(e) {
+                e.preventDefault();
+                resetAll();
             });
 
             document.addEventListener('keydown', function(e) {
