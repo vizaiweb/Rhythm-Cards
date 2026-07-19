@@ -702,7 +702,7 @@
                 const beatInMeasure = beatInRound % 4;
 
                 // 若 measureIdx 超出範圍，代表該輪已結束，進入下一輪
-                if (measureIdx >= playOrder.length) {
+                if (measureIdx >= playOrder.length) {{
     // 檢查是否已達循環上限（進入下一輪前）
     if (loopCount !== 0 && currentRound >= loopCount) {
         finishPlayback(loopDisplay);
@@ -720,7 +720,7 @@
         el.classList.remove('played-card');
     });
 
-    // 播放下一輪的第一拍
+    // 下一輪的第一拍
     const newItem = playOrder[0];
     const newCard = findCard(newItem.cardId);
     if (!newCard) {
@@ -758,10 +758,10 @@
     playBeat(newCard.pattern[0]);
 
     // ============================================================
-    //  ✅ 唯一修改：手動更新進度條，顯示新的循環數
+    //  ✅ 正確修復：直接更新進度條，傳入正確的 absoluteBeat
     // ============================================================
-    const newAbsoluteBeat = (currentRound - 1) * beatsPerRound + 1;
-    updateProgressDisplay(newAbsoluteBeat - 1, currentRound, loopDisplay);
+    const correctAbsoluteBeat = (currentRound - 1) * beatsPerRound;
+    updateProgressDisplay(correctAbsoluteBeat, currentRound, loopDisplay);
 
     // 更新狀態文字
     statusText.innerHTML =
