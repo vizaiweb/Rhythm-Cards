@@ -402,11 +402,23 @@
         (function() {
             // ----- 節奏庫（顯示拍子圖案 + 中文名稱） -----
             const RHYTHM_LIBRARY = [
-                { id: 'rock', name: '基本搖滾', pattern: ['accent', 'light', 'light', 'light'] },
-                { id: 'bass', name: '行走貝斯', pattern: ['accent', 'light', 'accent', 'light'] },
-                { id: 'syncop', name: '切分節奏', pattern: ['light', 'accent', 'light', 'accent'] },
-                { id: 'full', name: '滿拍衝刺', pattern: ['accent', 'accent', 'accent', 'accent'] }
-            ];
+    { id: 'rest', name: '全空', pattern: ['light', 'light', 'light', 'light'] },
+    { id: 'beat1', name: '只有第 1 拍', pattern: ['accent', 'light', 'light', 'light'] },
+    { id: 'beat2', name: '只有第 2 拍', pattern: ['light', 'accent', 'light', 'light'] },
+    { id: 'beat3', name: '只有第 3 拍', pattern: ['light', 'light', 'accent', 'light'] },
+    { id: 'beat4', name: '只有第 4 拍', pattern: ['light', 'light', 'light', 'accent'] },
+    { id: 'double', name: '第 1、2 拍', pattern: ['accent', 'accent', 'light', 'light'] },
+    { id: 'walking', name: '第 1、3 拍', pattern: ['accent', 'light', 'accent', 'light'] },
+    { id: 'diagonal', name: '第 1、4 拍', pattern: ['accent', 'light', 'light', 'accent'] },
+    { id: 'middle', name: '第 2、3 拍', pattern: ['light', 'accent', 'accent', 'light'] },
+    { id: 'syncop', name: '第 2、4 拍', pattern: ['light', 'accent', 'light', 'accent'] },
+    { id: 'back', name: '第 3、4 拍', pattern: ['light', 'light', 'accent', 'accent'] },
+    { id: 'front3', name: '第 1、2、3 拍', pattern: ['accent', 'accent', 'accent', 'light'] },
+    { id: 'jump', name: '第 1、2、4 拍', pattern: ['accent', 'accent', 'light', 'accent'] },
+    { id: 'triple', name: '第 1、3、4 拍', pattern: ['accent', 'light', 'accent', 'accent'] },
+    { id: 'back3', name: '第 2、3、4 拍', pattern: ['light', 'accent', 'accent', 'accent'] },
+    { id: 'full', name: '全滿', pattern: ['accent', 'accent', 'accent', 'accent'] }
+];
 
             // ----- DOM -----
             const grid = document.getElementById('cardGrid');
