@@ -422,8 +422,8 @@
 
         // 循環相關
         let loopCount = 4;
-        let currentRound = 1;       // 當前正在播放的循環次數（從 1 開始）
-        let totalRounds = 0;        // 總共要播放的循環次數（0 = 無限）
+        let currentRound = 1;
+        let totalRounds = 0;
 
         // ----- 音效 -----
         function initAudioCtx() {
@@ -702,7 +702,7 @@
                 const beatInMeasure = beatInRound % 4;
 
                 // 若 measureIdx 超出範圍，代表該輪已結束，進入下一輪
-                if (measureIdx >= playOrder.length) {{
+                if (measureIdx >= playOrder.length) {
     // 檢查是否已達循環上限（進入下一輪前）
     if (loopCount !== 0 && currentRound >= loopCount) {
         finishPlayback(loopDisplay);
@@ -770,6 +770,7 @@
     beatCounter++;
     return;
 }
+
 
                 // 正常播放邏輯
                 const item = playOrder[measureIdx];
