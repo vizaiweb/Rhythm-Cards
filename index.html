@@ -703,32 +703,73 @@
 
                 // 若 measureIdx 超出範圍，代表該輪已結束，進入下一輪
                 if (measureIdx >= playOrder.length) {
-                    // ----- 修正點 3：進入下一輪，currentRound + 1 -----
-                    currentRound++;
-                    beatCounter = 0; // 下一輪從第 0 拍開始
+    // 檢查是否已達循環上限（進入下一輪前）
+    if (loopCount !== 0 && currentRound >= loopCount) {
+        finishPlayback(loopDisplay);
+        return;
+    }
 
-                    // 重置卡槽的 played 狀態
-                    document.querySelectorAll('.card').forEach(el => {
-                        const num = el.querySelector('.card-number');
-                        if (num) num.classList.remove('played');
-                        el.classList.remove('played-card');
-                    });
+    // ✅ 循環數 +1
+    currentRound++;
+    beatCounter = 0;
 
-                    // 重新計算新的拍子位置（下一輪的第一拍）
-                    const newItem = playOrder[0];
-                    const newCard = findCard(newItem.cardId);
-                    if (!newCard) {
-                        beatCounter++;
-                        return;
-                    }
+    // 重置卡槽的 played 狀態
+    document.querySelectorAll('.card').forEach(el => {
+        const num = el.querySelector('.card-number');
+        if (num) num.classList.remove('played');
+        el.classList.remove('played-card');
+    });
 
-                    // 更新 UI 和聲音（下一輪的第一拍）
-                    updatePlaybackUI(allDots, newItem, 0, newCard, 0, currentRound, loopDisplay);
-                    playBeat(newCard.pattern[0]);
+    // 播放下一輪的第一拍
+    const newItem = playOrder[0];
+    const newCard = findCard(newItem.cardId);
+    if (!newCard) {
+        beatCounter++;
+        return;
+    }
 
-                    beatCounter++;
-                    return;
-                }
+    // 清除所有拍子高亮
+    document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
+
+    // 高亮下一輪第一拍
+    const nextDots = allDots[newItem.slotIndex];
+    if (nextDots && nextDots.length) {
+        nextDots[0].classList.add('playing');
+    }
+
+    // 更新卡片高亮
+    document.querySelectorAll('.card').forEach(el => {
+        const slotIdx = parseInt(el.dataset.slotIndex);
+        const cardId = el.dataset.cardId;
+        el.classList.remove('playing-card', 'waiting-card');
+        const num = el.querySelector('.card-number');
+        if (num) num.classList.remove('active');
+        const orderIdx = playOrder.findIndex(p => p.slotIndex === slotIdx);
+        if (orderIdx === -1 || !cardId) return;
+        if (orderIdx === 0) {
+            el.classList.add('playing-card');
+            if (num) num.classList.add('active');
+        } else {
+            el.classList.add('waiting-card');
+        }
+    });
+
+    // 播放聲音
+    playBeat(newCard.pattern[0]);
+
+    // ============================================================
+    //  ✅ 唯一修改：手動更新進度條，顯示新的循環數
+    // ============================================================
+    const newAbsoluteBeat = (currentRound - 1) * beatsPerRound + 1;
+    updateProgressDisplay(newAbsoluteBeat - 1, currentRound, loopDisplay);
+
+    // 更新狀態文字
+    statusText.innerHTML =
+        `▶ 播放中：循環 ${currentRound}/${loopDisplay} · 小節 1/${totalMeasures} · <strong>${newCard.name}</strong>`;
+
+    beatCounter++;
+    return;
+}
 
                 // 正常播放邏輯
                 const item = playOrder[measureIdx];
