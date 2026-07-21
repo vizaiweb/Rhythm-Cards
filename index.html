@@ -207,7 +207,7 @@
             background: rgba(26, 38, 60, 0.7);
             backdrop-filter: blur(4px);
             border-radius: 2rem;
-            padding: 1rem 0.6rem 1.2rem;
+            padding: 1.2rem 0.6rem 1rem; /* 增加上內距 */
             text-align: center;
             box-shadow: 0 10px 20px -8px #00000099, inset 0 0 0 1px rgba(255, 215, 150, 0.05);
             border: 1px solid rgba(255, 215, 150, 0.03);
@@ -228,8 +228,8 @@
         /* 卡槽編號 */
         .card .card-number {
             position: absolute;
-            top: 8px;
-            left: 12px;
+            top: 6px;
+            left: 8px;
             background: rgba(255, 215, 150, 0.12);
             border: 1px solid rgba(255, 215, 150, 0.15);
             color: #8a7e6b;
@@ -242,6 +242,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
+            z-index: 5; /* 確保在選單之上 */
         }
         .card .card-number.active {
             background: rgba(255, 215, 150, 0.3);
@@ -263,7 +264,7 @@
         .card .remove-btn {
             position: absolute;
             top: 6px;
-            right: 10px;
+            right: 8px;
             background: rgba(200, 80, 60, 0.15);
             border: none;
             color: #8a6a5a;
@@ -276,8 +277,9 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
-            opacity: 0.5;
+            opacity: 0.6; /* 稍微可見 */
             font-family: inherit;
+            z-index: 5; /* 確保在選單之上 */
         }
         .card .remove-btn:hover {
             background: rgba(200, 80, 60, 0.4);
@@ -291,8 +293,9 @@
 
         /* 下拉選單 */
         .card select {
-            width: 92%;
-            max-width: 190px;
+            width: 85%; /* 縮窄，避免碰到邊緣圖標 */
+            max-width: 170px;
+            margin: 0.2rem 0; /* 增加上下間距 */
             padding: 0.35rem 0.5rem;
             border-radius: 40px;
             background: rgba(0, 0, 0, 0.35);
@@ -324,25 +327,27 @@
             color: #e3d7c8;
         }
 
-        /* 拍子圖示 */
+        /* 拍子圖示 - 強制一行 */
         .card .beat-pattern {
             display: flex;
-            justify-content: center;
-            gap: 0.6rem;
-            margin: 0.1rem 0 0.1rem;
-            flex-wrap: wrap;
+            justify-content: space-around; /* 均勻分佈 */
+            gap: 0; /* 移除間距 */
+            width: 100%; /* 佔滿寬度 */
+            margin: 0.1rem 0;
             padding: 0 0.2rem;
             min-height: 44px;
             align-items: center;
+            flex-wrap: nowrap; /* 強制不換行 */
         }
         .card .beat-dot {
-            width: 36px;
-            height: 36px;
+            width: 32px;   /* 調整尺寸以適應一行 */
+            height: 32px;
+            flex-shrink: 0; /* 防止壓縮 */
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 300;
             background: rgba(30, 40, 60, 0.6);
             color: #9a8b7a;
