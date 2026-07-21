@@ -913,7 +913,7 @@
                         const opt = document.createElement('option');
                         opt.value = r.id;
                         const patternStr = r.pattern.map(p => p === 'accent' ? '◉' : '○').join(' ');
-                        opt.textContent = `${patternStr}  ${r.name}`;
+                        opt.textContent = patternStr; 
                         select.appendChild(opt);
                     });
 
