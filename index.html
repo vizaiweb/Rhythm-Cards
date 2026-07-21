@@ -51,9 +51,7 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .title-group span {
-            font-size: 1.9rem;
-        }
+        .title-group span { font-size: 1.9rem; }
         .badge {
             background: rgba(255, 200, 100, 0.12);
             border: 1px solid rgba(255, 200, 100, 0.2);
@@ -89,12 +87,7 @@
             border-radius: 60px;
             border: 1px solid rgba(255, 215, 150, 0.1);
         }
-        .bpm-section label {
-            color: #b8ad9a;
-            font-weight: 300;
-            font-size: 0.8rem;
-            letter-spacing: 1px;
-        }
+        .bpm-section label { color: #b8ad9a; font-weight: 300; font-size: 0.8rem; letter-spacing: 1px; }
         .bpm-section input[type="range"] {
             width: 100px;
             height: 4px;
@@ -115,13 +108,7 @@
             border: 1px solid #ffdbb5;
             cursor: pointer;
         }
-        .bpm-value {
-            min-width: 36px;
-            font-weight: 600;
-            color: #f7dec0;
-            font-size: 1.1rem;
-            text-align: center;
-        }
+        .bpm-value { min-width: 36px; font-weight: 600; color: #f7dec0; font-size: 1.1rem; text-align: center; }
 
         .loop-controls {
             display: flex;
@@ -133,12 +120,7 @@
             border-radius: 60px;
             border: 1px solid rgba(255, 215, 150, 0.06);
         }
-        .loop-controls label {
-            color: #b8ad9a;
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            font-weight: 300;
-        }
+        .loop-controls label { color: #b8ad9a; font-size: 0.75rem; letter-spacing: 1px; font-weight: 300; }
         .loop-select {
             background: rgba(0, 0, 0, 0.4);
             color: #e3d7c8;
@@ -159,18 +141,9 @@
             min-width: 70px;
             text-align: center;
         }
-        .loop-select:hover {
-            border-color: #f7c68b66;
-            background-color: rgba(0, 0, 0, 0.55);
-        }
-        .loop-select:focus {
-            border-color: #f7c68b88;
-            box-shadow: 0 0 16px #f7b87e33;
-        }
-        .loop-select option {
-            background: #1a2639;
-            color: #e3d7c8;
-        }
+        .loop-select:hover { border-color: #f7c68b66; background-color: rgba(0, 0, 0, 0.55); }
+        .loop-select:focus { border-color: #f7c68b88; box-shadow: 0 0 16px #f7b87e33; }
+        .loop-select option { background: #1a2639; color: #e3d7c8; }
 
         /* ============================================================
            卡槽網格 - Flexbox 流式佈局
@@ -207,7 +180,7 @@
             background: rgba(26, 38, 60, 0.7);
             backdrop-filter: blur(4px);
             border-radius: 2rem;
-            padding: 1.2rem 0.6rem 1rem; /* 增加上內距 */
+            padding: 1.2rem 0.6rem 1rem;
             text-align: center;
             box-shadow: 0 10px 20px -8px #00000099, inset 0 0 0 1px rgba(255, 215, 150, 0.05);
             border: 1px solid rgba(255, 215, 150, 0.03);
@@ -242,7 +215,7 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
-            z-index: 5; /* 確保在選單之上 */
+            z-index: 5;
         }
         .card .card-number.active {
             background: rgba(255, 215, 150, 0.3);
@@ -277,9 +250,9 @@
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
-            opacity: 0.6; /* 稍微可見 */
+            opacity: 0.6;
             font-family: inherit;
-            z-index: 5; /* 確保在選單之上 */
+            z-index: 5;
         }
         .card .remove-btn:hover {
             background: rgba(200, 80, 60, 0.4);
@@ -293,9 +266,9 @@
 
         /* 下拉選單 */
         .card select {
-            width: 85%; /* 縮窄，避免碰到邊緣圖標 */
+            width: 85%;
             max-width: 170px;
-            margin: 0.2rem 0; /* 增加上下間距 */
+            margin: 0.2rem 0;
             padding: 0.35rem 0.5rem;
             border-radius: 40px;
             background: rgba(0, 0, 0, 0.35);
@@ -330,19 +303,19 @@
         /* 拍子圖示 - 強制一行 */
         .card .beat-pattern {
             display: flex;
-            justify-content: space-around; /* 均勻分佈 */
-            gap: 0; /* 移除間距 */
-            width: 100%; /* 佔滿寬度 */
+            justify-content: space-around;
+            gap: 0;
+            width: 100%;
             margin: 0.1rem 0;
             padding: 0 0.2rem;
             min-height: 44px;
             align-items: center;
-            flex-wrap: nowrap; /* 強制不換行 */
+            flex-wrap: nowrap;
         }
         .card .beat-dot {
-            width: 32px;   /* 調整尺寸以適應一行 */
+            width: 32px;
             height: 32px;
-            flex-shrink: 0; /* 防止壓縮 */
+            flex-shrink: 0;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -758,16 +731,15 @@
             let audioCtx = null;
             let isPlaying = false;
             let timerId = null;
-            let slotData = [null, null, null, null]; // 動態卡槽資料
+            let prepTimerId = null;      // 準備音計時器
+            let slotData = [null, null, null, null];
             let playOrder = [];
             let totalMeasures = 0;
             let bpm = 120;
             let beatInterval = 500;
 
-            // 循環相關
             let loopCount = 4;
             let currentRound = 1;
-            let isPreparing = false;
 
             // ============================================================
             //  音效
@@ -882,14 +854,12 @@
                     div.dataset.slotIndex = index;
                     div.dataset.cardId = isEmpty ? '' : card.id;
 
-                    // 編號
                     const num = document.createElement('div');
                     num.className = 'card-number';
                     if (isEmpty) num.classList.add('empty-num');
                     num.textContent = index + 1;
                     div.appendChild(num);
 
-                    // 刪除按鈕（至少保留 1 個）
                     const rmBtn = document.createElement('button');
                     rmBtn.className = 'remove-btn' + (totalSlots <= 1 ? ' hidden' : '');
                     rmBtn.innerHTML = '✕';
@@ -900,7 +870,6 @@
                     });
                     div.appendChild(rmBtn);
 
-                    // 下拉選單
                     const select = document.createElement('select');
                     select.dataset.slotIndex = index;
 
@@ -909,11 +878,12 @@
                     emptyOption.textContent = '— 請選擇 —';
                     select.appendChild(emptyOption);
 
+                    // 下拉選單只顯示拍子記號（隱藏中文）
                     RHYTHM_LIBRARY.forEach(r => {
                         const opt = document.createElement('option');
                         opt.value = r.id;
                         const patternStr = r.pattern.map(p => p === 'accent' ? '◉' : '○').join(' ');
-                        opt.textContent = patternStr; 
+                        opt.textContent = patternStr;
                         select.appendChild(opt);
                     });
 
@@ -945,7 +915,6 @@
 
                     div.appendChild(select);
 
-                    // 拍子圖示
                     const pattern = document.createElement('div');
                     pattern.className = 'beat-pattern';
 
@@ -983,7 +952,6 @@
                 slotData.push(null);
                 renderCards();
                 updateStatus();
-                // 滾動到最底部
                 grid.scrollTop = grid.scrollHeight;
             }
 
@@ -1011,10 +979,13 @@
             }
 
             // ============================================================
-            //  播放邏輯
+            //  播放邏輯（修正版）
             // ============================================================
             function playFromSlot(startSlotIndex) {
-                if (isPlaying) stopPlayback(false);
+                // 如果正在播放，先停止
+                if (isPlaying) {
+                    stopPlayback(false);
+                }
 
                 updatePlayOrder();
 
@@ -1068,12 +1039,6 @@
                     return;
                 }
 
-                isPlaying = true;
-                updatePlayBtn();
-
-                const loopDisplay = (loopCount === 0) ? '∞' : loopCount;
-                statusText.innerHTML = `▶ 播放中：<strong>${firstCard.name}</strong>`;
-
                 // 收集所有 dots
                 const allDots = {};
                 document.querySelectorAll('.card').forEach(el => {
@@ -1089,24 +1054,39 @@
                 const firstDots = allDots[firstSlotIdx];
 
                 // ============================================================
-                //  4 拍準備音（只出聲音，無視覺變化）
+                //  4 拍準備音（使用 setInterval 以便可清除）
                 // ============================================================
                 let prepCount = 0;
                 const prepTotal = 4;
                 const prepInterval = beatInterval;
 
-                function playPrepBeatSequence() {
-                    if (prepCount >= prepTotal) {
-                        // 準備音結束，開始正式播放
-                        startMainPlayback();
-                        return;
-                    }
-                    playPrepBeat(0.4);
-                    prepCount++;
-                    setTimeout(playPrepBeatSequence, prepInterval);
+                // 清除舊的準備音計時器
+                if (prepTimerId) {
+                    clearInterval(prepTimerId);
+                    prepTimerId = null;
                 }
 
+                // 按鈕保持「播放」狀態，不改變
+                // 狀態文字顯示準備中
+                statusText.innerHTML = `⏳ 準備中...`;
+
                 function startMainPlayback() {
+                    // 清除準備音計時器
+                    if (prepTimerId) {
+                        clearInterval(prepTimerId);
+                        prepTimerId = null;
+                    }
+
+                    // ============================================================
+                    //  正式開始播放
+                    // ============================================================
+                    isPlaying = true;
+                    updatePlayBtn();  // 按鈕變成「暫停」
+
+                    const loopDisplay = (loopCount === 0) ? '∞' : loopCount;
+                    statusText.innerHTML = `▶ 播放中：<strong>${firstCard.name}</strong>`;
+
+                    // 手動播放第一拍
                     if (firstDots && firstDots.length) {
                         firstDots[0].classList.add('playing');
                     }
@@ -1225,7 +1205,16 @@
                     }, intervalMs);
                 }
 
-                playPrepBeatSequence();
+                // 使用 setInterval 播放準備音
+                prepTimerId = setInterval(() => {
+                    if (prepCount >= prepTotal) {
+                        // 準備音結束，開始正式播放
+                        startMainPlayback();
+                        return;
+                    }
+                    playPrepBeat(0.4);
+                    prepCount++;
+                }, prepInterval);
             }
 
             // ----- 輔助函數 -----
@@ -1269,24 +1258,33 @@
                 playFromSlot(firstSlot);
             }
 
-            // ----- 控制 -----
+            // ----- 控制（修正版） -----
             function stopPlayback(keepState = false) {
+                // 清除正式節奏計時器
                 if (timerId) {
                     clearInterval(timerId);
                     timerId = null;
                 }
+                // 清除準備音計時器
+                if (prepTimerId) {
+                    clearInterval(prepTimerId);
+                    prepTimerId = null;
+                }
                 isPlaying = false;
-                isPreparing = false;
-                if (!keepState) updatePlayBtn();
+                if (!keepState) {
+                    updatePlayBtn();
+                }
             }
 
             function togglePlayPause() {
                 if (isPlaying) {
+                    // 正在播放 → 暫停
                     stopPlayback(true);
                     isPlaying = false;
                     updatePlayBtn();
                     statusText.textContent = '⏸ 已暫停';
                 } else {
+                    // 已暫停或未播放 → 開始播放
                     const playedCount = document.querySelectorAll('.card.played-card').length;
                     if (playedCount > 0 && playedCount === playOrder.length) {
                         resetCardStates();
@@ -1364,11 +1362,9 @@
 
                 const totalSlots = slotData.length;
                 for (let i = 0; i < totalSlots; i++) {
-                    // 確保每個卡槽分配到不同的節奏（如果卡槽數 <= 16）
                     if (i < shuffled.length) {
                         slotData[i] = { ...shuffled[i] };
                     } else {
-                        // 如果卡槽超過 16 個，重新洗牌循環分配
                         const shuffledAgain = [...RHYTHM_LIBRARY];
                         for (let k = shuffledAgain.length - 1; k > 0; k--) {
                             const l = Math.floor(Math.random() * (k + 1));
