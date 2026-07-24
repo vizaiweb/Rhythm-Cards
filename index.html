@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>節奏卡片 · 動態卡槽</title>
+    <title>節奏卡片</title>
     <style>
         * {
             box-sizing: border-box;
@@ -51,7 +51,9 @@
             -webkit-text-fill-color: transparent;
             background-clip: text;
         }
-        .title-group span { font-size: 1.9rem; }
+        .title-group span {
+            font-size: 1.9rem;
+        }
         .badge {
             background: rgba(255, 200, 100, 0.12);
             border: 1px solid rgba(255, 200, 100, 0.2);
@@ -71,25 +73,29 @@
             border-radius: 40px;
             border: 1px solid rgba(255, 215, 150, 0.06);
         }
-
         .top-controls {
             display: flex;
             align-items: center;
             flex-wrap: wrap;
-            gap: 0.8rem 1.2rem;
+            gap: 0.6rem 0.8rem;
         }
         .bpm-section {
             display: flex;
             align-items: center;
-            gap: 0.8rem;
+            gap: 0.6rem;
             background: rgba(0, 0, 0, 0.35);
-            padding: 0.25rem 1rem 0.25rem 1.2rem;
+            padding: 0.2rem 0.8rem 0.2rem 1rem;
             border-radius: 60px;
             border: 1px solid rgba(255, 215, 150, 0.1);
         }
-        .bpm-section label { color: #b8ad9a; font-weight: 300; font-size: 0.8rem; letter-spacing: 1px; }
+        .bpm-section label {
+            color: #b8ad9a;
+            font-weight: 300;
+            font-size: 0.7rem;
+            letter-spacing: 1px;
+        }
         .bpm-section input[type="range"] {
-            width: 100px;
+            width: 80px;
             height: 4px;
             -webkit-appearance: none;
             appearance: none;
@@ -100,61 +106,147 @@
         .bpm-section input[type="range"]::-webkit-slider-thumb {
             -webkit-appearance: none;
             appearance: none;
-            width: 16px;
-            height: 16px;
+            width: 14px;
+            height: 14px;
             background: #f7e1c0;
             border-radius: 50%;
             box-shadow: 0 0 12px #f7b87eaa;
             border: 1px solid #ffdbb5;
             cursor: pointer;
         }
-        .bpm-value { min-width: 36px; font-weight: 600; color: #f7dec0; font-size: 1.1rem; text-align: center; }
-
-        .loop-controls {
+        .bpm-value {
+            min-width: 32px;
+            font-weight: 600;
+            color: #f7dec0;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+        .metronome-controls {
             display: flex;
             align-items: center;
-            gap: 0.5rem 0.8rem;
-            flex-wrap: wrap;
+            gap: 0.4rem;
             background: rgba(0, 0, 0, 0.25);
-            padding: 0.2rem 0.8rem 0.2rem 1rem;
+            padding: 0.15rem 0.6rem 0.15rem 0.8rem;
             border-radius: 60px;
             border: 1px solid rgba(255, 215, 150, 0.06);
         }
-        .loop-controls label { color: #b8ad9a; font-size: 0.75rem; letter-spacing: 1px; font-weight: 300; }
+        .metronome-controls label {
+            color: #8a7e6b;
+            font-size: 0.6rem;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
+        .metro-btn {
+            background: rgba(100, 100, 100, 0.3);
+            border: none;
+            color: #8a8a8a;
+            padding: 0.15rem 0.6rem;
+            border-radius: 40px;
+            font-size: 0.65rem;
+            font-family: inherit;
+            cursor: pointer;
+            transition: all 0.25s;
+            letter-spacing: 0.3px;
+        }
+        .metro-btn.on {
+            background: rgba(70, 200, 100, 0.3);
+            color: #7acf8a;
+            box-shadow: 0 0 16px rgba(70, 200, 100, 0.2);
+        }
+        .metro-btn:hover {
+            opacity: 0.8;
+        }
+        .metro-btn:active {
+            transform: scale(0.95);
+        }
+        .metro-volume {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem;
+        }
+        .metro-volume input[type="range"] {
+            width: 50px;
+            height: 3px;
+            -webkit-appearance: none;
+            appearance: none;
+            background: linear-gradient(90deg, #5a7a6a, #7acf8a);
+            border-radius: 4px;
+            outline: none;
+        }
+        .metro-volume input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #7acf8a;
+            border-radius: 50%;
+            cursor: pointer;
+            box-shadow: 0 0 8px rgba(70, 200, 100, 0.3);
+        }
+        .metro-vol-display {
+            color: #8a9a8a;
+            font-size: 0.6rem;
+            min-width: 28px;
+            text-align: center;
+            font-weight: 300;
+        }
+        .loop-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.3rem 0.6rem;
+            flex-wrap: wrap;
+            background: rgba(0, 0, 0, 0.25);
+            padding: 0.15rem 0.6rem 0.15rem 0.8rem;
+            border-radius: 60px;
+            border: 1px solid rgba(255, 215, 150, 0.06);
+        }
+        .loop-controls label {
+            color: #b8ad9a;
+            font-size: 0.65rem;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
         .loop-select {
             background: rgba(0, 0, 0, 0.4);
             color: #e3d7c8;
             border: 1px solid rgba(255, 215, 150, 0.15);
             border-radius: 40px;
-            padding: 0.25rem 0.6rem 0.25rem 0.8rem;
-            font-size: 0.85rem;
+            padding: 0.15rem 0.4rem 0.15rem 0.6rem;
+            font-size: 0.7rem;
             font-family: inherit;
             cursor: pointer;
             outline: none;
             transition: all 0.2s;
             appearance: none;
             -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b8ad9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%23b8ad9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 10px center;
-            padding-right: 28px;
-            min-width: 70px;
+            background-position: right 6px center;
+            padding-right: 22px;
+            min-width: 60px;
             text-align: center;
         }
-        .loop-select:hover { border-color: #f7c68b66; background-color: rgba(0, 0, 0, 0.55); }
-        .loop-select:focus { border-color: #f7c68b88; box-shadow: 0 0 16px #f7b87e33; }
-        .loop-select option { background: #1a2639; color: #e3d7c8; }
+        .loop-select:hover {
+            border-color: #f7c68b66;
+            background-color: rgba(0, 0, 0, 0.55);
+        }
+        .loop-select:focus {
+            border-color: #f7c68b88;
+            box-shadow: 0 0 16px #f7b87e33;
+        }
+        .loop-select option {
+            background: #1a2639;
+            color: #e3d7c8;
+            font-size: 0.7rem;
+        }
 
-        /* ============================================================
-           卡槽網格 - 一行最多 4 個
-           ============================================================ */
         .card-grid {
             display: flex;
             flex-wrap: wrap;
             gap: 1rem;
             justify-content: flex-start;
-            margin: 1.8rem 0 1.8rem;
-            max-height: 580px;
+            margin: 1.5rem 0 1.5rem;
+            max-height: 620px;
             overflow-y: auto;
             padding: 0.2rem 0.2rem 0.5rem;
             align-content: flex-start;
@@ -171,17 +263,14 @@
             border-radius: 10px;
         }
 
-        /* ============================================================
-           單個卡槽 - 一行最多 4 個
-           ============================================================ */
         .card {
             flex: 0 0 23%;
             max-width: 23%;
-            min-height: 160px;
+            min-height: 150px;
             background: rgba(26, 38, 60, 0.7);
             backdrop-filter: blur(4px);
-            border-radius: 2rem;
-            padding: 1.2rem 0.4rem 1rem;
+            border-radius: 1.8rem;
+            padding: 0.8rem 0.3rem 0.8rem;
             text-align: center;
             box-shadow: 0 10px 20px -8px #00000099, inset 0 0 0 1px rgba(255, 215, 150, 0.05);
             border: 1px solid rgba(255, 215, 150, 0.03);
@@ -189,7 +278,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 0.2rem;
+            gap: 0.15rem;
             user-select: none;
             position: relative;
         }
@@ -199,18 +288,17 @@
             box-shadow: 0 14px 28px -10px #000000cc, inset 0 0 0 1px rgba(255, 215, 150, 0.15);
         }
 
-        /* 卡槽編號 */
         .card .card-number {
             position: absolute;
-            top: 6px;
-            left: 8px;
+            top: 5px;
+            left: 7px;
             background: rgba(255, 215, 150, 0.12);
             border: 1px solid rgba(255, 215, 150, 0.15);
             color: #8a7e6b;
-            font-size: 0.6rem;
+            font-size: 0.55rem;
             font-weight: 600;
-            width: 22px;
-            height: 22px;
+            width: 20px;
+            height: 20px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -234,24 +322,23 @@
             border-color: rgba(255, 215, 150, 0.05);
         }
 
-        /* 刪除按鈕 */
         .card .remove-btn {
             position: absolute;
-            top: 6px;
-            right: 8px;
+            top: 5px;
+            right: 7px;
             background: rgba(200, 80, 60, 0.15);
             border: none;
             color: #8a6a5a;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
             cursor: pointer;
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             transition: all 0.2s;
-            opacity: 0.6;
+            opacity: 0.5;
             font-family: inherit;
             z-index: 5;
         }
@@ -265,19 +352,16 @@
             pointer-events: none;
         }
 
-        /* ============================================================
-           下拉選單 - 收窄（只顯示拍子記號）
-           ============================================================ */
         .card select {
             width: 82%;
-            max-width: 120px;
-            margin: 0.15rem 0;
-            padding: 0.25rem 0.35rem;
+            max-width: 110px;
+            margin: 0.1rem 0;
+            padding: 0.2rem 0.3rem;
             border-radius: 40px;
             background: rgba(0, 0, 0, 0.35);
             color: #e3d7c8;
             border: 1px solid rgba(255, 215, 150, 0.15);
-            font-size: 0.72rem;
+            font-size: 0.65rem;
             font-family: inherit;
             cursor: pointer;
             outline: none;
@@ -285,10 +369,10 @@
             text-align: center;
             appearance: none;
             -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%23b8ad9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5' viewBox='0 0 8 5'%3E%3Cpath d='M1 1l3 3 3-3' stroke='%23b8ad9a' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
             background-repeat: no-repeat;
-            background-position: right 8px center;
-            padding-right: 22px;
+            background-position: right 6px center;
+            padding-right: 18px;
         }
         .card select:hover {
             border-color: #f7c68b66;
@@ -301,63 +385,216 @@
         .card select option {
             background: #1a2639;
             color: #e3d7c8;
-            font-size: 0.7rem;
+            font-size: 0.6rem;
         }
 
-        /* 拍子圖示 - 強制一行 */
+        /* 拍點區域 - 放大 1.4 倍 */
+        .card .beat-area {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            gap: 0.05rem;
+        }
         .card .beat-pattern {
             display: flex;
             justify-content: space-around;
-            gap: 0;
+            gap: 0.1rem;
             width: 100%;
-            margin: 0.05rem 0;
             padding: 0 0.1rem;
-            min-height: 38px;
             align-items: center;
             flex-wrap: nowrap;
         }
-        .card .beat-dot {
-            width: 28px;
-            height: 28px;
+        .beat-dot {
+            width: 42px;
+            height: 42px;
             flex-shrink: 0;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 0.75rem;
-            font-weight: 300;
+            font-size: 1rem;
+            font-weight: 600;
             background: rgba(30, 40, 60, 0.6);
             color: #9a8b7a;
-            transition: all 0.1s ease;
+            transition: all 0.15s ease;
             box-shadow: inset 0 0 0 1px rgba(255, 215, 150, 0.1);
             border: 1px solid rgba(255, 215, 150, 0.03);
+            cursor: pointer;
+            position: relative;
+            user-select: none;
         }
-        .card .beat-dot.accent {
+        .beat-dot:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 16px rgba(255, 215, 150, 0.2);
+        }
+        .beat-dot.accent {
             background: radial-gradient(circle at 40% 35%, #f7c68b, #d48c4a);
             color: #1a1f2a;
             box-shadow: 0 0 12px #f7b87e88, inset 0 0 0 1px #ffddb0;
             border-color: #f7c68b;
         }
-        .card .beat-dot.light {
+        .beat-dot.light {
             background: radial-gradient(circle at 40% 35%, #3a4862, #1e2638);
             color: #6a7a92;
             box-shadow: inset 0 0 0 1px #4a5a7266;
             border-color: #2e3a4e;
         }
-        .card .beat-dot.playing {
+        .beat-dot.playing {
             transform: scale(1.6);
             box-shadow: 0 0 28px #f7c68be0, 0 0 60px #f7b87e66, inset 0 0 0 1px #ffe1b0;
             transition: all 0.06s ease;
             z-index: 5;
             position: relative;
         }
-        .card .beat-dot.empty-dot {
+        .beat-dot.empty-dot {
             background: rgba(30, 40, 60, 0.3);
             color: #3a4a5a;
             border-color: rgba(255, 215, 150, 0.03);
+            cursor: default;
         }
 
-        /* 卡片播放狀態 */
+        /* 連音顏色 */
+        .beat-dot.quadruplet {
+            border-color: #c48ad4;
+            box-shadow: 0 0 12px rgba(196, 138, 212, 0.3);
+        }
+        .beat-dot.quadruplet.accent {
+            background: radial-gradient(circle at 40% 35%, #d8aae8, #b06ac8);
+            color: #fff;
+        }
+        .beat-dot.quadruplet.light {
+            background: radial-gradient(circle at 40% 35%, #b88ad0, #8a5aa0);
+            color: #e0c8e8;
+        }
+        .beat-dot.triplet {
+            border-color: #4a9ad4;
+            box-shadow: 0 0 12px rgba(74, 154, 212, 0.3);
+        }
+        .beat-dot.triplet.accent {
+            background: radial-gradient(circle at 40% 35%, #6ab0e8, #2a7ab4);
+            color: #fff;
+        }
+        .beat-dot.triplet.light {
+            background: radial-gradient(circle at 40% 35%, #4a8ab4, #1a5a7a);
+            color: #aac8e0;
+        }
+        .beat-dot.quintuplet {
+            border-color: #d4a04a;
+            box-shadow: 0 0 12px rgba(212, 160, 74, 0.3);
+        }
+        .beat-dot.quintuplet.accent {
+            background: radial-gradient(circle at 40% 35%, #e8b86a, #b4802a);
+            color: #fff;
+        }
+        .beat-dot.quintuplet.light {
+            background: radial-gradient(circle at 40% 35%, #b4904a, #7a602a);
+            color: #e0c8a0;
+        }
+        .beat-dot.sextuplet {
+            border-color: #6ab87a;
+            box-shadow: 0 0 12px rgba(106, 184, 122, 0.3);
+        }
+        .beat-dot.sextuplet.accent {
+            background: radial-gradient(circle at 40% 35%, #7ad48a, #3a8a4a);
+            color: #fff;
+        }
+        .beat-dot.sextuplet.light {
+            background: radial-gradient(circle at 40% 35%, #5aaa6a, #2a6a3a);
+            color: #aad8b0;
+        }
+        .beat-dot.septuplet {
+            border-color: #b46ad4;
+            box-shadow: 0 0 12px rgba(180, 106, 212, 0.3);
+        }
+        .beat-dot.septuplet.accent {
+            background: radial-gradient(circle at 40% 35%, #c88ae8, #9a4ab4);
+            color: #fff;
+        }
+        .beat-dot.septuplet.light {
+            background: radial-gradient(circle at 40% 35%, #a86ac8, #7a3a94);
+            color: #d8b0e8;
+        }
+        .beat-dot.octuplet {
+            border-color: #d46a8a;
+            box-shadow: 0 0 12px rgba(212, 106, 138, 0.3);
+        }
+        .beat-dot.octuplet.accent {
+            background: radial-gradient(circle at 40% 35%, #e88aaa, #c04a6a);
+            color: #fff;
+        }
+        .beat-dot.octuplet.light {
+            background: radial-gradient(circle at 40% 35%, #c86a8a, #8a3a5a);
+            color: #e8b0c8;
+        }
+
+        /* 跨拍合併邊界 */
+        .beat-dot.merged-start {
+            border-left: 3px solid #f7c68b;
+            border-radius: 50% 0 0 50%;
+        }
+        .beat-dot.merged-end {
+            border-right: 3px solid #f7c68b;
+            border-radius: 0 50% 50% 0;
+        }
+        .beat-dot.merged-middle {
+            border-radius: 0;
+            border-left: none;
+            border-right: none;
+        }
+
+        .card .beat-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* 拍點標記 */
+        .card .beat-label {
+            font-size: 0.5rem;
+            color: #8a9a8a;
+            height: 0.9rem;
+            line-height: 0.9rem;
+            text-align: center;
+            font-weight: 400;
+            letter-spacing: 0px;
+            margin-top: -0.05rem;
+            white-space: nowrap;
+            max-width: 100%;
+            overflow: visible;
+            text-overflow: clip;
+            font-family: monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+        .card .beat-label.merge-label {
+            color: #f7c68b;
+            letter-spacing: 1px;
+        }
+        .card .beat-label .label-quadruplet {
+            color: #c48ad4;
+        }
+        .card .beat-label .label-triplet {
+            color: #4a9ad4;
+        }
+        .card .beat-label .label-quintuplet {
+            color: #d4a04a;
+        }
+        .card .beat-label .label-sextuplet {
+            color: #6ab87a;
+        }
+        .card .beat-label .label-septuplet {
+            color: #b46ad4;
+        }
+        .card .beat-label .label-octuplet {
+            color: #d46a8a;
+        }
+
+        /* 狀態 */
         .card.playing-card {
             background: rgba(44, 62, 94, 0.9);
             border-color: #f7c68b88;
@@ -376,32 +613,30 @@
             opacity: 0.6;
         }
 
-        /* ============================================================
-           控制按鈕
-           ============================================================ */
+        /* 按鈕 */
         .controls {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
-            gap: 0.6rem 1rem;
-            margin: 0.6rem 0 1rem;
+            gap: 0.5rem 0.8rem;
+            margin: 0.5rem 0 0.8rem;
         }
         .btn {
             background: rgba(30, 42, 64, 0.7);
             backdrop-filter: blur(4px);
             border: 1px solid rgba(255, 215, 150, 0.1);
             color: #e3d7c8;
-            padding: 0.45rem 1.2rem;
+            padding: 0.35rem 1rem;
             border-radius: 60px;
-            font-size: 0.85rem;
+            font-size: 0.75rem;
             font-weight: 400;
             letter-spacing: 0.5px;
             cursor: pointer;
             transition: all 0.2s;
             display: inline-flex;
             align-items: center;
-            gap: 0.4rem;
+            gap: 0.3rem;
             box-shadow: 0 4px 8px #00000033;
             font-family: inherit;
         }
@@ -444,20 +679,18 @@
             border-color: rgba(200, 80, 60, 0.3);
         }
         .btn-icon {
-            font-size: 1rem;
+            font-size: 0.9rem;
             line-height: 1;
         }
 
-        /* ============================================================
-           進度條
-           ============================================================ */
+        /* 進度條 */
         .progress-area {
-            margin: 0.6rem 0 0.2rem;
+            margin: 0.4rem 0 0.2rem;
             padding: 0.2rem 0.2rem;
         }
         .progress-track {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: rgba(60, 70, 90, 0.5);
             border-radius: 20px;
             overflow: hidden;
@@ -471,154 +704,241 @@
             transition: width 0.08s linear;
             box-shadow: 0 0 16px #f7b87e77;
         }
-
         .status-text {
             color: #a0937e;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             font-weight: 300;
             letter-spacing: 0.5px;
             text-align: center;
             border-top: 1px solid rgba(255, 215, 150, 0.04);
-            padding-top: 1rem;
-            margin-top: 0.6rem;
+            padding-top: 0.8rem;
+            margin-top: 0.4rem;
         }
         .status-text strong {
             color: #f7dec0;
             font-weight: 400;
         }
+        .status-text .hint-key {
+            color: #6a8a7a;
+            font-size: 0.7rem;
+        }
 
         /* ============================================================
-           響應式
+           右鍵選單 - 放大版 (寬度 260px，內距增大)
            ============================================================ */
+        .context-menu {
+            display: none;
+            position: fixed;
+            background: rgba(20, 30, 50, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 150, 0.15);
+            border-radius: 1rem;
+            padding: 0.4rem;
+            min-width: 260px;
+            max-height: 450px;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px -10px #000000cc;
+            z-index: 1000;
+        }
+        .context-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .context-menu::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 150, 0.3);
+            border-radius: 10px;
+        }
+
+        .context-menu .menu-item {
+            padding: 0.7rem 1.2rem;
+            color: #d4c9b8;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 0.6rem;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+            min-height: 48px;
+        }
+        .context-menu .menu-item:hover {
+            background: rgba(255, 215, 150, 0.1);
+        }
+        .context-menu .menu-item .icon {
+            font-size: 0.9rem;
+        }
+        .context-menu .menu-divider {
+            height: 1px;
+            background: rgba(255, 215, 150, 0.06);
+            margin: 0.2rem 0.4rem;
+        }
+        .context-menu .menu-item.has-sub {
+            justify-content: space-between;
+        }
+        .context-menu .menu-item.has-sub::after {
+            content: '▸';
+            color: #6a7a8a;
+            font-size: 0.7rem;
+        }
+
+        /* 子清單 - 放大版 */
+        .context-menu .sub-menu {
+            display: none;
+            position: absolute;
+            left: 100%;
+            top: 0;
+            background: rgba(20, 30, 50, 0.97);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 150, 0.12);
+            border-radius: 0.8rem;
+            padding: 0.4rem;
+            min-width: 240px;
+            max-height: 420px;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px -10px #000000cc;
+            z-index: 1001;
+        }
+        .context-menu .sub-menu::-webkit-scrollbar {
+            width: 4px;
+        }
+        .context-menu .sub-menu::-webkit-scrollbar-thumb {
+            background: rgba(255, 215, 150, 0.3);
+            border-radius: 10px;
+        }
+
+        .context-menu .sub-menu .sub-item {
+            padding: 0.7rem 1.2rem;
+            color: #c4b9a8;
+            font-size: 0.8rem;
+            cursor: pointer;
+            border-radius: 0.5rem;
+            transition: all 0.15s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            white-space: nowrap;
+            font-family: monospace;
+            letter-spacing: 1px;
+            min-height: 48px;
+        }
+        .context-menu .sub-menu .sub-item:hover {
+            background: rgba(255, 215, 150, 0.08);
+            color: #f7dec0;
+        }
+
         @media (max-width: 992px) {
             .card {
                 flex: 0 0 30%;
                 max-width: 30%;
-                min-height: 150px;
-                padding: 0.8rem 0.4rem 0.8rem;
             }
-            .card .beat-dot {
-                width: 26px;
-                height: 26px;
-                font-size: 0.7rem;
+            .beat-dot {
+                width: 36px;
+                height: 36px;
+                font-size: 0.85rem;
             }
             .card select {
-                max-width: 105px;
-                font-size: 0.68rem;
-                padding: 0.2rem 0.3rem;
-                padding-right: 20px;
-            }
-            .card .beat-pattern {
-                min-height: 34px;
+                max-width: 95px;
+                font-size: 0.6rem;
             }
         }
         @media (max-width: 768px) {
             .app {
-                padding: 1.5rem 1rem 2rem;
-                border-radius: 2.5rem;
+                padding: 1.2rem 0.8rem 1.5rem;
+                border-radius: 2rem;
             }
             .card {
                 flex: 0 0 45%;
                 max-width: 45%;
-                min-height: 140px;
-                padding: 0.6rem 0.3rem 0.6rem;
-                border-radius: 1.5rem;
+                min-height: 130px;
+                padding: 0.5rem 0.2rem 0.5rem;
             }
-            .card .beat-dot {
-                width: 24px;
-                height: 24px;
-                font-size: 0.65rem;
-            }
-            .card .beat-pattern {
-                gap: 0.2rem;
-                min-height: 30px;
+            .beat-dot {
+                width: 32px;
+                height: 32px;
+                font-size: 0.75rem;
             }
             .card select {
-                max-width: 95px;
-                font-size: 0.62rem;
-                padding: 0.2rem 0.25rem;
-                padding-right: 18px;
+                max-width: 85px;
+                font-size: 0.55rem;
             }
             .card .card-number {
-                width: 18px;
-                height: 18px;
-                font-size: 0.5rem;
-                top: 4px;
-                left: 6px;
-            }
-            .card .remove-btn {
                 width: 16px;
                 height: 16px;
-                font-size: 0.55rem;
-                top: 4px;
-                right: 6px;
+                font-size: 0.45rem;
+            }
+            .card .remove-btn {
+                width: 14px;
+                height: 14px;
+                font-size: 0.45rem;
             }
             .title-group h1 {
-                font-size: 1.4rem;
+                font-size: 1.2rem;
             }
             .controls {
-                gap: 0.5rem;
+                gap: 0.4rem;
             }
             .btn {
-                padding: 0.35rem 0.9rem;
-                font-size: 0.75rem;
+                padding: 0.25rem 0.7rem;
+                font-size: 0.65rem;
             }
             .header {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 0.4rem;
+                gap: 0.3rem;
             }
             .top-controls {
                 justify-content: center;
+                gap: 0.4rem;
             }
             .bpm-section input[type="range"] {
-                width: 80px;
+                width: 60px;
             }
             .card-grid {
                 max-height: 420px;
-                gap: 0.7rem;
+                gap: 0.6rem;
+            }
+            .context-menu {
+                min-width: 220px;
+            }
+            .context-menu .sub-menu {
+                min-width: 200px;
             }
         }
         @media (max-width: 480px) {
             .card {
                 flex: 0 0 100%;
                 max-width: 100%;
-                min-height: 120px;
-                padding: 0.5rem 0.3rem 0.5rem;
-                border-radius: 1.2rem;
+                min-height: 110px;
+                padding: 0.4rem 0.2rem 0.4rem;
             }
-            .card .beat-dot {
-                width: 28px;
-                height: 28px;
-                font-size: 0.7rem;
-            }
-            .card .beat-pattern {
-                gap: 0.4rem;
-                min-height: 34px;
+            .beat-dot {
+                width: 36px;
+                height: 36px;
+                font-size: 0.8rem;
             }
             .card select {
-                max-width: 140px;
-                font-size: 0.7rem;
-                padding: 0.25rem 0.35rem;
-                padding-right: 22px;
+                max-width: 120px;
+                font-size: 0.6rem;
             }
             .card .card-number {
-                width: 22px;
-                height: 22px;
-                font-size: 0.6rem;
-                top: 6px;
-                left: 8px;
-            }
-            .card .remove-btn {
                 width: 20px;
                 height: 20px;
-                font-size: 0.65rem;
-                top: 6px;
-                right: 8px;
+                font-size: 0.5rem;
+            }
+            .card .remove-btn {
+                width: 16px;
+                height: 16px;
+                font-size: 0.5rem;
             }
             .card-grid {
                 max-height: 350px;
-                gap: 0.6rem;
+                gap: 0.5rem;
+            }
+            .context-menu {
+                min-width: 200px;
+            }
+            .context-menu .sub-menu {
+                min-width: 180px;
             }
         }
     </style>
@@ -637,8 +957,16 @@
                     <input type="range" id="bpmSlider" min="60" max="160" value="120" step="1">
                     <span class="bpm-value" id="bpmDisplay">120</span>
                 </div>
+                <div class="metronome-controls">
+                    <label>🔔</label>
+                    <button class="metro-btn" id="metroToggleBtn">關</button>
+                    <div class="metro-volume">
+                        <input type="range" id="metroVolumeSlider" min="0" max="100" value="60">
+                        <span class="metro-vol-display" id="metroVolDisplay">60%</span>
+                    </div>
+                </div>
                 <div class="loop-controls">
-                    <label>🔁 循環</label>
+                    <label>🔁</label>
                     <select class="loop-select" id="loopSelect">
                         <option value="0">無限</option>
                         <option value="2">2 次</option>
@@ -655,52 +983,83 @@
         <div class="card-grid" id="cardGrid"></div>
 
         <div class="controls">
-            <button class="btn btn-success" id="addSlotBtn">
-                <span class="btn-icon">＋</span> 新增卡槽
-            </button>
-            <button class="btn btn-primary" id="playPauseBtn">
-                <span class="btn-icon">▶</span> <span id="playPauseLabel">播放</span>
-            </button>
-            <button class="btn" id="randomBtn">
-                <span class="btn-icon">🎲</span> 隨機
-            </button>
-            <button class="btn btn-danger" id="clearBtn">
-                <span class="btn-icon">🗑</span> 清空序列
-            </button>
+            <button class="btn btn-success" id="addSlotBtn"><span class="btn-icon">＋</span> 新增卡槽</button>
+            <button class="btn btn-primary" id="playPauseBtn"><span class="btn-icon">▶</span> <span id="playPauseLabel">播放</span></button>
+            <button class="btn" id="randomBtn"><span class="btn-icon">🎲</span> 隨機</button>
+            <button class="btn btn-danger" id="clearBtn"><span class="btn-icon">🗑</span> 清空序列</button>
         </div>
 
         <div class="progress-area">
-            <div class="progress-track">
-                <div class="progress-fill" id="progressFill"></div>
-            </div>
+            <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
         </div>
 
-        <div class="status-text" id="statusText">🎵 選擇節奏或按 <strong>隨機</strong> 開始</div>
+        <div class="status-text" id="statusText">
+            🎵 點擊拍點切換模式 · 右鍵拍點設定
+            <span class="hint-key">｜左鍵：正常↔三連音↔六連音 ｜右鍵：常符/連音/跨拍合併</span>
+        </div>
+    </div>
+
+    <!-- 右鍵選單 -->
+    <div class="context-menu" id="contextMenu">
+        <div class="menu-item has-sub" id="rhythmSubMenu">
+            <span class="icon">🎵</span> 常符
+            <div class="sub-menu" id="rhythmSubList"></div>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item has-sub" id="tupletSubMenu">
+            <span class="icon">🔀</span> 連音
+            <div class="sub-menu" id="tupletSubList"></div>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item has-sub" id="mergeSubMenu">
+            <span class="icon">⟐</span> 跨拍合併
+            <div class="sub-menu" id="mergeSubList"></div>
+        </div>
+        <div class="menu-divider"></div>
+        <div class="menu-item" data-action="reset">
+            <span class="icon">↺</span> 重置為正常
+        </div>
     </div>
 
     <script>
         (function() {
-            // ----- 16 種節奏庫 -----
+            // ============================================================
+            //  節奏庫（16 種）
+            // ============================================================
             const RHYTHM_LIBRARY = [
-                { id: 'rest', name: '全空', pattern: ['light', 'light', 'light', 'light'] },
-                { id: 'beat1', name: '只有第 1 拍', pattern: ['accent', 'light', 'light', 'light'] },
-                { id: 'beat2', name: '只有第 2 拍', pattern: ['light', 'accent', 'light', 'light'] },
-                { id: 'beat3', name: '只有第 3 拍', pattern: ['light', 'light', 'accent', 'light'] },
-                { id: 'beat4', name: '只有第 4 拍', pattern: ['light', 'light', 'light', 'accent'] },
-                { id: 'double', name: '第 1、2 拍', pattern: ['accent', 'accent', 'light', 'light'] },
-                { id: 'walking', name: '第 1、3 拍', pattern: ['accent', 'light', 'accent', 'light'] },
-                { id: 'diagonal', name: '第 1、4 拍', pattern: ['accent', 'light', 'light', 'accent'] },
-                { id: 'middle', name: '第 2、3 拍', pattern: ['light', 'accent', 'accent', 'light'] },
-                { id: 'syncop', name: '第 2、4 拍', pattern: ['light', 'accent', 'light', 'accent'] },
-                { id: 'back', name: '第 3、4 拍', pattern: ['light', 'light', 'accent', 'accent'] },
-                { id: 'front3', name: '第 1、2、3 拍', pattern: ['accent', 'accent', 'accent', 'light'] },
-                { id: 'jump', name: '第 1、2、4 拍', pattern: ['accent', 'accent', 'light', 'accent'] },
-                { id: 'triple', name: '第 1、3、4 拍', pattern: ['accent', 'light', 'accent', 'accent'] },
-                { id: 'back3', name: '第 2、3、4 拍', pattern: ['light', 'accent', 'accent', 'accent'] },
-                { id: 'full', name: '全滿', pattern: ['accent', 'accent', 'accent', 'accent'] }
+                { id: 'rest', pattern: ['light', 'light', 'light', 'light'] },
+                { id: 'beat1', pattern: ['accent', 'light', 'light', 'light'] },
+                { id: 'beat2', pattern: ['light', 'accent', 'light', 'light'] },
+                { id: 'beat3', pattern: ['light', 'light', 'accent', 'light'] },
+                { id: 'beat4', pattern: ['light', 'light', 'light', 'accent'] },
+                { id: 'double', pattern: ['accent', 'accent', 'light', 'light'] },
+                { id: 'walking', pattern: ['accent', 'light', 'accent', 'light'] },
+                { id: 'diagonal', pattern: ['accent', 'light', 'light', 'accent'] },
+                { id: 'middle', pattern: ['light', 'accent', 'accent', 'light'] },
+                { id: 'syncop', pattern: ['light', 'accent', 'light', 'accent'] },
+                { id: 'back', pattern: ['light', 'light', 'accent', 'accent'] },
+                { id: 'front3', pattern: ['accent', 'accent', 'accent', 'light'] },
+                { id: 'jump', pattern: ['accent', 'accent', 'light', 'accent'] },
+                { id: 'triple', pattern: ['accent', 'light', 'accent', 'accent'] },
+                { id: 'back3', pattern: ['light', 'accent', 'accent', 'accent'] },
+                { id: 'full', pattern: ['accent', 'accent', 'accent', 'accent'] }
             ];
 
-            // ----- DOM -----
+            // ============================================================
+            //  連音類型
+            // ============================================================
+            const TUPLET_TYPES = [
+                { id: 'quadruplet', label: '4', subDivisions: 4, cssClass: 'label-quadruplet', dotClass: 'quadruplet' },
+                { id: 'triplet', label: '3', subDivisions: 3, cssClass: 'label-triplet', dotClass: 'triplet' },
+                { id: 'quintuplet', label: '5', subDivisions: 5, cssClass: 'label-quintuplet', dotClass: 'quintuplet' },
+                { id: 'sextuplet', label: '6', subDivisions: 6, cssClass: 'label-sextuplet', dotClass: 'sextuplet' },
+                { id: 'septuplet', label: '7', subDivisions: 7, cssClass: 'label-septuplet', dotClass: 'septuplet' },
+                { id: 'octuplet', label: '8', subDivisions: 8, cssClass: 'label-octuplet', dotClass: 'octuplet' }
+            ];
+
+            // ============================================================
+            //  DOM
+            // ============================================================
             const grid = document.getElementById('cardGrid');
             const playBtn = document.getElementById('playPauseBtn');
             const playLabel = document.getElementById('playPauseLabel');
@@ -713,20 +1072,32 @@
             const statusText = document.getElementById('statusText');
             const loopSelect = document.getElementById('loopSelect');
             const slotCounter = document.getElementById('slotCounter');
+            const metroToggleBtn = document.getElementById('metroToggleBtn');
+            const metroVolumeSlider = document.getElementById('metroVolumeSlider');
+            const metroVolDisplay = document.getElementById('metroVolDisplay');
+            const contextMenu = document.getElementById('contextMenu');
+            const rhythmSubList = document.getElementById('rhythmSubList');
+            const tupletSubList = document.getElementById('tupletSubList');
+            const mergeSubList = document.getElementById('mergeSubList');
 
-            // ----- 狀態 -----
+            // ============================================================
+            //  狀態
+            // ============================================================
             let audioCtx = null;
             let isPlaying = false;
             let timerId = null;
             let prepTimerId = null;
+            let metronomeTimerId = null;
             let slotData = [null, null, null, null];
             let playOrder = [];
             let totalMeasures = 0;
-            let bpm = 120;
+            let bpmDisplayValue = 120;
             let beatInterval = 500;
-
+            let metronomeEnabled = false;
+            let metronomeVolume = 0.6;
             let loopCount = 4;
             let currentRound = 1;
+            let contextTarget = null;
 
             // ============================================================
             //  音效
@@ -737,25 +1108,24 @@
                 return audioCtx;
             }
 
-            function playPrepBeat(volume = 0.4) {
+            function playTick(volume = 0.4, freq = 1500) {
                 try {
                     const ctx = initAudioCtx();
                     const now = ctx.currentTime;
                     const osc = ctx.createOscillator();
                     const gain = ctx.createGain();
                     osc.type = 'sine';
-                    osc.frequency.setValueAtTime(1500, now);
+                    osc.frequency.setValueAtTime(freq, now);
                     gain.gain.setValueAtTime(volume, now);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
                     osc.connect(gain);
                     gain.connect(ctx.destination);
                     osc.start(now);
                     osc.stop(now + 0.05);
-
                     const osc2 = ctx.createOscillator();
                     const gain2 = ctx.createGain();
                     osc2.type = 'sine';
-                    osc2.frequency.setValueAtTime(3000, now);
+                    osc2.frequency.setValueAtTime(freq * 2, now);
                     gain2.gain.setValueAtTime(volume * 0.3, now);
                     gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
                     osc2.connect(gain2);
@@ -764,6 +1134,9 @@
                     osc2.stop(now + 0.03);
                 } catch (e) {}
             }
+
+            function playPrepBeat(volume = 0.4) { playTick(volume, 1500); }
+            function playMetronomeBeat(volume = 0.6) { playTick(volume, 1500); }
 
             function playAccent(vol = 0.55) {
                 try {
@@ -780,7 +1153,6 @@
                     gain.connect(ctx.destination);
                     osc.start(now);
                     osc.stop(now + 0.12);
-
                     const bufSize = ctx.sampleRate * 0.04;
                     const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
                     const data = buf.getChannelData(0);
@@ -805,9 +1177,339 @@
                 if (type === 'accent') playAccent(0.55);
             }
 
-            // ----- 工具 -----
+            // ============================================================
+            //  拍點資料管理
+            // ============================================================
+            function getBeatData(slotIndex, beatIndex) {
+                const card = slotData[slotIndex];
+                if (!card) return { accent: false, tuplet: null, inMerge: false };
+
+                const pattern = card.pattern || ['light', 'light', 'light', 'light'];
+                const overrides = card.beatOverrides || {};
+                const override = overrides[beatIndex];
+                const tuplets = card.beatTuplets || {};
+                const tuplet = tuplets[beatIndex] || null;
+                const mergeGroup = card.mergeGroup || null;
+
+                let inMerge = false;
+                let mergeType = null;
+                let mergeStart = -1;
+                let mergeEnd = -1;
+                if (mergeGroup && beatIndex >= mergeGroup.start && beatIndex <= mergeGroup.end) {
+                    inMerge = true;
+                    mergeType = mergeGroup.type;
+                    mergeStart = mergeGroup.start;
+                    mergeEnd = mergeGroup.end;
+                }
+
+                let accent;
+                if (override !== undefined && override !== null) {
+                    accent = override;
+                } else {
+                    accent = pattern[beatIndex] === 'accent';
+                }
+
+                let finalTuplet = tuplet;
+                if (inMerge && mergeType) {
+                    finalTuplet = mergeType;
+                }
+
+                return {
+                    accent: accent,
+                    tuplet: finalTuplet,
+                    inMerge: inMerge,
+                    mergeType: mergeType,
+                    mergeStart: mergeStart,
+                    mergeEnd: mergeEnd,
+                    isOverridden: (override !== undefined && override !== null),
+                    rhythmHint: (card.beatRhythmHints && card.beatRhythmHints[beatIndex]) || null
+                };
+            }
+
+            // ============================================================
+            //  核心操作函數
+            // ============================================================
+            function setBeatFromRhythm(slotIndex, beatIndex, rhythmId) {
+                const card = slotData[slotIndex];
+                if (!card) return;
+                const rhythm = RHYTHM_LIBRARY.find(r => r.id === rhythmId);
+                if (!rhythm) return;
+
+                // 儲存重/輕覆蓋
+                const value = rhythm.pattern[beatIndex];
+                if (!card.beatOverrides) card.beatOverrides = {};
+                card.beatOverrides[beatIndex] = (value === 'accent');
+
+                // 儲存節奏型提示（用於顯示記號）
+                if (!card.beatRhythmHints) card.beatRhythmHints = {};
+                card.beatRhythmHints[beatIndex] = rhythmId;
+
+                // 設為 4 連音
+                if (!card.beatTuplets) card.beatTuplets = {};
+                card.beatTuplets[beatIndex] = 'quadruplet';
+
+                renderCards();
+                const patternStr = rhythm.pattern.map(p => p === 'accent' ? '◉' : '○').join('');
+                statusText.textContent = `拍 ${beatIndex+1} → 常符 ${patternStr}`;
+            }
+
+            function setBeatTuplet(slotIndex, beatIndex, tupletId) {
+                const card = slotData[slotIndex];
+                if (!card) return;
+                if (!card.beatTuplets) card.beatTuplets = {};
+
+                // 清除合併組
+                if (card.mergeGroup) {
+                    const g = card.mergeGroup;
+                    if (beatIndex >= g.start && beatIndex <= g.end) {
+                        for (let i = g.start; i <= g.end; i++) {
+                            if (card.beatTuplets) delete card.beatTuplets[i];
+                            if (card.beatOverrides) delete card.beatOverrides[i];
+                        }
+                        delete card.mergeGroup;
+                    }
+                }
+
+                if (tupletId === null) {
+                    delete card.beatTuplets[beatIndex];
+                } else {
+                    card.beatTuplets[beatIndex] = tupletId;
+                }
+                renderCards();
+                const info = TUPLET_TYPES.find(t => t.id === tupletId);
+                statusText.textContent = `拍 ${beatIndex+1} → ${info ? info.label : ''} 連音`;
+            }
+
+            function mergeBeats(slotIndex, startBeat, tupletId) {
+                const card = slotData[slotIndex];
+                if (!card) return;
+                if (startBeat >= 3) {
+                    statusText.textContent = '⚠️ 無法合併最後一拍，請選擇前面的拍子';
+                    return;
+                }
+                if (!card.beatTuplets) card.beatTuplets = {};
+
+                // 清除舊合併組
+                if (card.mergeGroup) {
+                    const old = card.mergeGroup;
+                    for (let i = old.start; i <= old.end; i++) {
+                        if (card.beatTuplets) delete card.beatTuplets[i];
+                        if (card.beatOverrides) delete card.beatOverrides[i];
+                    }
+                    delete card.mergeGroup;
+                }
+
+                // 建立新合併組
+                card.mergeGroup = { start: startBeat, end: startBeat + 1, type: tupletId };
+                if (card.beatTuplets) {
+                    delete card.beatTuplets[startBeat];
+                    delete card.beatTuplets[startBeat + 1];
+                }
+                if (card.beatOverrides) {
+                    delete card.beatOverrides[startBeat];
+                    delete card.beatOverrides[startBeat + 1];
+                }
+
+                renderCards();
+                const info = TUPLET_TYPES.find(t => t.id === tupletId);
+                statusText.textContent = `✅ 已合併拍 ${startBeat+1} 和 ${startBeat+2} 為 ${info ? info.label : ''} 連音`;
+            }
+
+            function resetBeat(slotIndex, beatIndex) {
+                const card = slotData[slotIndex];
+                if (!card) return;
+
+                if (card.beatOverrides) delete card.beatOverrides[beatIndex];
+                if (card.beatTuplets) delete card.beatTuplets[beatIndex];
+                if (card.beatRhythmHints) delete card.beatRhythmHints[beatIndex];
+
+                if (card.mergeGroup) {
+                    const g = card.mergeGroup;
+                    if (beatIndex >= g.start && beatIndex <= g.end) {
+                        for (let i = g.start; i <= g.end; i++) {
+                            if (card.beatOverrides) delete card.beatOverrides[i];
+                            if (card.beatTuplets) delete card.beatTuplets[i];
+                            if (card.beatRhythmHints) delete card.beatRhythmHints[i];
+                        }
+                        delete card.mergeGroup;
+                    }
+                }
+
+                renderCards();
+                statusText.textContent = `↺ 拍 ${beatIndex+1} 已重置`;
+            }
+
+            function handleBeatClick(slotIndex, beatIndex) {
+                const card = slotData[slotIndex];
+                if (!card) return;
+
+                // 如果在合併組中，取消合併
+                if (card.mergeGroup) {
+                    const g = card.mergeGroup;
+                    if (beatIndex >= g.start && beatIndex <= g.end) {
+                        for (let i = g.start; i <= g.end; i++) {
+                            if (card.beatTuplets) delete card.beatTuplets[i];
+                            if (card.beatOverrides) delete card.beatOverrides[i];
+                            if (card.beatRhythmHints) delete card.beatRhythmHints[i];
+                        }
+                        delete card.mergeGroup;
+                        renderCards();
+                        statusText.textContent = `↺ 已取消合併`;
+                        return;
+                    }
+                }
+
+                const current = (card.beatTuplets && card.beatTuplets[beatIndex]) || null;
+                let next = null;
+                if (current === null) next = 'triplet';
+                else if (current === 'triplet') next = 'sextuplet';
+                else next = null;
+
+                setBeatTuplet(slotIndex, beatIndex, next);
+                const names = { triplet: '三連音', sextuplet: '六連音' };
+                statusText.textContent = `拍 ${beatIndex+1} → ${next ? names[next] || next : '正常'}`;
+            }
+
+            // ============================================================
+            //  右鍵選單
+            // ============================================================
+            function showContextMenu(e, slotIndex, beatIndex) {
+                e.preventDefault();
+                contextTarget = { slotIndex, beatIndex };
+                const menu = contextMenu;
+                menu.style.display = 'block';
+                let x = e.clientX;
+                let y = e.clientY;
+                const rect = menu.getBoundingClientRect();
+                const w = rect.width || 260;
+                const h = rect.height || 200;
+                if (x + w > window.innerWidth) x = window.innerWidth - w - 10;
+                if (y + h > window.innerHeight) y = window.innerHeight - h - 10;
+                if (x < 10) x = 10;
+                if (y < 10) y = 10;
+                menu.style.left = x + 'px';
+                menu.style.top = y + 'px';
+                document.querySelectorAll('.sub-menu').forEach(sub => { sub.style.display = 'none'; });
+            }
+
+            function hideContextMenu() {
+                contextMenu.style.display = 'none';
+                contextTarget = null;
+                document.querySelectorAll('.sub-menu').forEach(sub => { sub.style.display = 'none'; });
+            }
+
+            function toggleSubMenu(menuItem) {
+                const sub = menuItem.querySelector('.sub-menu');
+                if (!sub) return;
+                document.querySelectorAll('.sub-menu').forEach(s => { if (s !== sub) s.style.display = 'none'; });
+                sub.style.display = sub.style.display === 'block' ? 'none' : 'block';
+            }
+
+            // ============================================================
+            //  渲染子清單
+            // ============================================================
+            function renderSubMenus() {
+                // 常符子清單（16 種節奏型，只顯示拍子記號）
+                rhythmSubList.innerHTML = '';
+                RHYTHM_LIBRARY.forEach(r => {
+                    const div = document.createElement('div');
+                    div.className = 'sub-item';
+                    const patternStr = r.pattern.map(p => p === 'accent' ? '◉' : '○').join(' ');
+                    div.textContent = patternStr;
+                    div.dataset.rhythmId = r.id;
+                    div.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (!contextTarget) return;
+                        const { slotIndex, beatIndex } = contextTarget;
+                        setBeatFromRhythm(slotIndex, beatIndex, this.dataset.rhythmId);
+                        hideContextMenu();
+                    });
+                    rhythmSubList.appendChild(div);
+                });
+
+                // 連音子清單
+                tupletSubList.innerHTML = '';
+                TUPLET_TYPES.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'sub-item';
+                    div.textContent = `${t.label} 連音`;
+                    div.dataset.tupletId = t.id;
+                    div.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (!contextTarget) return;
+                        const { slotIndex, beatIndex } = contextTarget;
+                        setBeatTuplet(slotIndex, beatIndex, this.dataset.tupletId);
+                        hideContextMenu();
+                    });
+                    tupletSubList.appendChild(div);
+                });
+
+                // 跨拍合併子清單
+                mergeSubList.innerHTML = '';
+                TUPLET_TYPES.forEach(t => {
+                    const div = document.createElement('div');
+                    div.className = 'sub-item';
+                    div.textContent = `與下一拍合併 ${t.label} 連音`;
+                    div.dataset.tupletId = t.id;
+                    div.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        if (!contextTarget) return;
+                        const { slotIndex, beatIndex } = contextTarget;
+                        mergeBeats(slotIndex, beatIndex, this.dataset.tupletId);
+                        hideContextMenu();
+                    });
+                    mergeSubList.appendChild(div);
+                });
+            }
+
+            // ============================================================
+            //  拍子機控制
+            // ============================================================
+            function toggleMetronome() {
+                metronomeEnabled = !metronomeEnabled;
+                updateMetronomeUI();
+                if (metronomeEnabled && isPlaying) startMetronome();
+                else stopMetronome();
+            }
+
+            function updateMetronomeUI() {
+                if (metronomeEnabled) {
+                    metroToggleBtn.textContent = '開';
+                    metroToggleBtn.classList.add('on');
+                } else {
+                    metroToggleBtn.textContent = '關';
+                    metroToggleBtn.classList.remove('on');
+                }
+            }
+
+            function updateMetronomeVolume() {
+                const val = parseInt(metroVolumeSlider.value);
+                metronomeVolume = val / 100;
+                metroVolDisplay.textContent = val + '%';
+            }
+
+            function startMetronome() {
+                stopMetronome();
+                if (!metronomeEnabled || !isPlaying) return;
+                const metroBpm = bpmDisplayValue;
+                const metroInterval = 60000 / metroBpm;
+                metronomeTimerId = setInterval(() => {
+                    playMetronomeBeat(metronomeVolume);
+                }, metroInterval);
+            }
+
+            function stopMetronome() {
+                if (metronomeTimerId) {
+                    clearInterval(metronomeTimerId);
+                    metronomeTimerId = null;
+                }
+            }
+
+            // ============================================================
+            //  工具
+            // ============================================================
             function findCard(id) {
-                return RHYTHM_LIBRARY.find(c => c.id === id) || null;
+                return RHYTHM_LIBRARY.find(r => r.id === id) || null;
             }
 
             function updatePlayOrder() {
@@ -825,28 +1527,28 @@
             }
 
             // ============================================================
-            //  渲染
+            //  渲染卡槽
             // ============================================================
             function renderCards() {
                 grid.innerHTML = '';
-
                 const totalSlots = slotData.length;
 
                 slotData.forEach((card, index) => {
                     const isEmpty = (card === null);
-
                     const div = document.createElement('div');
                     div.className = 'card';
                     if (isEmpty) div.classList.add('empty-card');
                     div.dataset.slotIndex = index;
                     div.dataset.cardId = isEmpty ? '' : card.id;
 
+                    // 編號
                     const num = document.createElement('div');
                     num.className = 'card-number';
                     if (isEmpty) num.classList.add('empty-num');
                     num.textContent = index + 1;
                     div.appendChild(num);
 
+                    // 刪除按鈕
                     const rmBtn = document.createElement('button');
                     rmBtn.className = 'remove-btn' + (totalSlots <= 1 ? ' hidden' : '');
                     rmBtn.innerHTML = '✕';
@@ -857,15 +1559,13 @@
                     });
                     div.appendChild(rmBtn);
 
+                    // 下拉選單
                     const select = document.createElement('select');
                     select.dataset.slotIndex = index;
-
                     const emptyOption = document.createElement('option');
                     emptyOption.value = '';
                     emptyOption.textContent = '— 請選擇 —';
                     select.appendChild(emptyOption);
-
-                    // 下拉選單只顯示拍子記號（隱藏中文）
                     RHYTHM_LIBRARY.forEach(r => {
                         const opt = document.createElement('option');
                         opt.value = r.id;
@@ -873,10 +1573,7 @@
                         opt.textContent = patternStr;
                         select.appendChild(opt);
                     });
-
-                    if (!isEmpty) {
-                        select.value = card.id;
-                    }
+                    if (!isEmpty) select.value = card.id;
 
                     select.addEventListener('change', function(e) {
                         const slotIdx = parseInt(this.dataset.slotIndex);
@@ -885,7 +1582,10 @@
                             slotData[slotIdx] = null;
                         } else {
                             const found = RHYTHM_LIBRARY.find(r => r.id === val);
-                            if (found) slotData[slotIdx] = { ...found };
+                            if (found) {
+                                slotData[slotIdx] = { ...found, beatOverrides: {}, beatTuplets: {},
+                                    beatRhythmHints: {} };
+                            }
                         }
                         const wasPlaying = isPlaying;
                         if (wasPlaying) stopPlayback(false);
@@ -893,35 +1593,110 @@
                         updatePlayOrder();
                         resetCardStates();
                         resetProgress();
-                        if (wasPlaying) {
-                            isPlaying = false;
-                            updatePlayBtn();
-                        }
+                        if (wasPlaying) { isPlaying = false;
+                            updatePlayBtn(); }
                         updateStatus();
                     });
-
                     div.appendChild(select);
 
-                    const pattern = document.createElement('div');
-                    pattern.className = 'beat-pattern';
+                    // 拍點區域
+                    const beatArea = document.createElement('div');
+                    beatArea.className = 'beat-area';
 
-                    if (isEmpty) {
-                        for (let j = 0; j < 4; j++) {
-                            const dot = document.createElement('div');
-                            dot.className = 'beat-dot empty-dot';
-                            dot.textContent = '○';
-                            pattern.appendChild(dot);
+                    const patternDiv = document.createElement('div');
+                    patternDiv.className = 'beat-pattern';
+
+                    // 獲取卡槽的基礎節奏型（用於顯示）
+                    const basePatternStr = card && card.pattern ? card.pattern.map(p => p === 'accent' ? '◉' : '○')
+                        .join('') : '';
+
+                    for (let b = 0; b < 4; b++) {
+                        const container = document.createElement('div');
+                        container.className = 'beat-container';
+
+                        const dot = document.createElement('div');
+                        const data = getBeatData(index, b);
+
+                        dot.className = 'beat-dot';
+                        if (data.accent) dot.classList.add('accent');
+                        else dot.classList.add('light');
+
+                        if (data.tuplet) {
+                            const info = TUPLET_TYPES.find(t => t.id === data.tuplet);
+                            if (info) {
+                                dot.classList.add(info.dotClass);
+                            }
                         }
-                    } else {
-                        card.pattern.forEach(p => {
-                            const dot = document.createElement('div');
-                            dot.className = `beat-dot ${p}`;
-                            dot.textContent = p === 'accent' ? '◉' : '○';
-                            pattern.appendChild(dot);
-                        });
-                    }
-                    div.appendChild(pattern);
 
+                        if (data.inMerge) {
+                            if (b === data.mergeStart) dot.classList.add('merged-start');
+                            else if (b === data.mergeEnd) dot.classList.add('merged-end');
+                            else dot.classList.add('merged-middle');
+                        }
+
+                        dot.textContent = data.accent ? '◉' : '○';
+                        dot.dataset.beatIndex = b;
+                        dot.dataset.slotIndex = index;
+
+                        dot.addEventListener('click', function(e) {
+                            e.stopPropagation();
+                            const si = parseInt(this.dataset.slotIndex);
+                            const bi = parseInt(this.dataset.beatIndex);
+                            handleBeatClick(si, bi);
+                        });
+
+                        dot.addEventListener('contextmenu', function(e) {
+                            e.stopPropagation();
+                            const si = parseInt(this.dataset.slotIndex);
+                            const bi = parseInt(this.dataset.beatIndex);
+                            showContextMenu(e, si, bi);
+                        });
+
+                        container.appendChild(dot);
+
+                        // ============================================================
+                        //  拍點標記
+                        // ============================================================
+                        const label = document.createElement('div');
+                        label.className = 'beat-label';
+                        let labelText = '';
+                        let labelClass = '';
+
+                        // 檢查是否有常符提示（右鍵設置的節奏型記號）
+                        const hintRhythmId = card && card.beatRhythmHints && card.beatRhythmHints[b];
+                        const hasRhythmHint = hintRhythmId !== undefined && hintRhythmId !== null;
+
+                        if (hasRhythmHint) {
+                            const hintRhythm = RHYTHM_LIBRARY.find(r => r.id === hintRhythmId);
+                            if (hintRhythm) {
+                                // 顯示所選節奏型的完整記號（無空格，緊湊排列）
+                                const hintStr = hintRhythm.pattern.map(p => p === 'accent' ? '◉' : '○').join('');
+                                labelText = hintStr;
+                                label.style.fontSize = '0.5rem';
+                                label.style.color = '#8a7a7a';
+                                label.style.letterSpacing = '0px';
+                                label.style.fontFamily = 'monospace';
+                            }
+                        } else if (data.tuplet) {
+                            const info = TUPLET_TYPES.find(t => t.id === data.tuplet);
+                            if (info) {
+                                labelText = `-${info.label}-`;
+                                labelClass = info.cssClass;
+                                if (data.inMerge) label.classList.add('merge-label');
+                            }
+                        }
+
+                        if (labelText) {
+                            label.textContent = labelText;
+                            if (labelClass) label.classList.add(labelClass);
+                        }
+                        container.appendChild(label);
+
+                        patternDiv.appendChild(container);
+                    }
+
+                    beatArea.appendChild(patternDiv);
+                    div.appendChild(beatArea);
                     grid.appendChild(div);
                 });
 
@@ -953,15 +1728,60 @@
                 updateStatus();
             }
 
-            // ============================================================
-            //  循環控制
-            // ============================================================
             function updateLoopSetting() {
                 const val = loopSelect.value;
-                if (val === '0') {
-                    loopCount = 0;
+                if (val === '0') loopCount = 0;
+                else loopCount = parseInt(val);
+            }
+
+            // ============================================================
+            //  連音播放核心
+            // ============================================================
+            function playBeatWithSubdivisions(slotIndex, beatIndex, dotElements, card) {
+                const cardData = slotData[slotIndex];
+                if (!cardData) return;
+
+                const data = getBeatData(slotIndex, beatIndex);
+                if (!data.tuplet) {
+                    if (dotElements && dotElements.length > beatIndex) {
+                        dotElements[beatIndex].classList.add('playing');
+                    }
+                    if (data.accent) {
+                        playAccent(0.55);
+                    }
+                    return;
+                }
+
+                const info = TUPLET_TYPES.find(t => t.id === data.tuplet);
+                if (!info) return;
+
+                let totalDuration = beatInterval;
+                if (data.inMerge) {
+                    const numBeats = data.mergeEnd - data.mergeStart + 1;
+                    totalDuration = beatInterval * numBeats;
+                }
+                const subDivisions = info.subDivisions;
+                const subInterval = totalDuration / subDivisions;
+
+                const highlightBeats = [];
+                if (data.inMerge) {
+                    for (let b = data.mergeStart; b <= data.mergeEnd; b++) {
+                        highlightBeats.push(b);
+                    }
                 } else {
-                    loopCount = parseInt(val);
+                    highlightBeats.push(beatIndex);
+                }
+
+                for (let i = 0; i < subDivisions; i++) {
+                    setTimeout(() => {
+                        document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
+                        highlightBeats.forEach(b => {
+                            if (dotElements && dotElements.length > b) {
+                                dotElements[b].classList.add('playing');
+                            }
+                        });
+                        playAccent(0.55);
+                    }, i * subInterval);
                 }
             }
 
@@ -969,29 +1789,19 @@
             //  播放邏輯
             // ============================================================
             function playFromSlot(startSlotIndex) {
-                if (isPlaying) {
-                    stopPlayback(false);
-                }
-
+                if (isPlaying) stopPlayback(false);
                 updatePlayOrder();
-
                 if (playOrder.length === 0) {
                     statusText.textContent = '⚠️ 請先選擇節奏';
                     return;
                 }
-
                 updateLoopSetting();
 
                 let startIdx = playOrder.findIndex(item => item.slotIndex === startSlotIndex);
                 if (startIdx === -1) startIdx = 0;
-
-                const ordered = [
-                    ...playOrder.slice(startIdx),
-                    ...playOrder.slice(0, startIdx)
-                ];
+                const ordered = [...playOrder.slice(startIdx), ...playOrder.slice(0, startIdx)];
                 playOrder = ordered;
                 totalMeasures = playOrder.length;
-
                 currentRound = 1;
 
                 clearAllHighlights();
@@ -1005,7 +1815,6 @@
                         num.classList.remove('active', 'played');
                     }
                     el.classList.remove('playing-card', 'played-card', 'waiting-card');
-
                     const orderIdx = playOrder.findIndex(p => p.slotIndex === slotIdx);
                     if (orderIdx === -1) return;
                     if (orderIdx === 0) {
@@ -1028,45 +1837,33 @@
                 document.querySelectorAll('.card').forEach(el => {
                     const slotIdx = parseInt(el.dataset.slotIndex);
                     const dots = el.querySelectorAll('.beat-dot');
-                    if (dots && dots.length) {
-                        allDots[slotIdx] = dots;
-                    }
+                    if (dots && dots.length) allDots[slotIdx] = dots;
                 });
 
                 const beatsPerRound = totalMeasures * 4;
                 const firstSlotIdx = firstItem.slotIndex;
                 const firstDots = allDots[firstSlotIdx];
 
-                // ============================================================
-                //  4 拍準備音（使用 setInterval 以便可清除）
-                // ============================================================
+                // 準備音
                 let prepCount = 0;
                 const prepTotal = 4;
                 const prepInterval = beatInterval;
-
-                if (prepTimerId) {
-                    clearInterval(prepTimerId);
-                    prepTimerId = null;
-                }
-
+                if (prepTimerId) { clearInterval(prepTimerId);
+                    prepTimerId = null; }
                 statusText.innerHTML = `⏳ 準備中...`;
 
                 function startMainPlayback() {
-                    if (prepTimerId) {
-                        clearInterval(prepTimerId);
-                        prepTimerId = null;
-                    }
-
+                    if (prepTimerId) { clearInterval(prepTimerId);
+                        prepTimerId = null; }
                     isPlaying = true;
                     updatePlayBtn();
+                    if (metronomeEnabled) startMetronome();
 
                     const loopDisplay = (loopCount === 0) ? '∞' : loopCount;
                     statusText.innerHTML = `▶ 播放中：<strong>${firstCard.name}</strong>`;
 
-                    if (firstDots && firstDots.length) {
-                        firstDots[0].classList.add('playing');
-                    }
-                    playBeat(firstCard.pattern[0]);
+                    playBeatWithSubdivisions(firstSlotIdx, 0, firstDots, firstCard);
+                    if (metronomeEnabled) playMetronomeBeat(metronomeVolume);
                     updateProgress(0);
 
                     let beatCounter = 1;
@@ -1074,7 +1871,6 @@
 
                     timerId = setInterval(() => {
                         const absoluteBeat = (currentRound - 1) * beatsPerRound + beatCounter;
-
                         if (loopCount !== 0 && absoluteBeat >= loopCount * beatsPerRound) {
                             finishPlayback(loopDisplay);
                             return;
@@ -1089,16 +1885,13 @@
                                 finishPlayback(loopDisplay);
                                 return;
                             }
-
                             currentRound++;
                             beatCounter = 0;
-
                             document.querySelectorAll('.card').forEach(el => {
                                 const num = el.querySelector('.card-number');
                                 if (num) num.classList.remove('played');
                                 el.classList.remove('played-card');
                             });
-
                             document.querySelectorAll('.card').forEach(el => {
                                 const slotIdx = parseInt(el.dataset.slotIndex);
                                 const cardId = el.dataset.cardId;
@@ -1114,40 +1907,30 @@
                                     el.classList.add('waiting-card');
                                 }
                             });
-
                             const correctAbsoluteBeat = (currentRound - 1) * beatsPerRound;
                             updateProgress(correctAbsoluteBeat);
-
                             const firstCardName = findCard(playOrder[0].cardId);
                             statusText.innerHTML =
                                 `▶ 播放中：<strong>${firstCardName ? firstCardName.name : ''}</strong>`;
-
                             document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
-
                             beatCounter++;
                             return;
                         }
 
                         const item = playOrder[measureIdx];
                         const card = findCard(item.cardId);
-                        if (!card) {
-                            beatCounter++;
-                            return;
-                        }
+                        if (!card) { beatCounter++; return; }
 
                         document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
 
                         document.querySelectorAll('.card').forEach(el => {
                             const slotIdx = parseInt(el.dataset.slotIndex);
                             const cardId = el.dataset.cardId;
-
                             el.classList.remove('playing-card', 'waiting-card');
                             const num = el.querySelector('.card-number');
                             if (num) num.classList.remove('active');
-
                             const orderIdx = playOrder.findIndex(p => p.slotIndex === slotIdx);
                             if (orderIdx === -1 || !cardId) return;
-
                             if (orderIdx === measureIdx) {
                                 el.classList.add('playing-card');
                                 if (num) num.classList.add('active');
@@ -1155,41 +1938,32 @@
                                 el.classList.add('waiting-card');
                             } else {
                                 el.classList.add('played-card');
-                                if (num) {
-                                    num.classList.remove('active');
-                                    num.classList.add('played');
-                                }
+                                if (num) { num.classList.remove('active');
+                                    num.classList.add('played'); }
                             }
                         });
 
                         const targetSlotIdx = item.slotIndex;
                         const targetDots = allDots[targetSlotIdx];
-                        if (targetDots && targetDots.length) {
-                            const dot = targetDots[beatInMeasure];
-                            if (dot) dot.classList.add('playing');
-                        }
+                        playBeatWithSubdivisions(targetSlotIdx, beatInMeasure, targetDots, card);
 
-                        playBeat(card.pattern[beatInMeasure]);
                         updateProgress(absoluteBeat - 1);
-                        statusText.innerHTML =
-                            `▶ 播放中：<strong>${card.name}</strong>`;
-
+                        statusText.innerHTML = `▶ 播放中：<strong>${card.name}</strong>`;
                         beatCounter++;
 
                     }, intervalMs);
                 }
 
                 prepTimerId = setInterval(() => {
-                    if (prepCount >= prepTotal) {
-                        startMainPlayback();
-                        return;
-                    }
+                    if (prepCount >= prepTotal) { startMainPlayback(); return; }
                     playPrepBeat(0.4);
                     prepCount++;
                 }, prepInterval);
             }
 
-            // ----- 輔助函數 -----
+            // ============================================================
+            //  輔助函數
+            // ============================================================
             function updateProgress(absoluteBeat) {
                 const beatsPerRound = totalMeasures * 4;
                 const totalBeats = (loopCount === 0) ? Infinity : loopCount * beatsPerRound;
@@ -1230,20 +2004,17 @@
                 playFromSlot(firstSlot);
             }
 
-            // ----- 控制 -----
+            // ============================================================
+            //  控制
+            // ============================================================
             function stopPlayback(keepState = false) {
-                if (timerId) {
-                    clearInterval(timerId);
-                    timerId = null;
-                }
-                if (prepTimerId) {
-                    clearInterval(prepTimerId);
-                    prepTimerId = null;
-                }
+                if (timerId) { clearInterval(timerId);
+                    timerId = null; }
+                if (prepTimerId) { clearInterval(prepTimerId);
+                    prepTimerId = null; }
+                stopMetronome();
                 isPlaying = false;
-                if (!keepState) {
-                    updatePlayBtn();
-                }
+                if (!keepState) updatePlayBtn();
             }
 
             function togglePlayPause() {
@@ -1288,15 +2059,17 @@
             function updateStatus() {
                 const count = slotData.filter(c => c !== null).length;
                 if (count === 0) {
-                    statusText.textContent = '🎵 選擇節奏或按「隨機」開始';
+                    statusText.innerHTML = '🎵 選擇節奏或按「隨機」開始';
                 } else {
                     const loopDisplay = (loopCount === 0) ? '∞' : loopCount;
-                    statusText.textContent =
+                    statusText.innerHTML =
                         `🎵 已選擇 ${count} 個節奏 · 循環 ${loopDisplay} 次 · 按「播放」聆聽`;
                 }
             }
 
-            // ----- UI 輔助 -----
+            // ============================================================
+            //  UI 輔助
+            // ============================================================
             function clearAllHighlights() {
                 document.querySelectorAll('.card').forEach(c => {
                     c.classList.remove('playing-card', 'played-card', 'waiting-card');
@@ -1318,43 +2091,40 @@
                 progressFill.style.width = '0%';
             }
 
-            // ----- 隨機分配 -----
+            // ============================================================
+            //  隨機 / 清空
+            // ============================================================
             function randomAssign() {
                 if (isPlaying) stopPlayback(false);
-
                 const shuffled = [...RHYTHM_LIBRARY];
                 for (let i = shuffled.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
                 }
-
                 const totalSlots = slotData.length;
                 for (let i = 0; i < totalSlots; i++) {
                     if (i < shuffled.length) {
-                        slotData[i] = { ...shuffled[i] };
+                        slotData[i] = { ...shuffled[i], beatOverrides: {}, beatTuplets: {}, beatRhythmHints: {} };
                     } else {
                         const shuffledAgain = [...RHYTHM_LIBRARY];
                         for (let k = shuffledAgain.length - 1; k > 0; k--) {
                             const l = Math.floor(Math.random() * (k + 1));
                             [shuffledAgain[k], shuffledAgain[l]] = [shuffledAgain[l], shuffledAgain[k]];
                         }
-                        slotData[i] = { ...shuffledAgain[i % shuffledAgain.length] };
+                        slotData[i] = { ...shuffledAgain[i % shuffledAgain.length], beatOverrides: {},
+                            beatTuplets: {}, beatRhythmHints: {} };
                     }
                 }
-
                 renderCards();
                 updatePlayOrder();
                 resetCardStates();
                 resetProgress();
                 updateStatus();
-                if (isPlaying) {
-                    isPlaying = false;
-                    updatePlayBtn();
-                }
+                if (isPlaying) { isPlaying = false;
+                    updatePlayBtn(); }
                 updatePlayBtn();
             }
 
-            // ----- 清空序列 -----
             function clearAll() {
                 if (isPlaying) stopPlayback(false);
                 for (let i = 0; i < slotData.length; i++) {
@@ -1365,18 +2135,18 @@
                 resetCardStates();
                 resetProgress();
                 statusText.textContent = '🗑 已清空所有節奏';
-                if (isPlaying) {
-                    isPlaying = false;
-                    updatePlayBtn();
-                }
+                if (isPlaying) { isPlaying = false;
+                    updatePlayBtn(); }
                 updatePlayBtn();
             }
 
-            // ----- BPM -----
+            // ============================================================
+            //  BPM
+            // ============================================================
             function updateBpm(val) {
-                bpm = Math.min(160, Math.max(60, Number(val)));
-                bpmDisplay.textContent = bpm;
-                beatInterval = 60000 / bpm;
+                bpmDisplayValue = Math.min(160, Math.max(60, Number(val)));
+                bpmDisplay.textContent = bpmDisplayValue;
+                beatInterval = 60000 / bpmDisplayValue;
                 if (isPlaying) {
                     const active = document.querySelector('.card.playing-card');
                     if (active && active.dataset.cardId) {
@@ -1395,7 +2165,11 @@
                 renderCards();
                 updatePlayOrder();
                 updateLoopSetting();
-                statusText.textContent = '🎵 選擇節奏或按「隨機」開始';
+                updateMetronomeUI();
+                renderSubMenus();
+                statusText.innerHTML =
+                    '🎵 點擊拍點切換模式 · 右鍵拍點設定 ' +
+                    '<span class="hint-key">｜左鍵：正常↔三連音↔六連音 ｜右鍵：常符/連音/跨拍合併</span>';
 
                 bpmSlider.addEventListener('input', function(e) {
                     const val = e.target.value;
@@ -1416,10 +2190,41 @@
                     }
                 });
 
+                metroToggleBtn.addEventListener('click', toggleMetronome);
+                metroVolumeSlider.addEventListener('input', updateMetronomeVolume);
                 addSlotBtn.addEventListener('click', addSlot);
                 playBtn.addEventListener('click', togglePlayPause);
                 randomBtn.addEventListener('click', randomAssign);
                 clearBtn.addEventListener('click', clearAll);
+
+                // 子清單點擊展開
+                document.querySelectorAll('.menu-item.has-sub').forEach(item => {
+                    item.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        toggleSubMenu(this);
+                    });
+                });
+
+                // 點擊其他地方關閉右鍵選單
+                document.addEventListener('click', function(e) {
+                    if (!contextMenu.contains(e.target)) hideContextMenu();
+                });
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape') hideContextMenu();
+                });
+
+                // 右鍵選單「重置」項目
+                contextMenu.querySelectorAll('.menu-item:not(.has-sub)').forEach(item => {
+                    item.addEventListener('click', function() {
+                        const action = this.dataset.action;
+                        if (!contextTarget) { hideContextMenu(); return; }
+                        const { slotIndex, beatIndex } = contextTarget;
+                        if (action === 'reset') {
+                            resetBeat(slotIndex, beatIndex);
+                        }
+                        hideContextMenu();
+                    });
+                });
 
                 document.addEventListener('keydown', function(e) {
                     if (e.key === ' ' || e.code === 'Space') {
