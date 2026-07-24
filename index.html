@@ -954,7 +954,7 @@
             <div class="top-controls">
                 <div class="bpm-section">
                     <label for="bpmSlider">BPM</label>
-                    <input type="range" id="bpmSlider" min="60" max="160" value="120" step="1">
+                    <input type="range" id="bpmSlider" min="50" max="200" value="120" step="1">
                     <span class="bpm-value" id="bpmDisplay">120</span>
                 </div>
                 <div class="metronome-controls">
@@ -2166,7 +2166,7 @@
             //  BPM
             // ============================================================
             function updateBpm(val) {
-                bpmDisplayValue = Math.min(160, Math.max(60, Number(val)));
+                bpmDisplayValue = Math.min(200, Math.max(50, Number(val)));
                 bpmDisplay.textContent = bpmDisplayValue;
                 beatInterval = 60000 / bpmDisplayValue;
                 if (isPlaying) {
