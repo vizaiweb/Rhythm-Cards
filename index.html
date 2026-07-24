@@ -1738,52 +1738,74 @@
             //  連音播放核心
             // ============================================================
             function playBeatWithSubdivisions(slotIndex, beatIndex, dotElements, card) {
-                const cardData = slotData[slotIndex];
-                if (!cardData) return;
+    const cardData = slotData[slotIndex];
+    if (!cardData) return;
 
-                const data = getBeatData(slotIndex, beatIndex);
-                if (!data.tuplet) {
-                    if (dotElements && dotElements.length > beatIndex) {
-                        dotElements[beatIndex].classList.add('playing');
-                    }
-                    if (data.accent) {
-                        playAccent(0.55);
-                    }
-                    return;
+    const data = getBeatData(slotIndex, beatIndex);
+    if (!data.tuplet) {
+        if (dotElements && dotElements.length > beatIndex) {
+            dotElements[beatIndex].classList.add('playing');
+        }
+        if (data.accent) {
+            playAccent(0.55);
+        }
+        return;
+    }
+
+    const info = TUPLET_TYPES.find(t => t.id === data.tuplet);
+    if (!info) return;
+
+    let totalDuration = beatInterval;
+    if (data.inMerge) {
+        const numBeats = data.mergeEnd - data.mergeStart + 1;
+        totalDuration = beatInterval * numBeats;
+    }
+    const subDivisions = info.subDivisions;
+    const subInterval = totalDuration / subDivisions;
+
+    const highlightBeats = [];
+    if (data.inMerge) {
+        for (let b = data.mergeStart; b <= data.mergeEnd; b++) {
+            highlightBeats.push(b);
+        }
+    } else {
+        highlightBeats.push(beatIndex);
+    }
+
+    // ✅ 獲取常符的 pattern（如果有）
+    let accentPattern = null;
+    if (data.rhythmHint) {
+        const hintRhythm = RHYTHM_LIBRARY.find(r => r.id === data.rhythmHint);
+        if (hintRhythm) {
+            accentPattern = hintRhythm.pattern;
+        }
+    }
+
+    for (let i = 0; i < subDivisions; i++) {
+        setTimeout(() => {
+            document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
+            highlightBeats.forEach(b => {
+                if (dotElements && dotElements.length > b) {
+                    dotElements[b].classList.add('playing');
                 }
+            });
 
-                const info = TUPLET_TYPES.find(t => t.id === data.tuplet);
-                if (!info) return;
-
-                let totalDuration = beatInterval;
-                if (data.inMerge) {
-                    const numBeats = data.mergeEnd - data.mergeStart + 1;
-                    totalDuration = beatInterval * numBeats;
-                }
-                const subDivisions = info.subDivisions;
-                const subInterval = totalDuration / subDivisions;
-
-                const highlightBeats = [];
-                if (data.inMerge) {
-                    for (let b = data.mergeStart; b <= data.mergeEnd; b++) {
-                        highlightBeats.push(b);
-                    }
-                } else {
-                    highlightBeats.push(beatIndex);
-                }
-
-                for (let i = 0; i < subDivisions; i++) {
-                    setTimeout(() => {
-                        document.querySelectorAll('.beat-dot').forEach(d => d.classList.remove('playing'));
-                        highlightBeats.forEach(b => {
-                            if (dotElements && dotElements.length > b) {
-                                dotElements[b].classList.add('playing');
-                            }
-                        });
-                        playAccent(0.55);
-                    }, i * subInterval);
-                }
+            // ✅ 判斷是否播放聲音
+            let shouldPlay = false;
+            if (accentPattern && i < accentPattern.length) {
+                // 常符模式：根據 pattern 決定每個子拍是否有聲
+                shouldPlay = accentPattern[i] === 'accent';
+            } else {
+                // 純連音模式：所有子拍都有聲
+                shouldPlay = true;
             }
+
+            if (shouldPlay) {
+                playAccent(0.55);
+            }
+        }, i * subInterval);
+    }
+}
 
             // ============================================================
             //  播放邏輯
