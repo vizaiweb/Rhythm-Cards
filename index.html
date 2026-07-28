@@ -1,411 +1,1619 @@
 <!DOCTYPE html>
 <html lang="zh-Hant">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>節奏卡片 · 固定卡槽</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            background: radial-gradient(circle at 20% 30%, #1a2639, #0b0f1a);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            font-family: 'Segoe UI', 'Poppins', system-ui, sans-serif;
-            padding: 1.5rem;
-        }
-        .app {
-            max-width: 1200px;
-            width: 100%;
-        }
-        .app-title {
-            color: #d4c9b8;
-            font-weight: 300;
-            font-size: 1rem;
-            letter-spacing: 2px;
-            text-align: center;
-            margin-bottom: 1.2rem;
-            opacity: 0.5;
-        }
-        .app-title span {
-            color: #f7c68b;
-        }
-
-        /* ============================================================
-           卡槽容器：固定寬度，flex 排列
-           ============================================================ */
-        .slot-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            justify-content: flex-start;
-        }
-
-        /* ============================================================
-           卡槽：固定尺寸（跟圓點版一樣的寬度）
-           ============================================================ */
-        .slot {
-            flex: 0 0 230px;
-            /* 固定寬度，不縮放 */
-            background: rgba(26, 38, 60, 0.5);
-            border-radius: 1.2rem;
-            padding: 0.6rem 0.7rem 0.7rem;
-            border: 1px solid rgba(255, 215, 150, 0.06);
-            box-shadow: 0 6px 16px -6px #00000066;
-        }
-        .slot-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.4rem;
-        }
-        .slot-number {
-            color: #8a7e6b;
-            font-size: 0.55rem;
-            font-weight: 600;
-            background: rgba(255, 215, 150, 0.08);
-            padding: 0.05rem 0.6rem;
-            border-radius: 40px;
-            border: 1px solid rgba(255, 215, 150, 0.06);
-            letter-spacing: 0.5px;
-        }
-        .slot-status {
-            font-size: 0.5rem;
-            color: #6fcf97;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 0.05rem 0.5rem;
-            border-radius: 40px;
-        }
-        .slot-status.inactive {
-            color: #6b7a93;
-        }
-
-        /* ============================================================
-           4x4 格子矩陣（固定大小）
-           ============================================================ */
-        .grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr 1fr 1fr;
-            gap: 3px;
-        }
-        .cell {
-            aspect-ratio: 1 / 1;
-            background: rgba(50, 60, 80, 0.4);
-            border-radius: 4px;
-            border: 1px solid rgba(255, 255, 255, 0.03);
-            transition: background 0.12s ease, transform 0.08s ease;
-            cursor: pointer;
-            min-height: 32px;
-        }
-        .cell:hover {
-            transform: scale(1.05);
-            border-color: rgba(255, 215, 150, 0.15);
-        }
-        .cell.accent {
-            background: #d48c4a;
-            border-color: #f7c68b66;
-            box-shadow: 0 0 10px #f7b87e33;
-        }
-        .cell.light {
-            background: rgba(50, 60, 80, 0.5);
-            border-color: rgba(255, 255, 255, 0.02);
-        }
-
-        /* ============================================================
-           行標記
-           ============================================================ */
-        .row-label {
-            display: flex;
-            align-items: center;
-            gap: 0.3rem;
-            margin-top: 0.15rem;
-            padding-left: 0.1rem;
-        }
-        .row-label .beat-number {
-            color: #5a6a7a;
-            font-size: 0.45rem;
-            font-weight: 300;
-            min-width: 12px;
-            letter-spacing: 0.2px;
-        }
-        .row-label .beat-hint {
-            color: #7a8a7a;
-            font-size: 0.4rem;
-            font-family: monospace;
-            letter-spacing: 0.3px;
-            background: rgba(0, 0, 0, 0.2);
-            padding: 0.02rem 0.3rem;
-            border-radius: 12px;
-            opacity: 0.6;
-        }
-
-        /* ============================================================
-           底部提示
-           ============================================================ */
-        .footer-hint {
-            color: #5a6a6a;
-            font-size: 0.6rem;
-            text-align: center;
-            margin-top: 1.5rem;
-            letter-spacing: 0.5px;
-            opacity: 0.5;
-        }
-        .footer-hint strong {
-            color: #7a8a7a;
-            font-weight: 400;
-        }
-
-        /* ============================================================
-           響應式：窄螢幕改為 2 欄
-           ============================================================ */
-        @media (max-width: 820px) {
-            .slot {
-                flex: 0 0 calc(50% - 0.4rem);
-            }
-        }
-        @media (max-width: 500px) {
-            body {
-                padding: 0.8rem;
-            }
-            .slot {
-                flex: 0 0 100%;
-                padding: 0.5rem;
-                border-radius: 0.8rem;
-            }
-            .cell {
-                min-height: 28px;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>節奏卡片 · 恢復版</title>
+<style>
+/* ===== 樣式與之前相同（此處省略以節省空間，實際使用時需保留） ===== */
+/* 完整樣式見之前版本 */
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif;padding:0;color:#d4c9b8;overflow:hidden;height:100vh}
+.app{max-width:100%;width:100%;height:100vh;display:flex;flex-direction:column;overflow:hidden}
+.title{text-align:center;padding:4px 0;font-size:.95rem;color:#f7c68b;background:rgba(12,18,30,.85);flex-shrink:0;border-bottom:1px solid rgba(255,215,150,.06)}
+.title span{color:#d4c9b8;font-weight:300}
+.top-bar{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:3px 8px;background:rgba(12,18,30,.92);backdrop-filter:blur(12px);padding:4px 10px;border-bottom:1px solid rgba(255,215,150,.06);flex-shrink:0;z-index:50}
+.control-group{display:flex;align-items:center;gap:2px 6px}
+.control-group label{color:#8a9a8a;font-size:10px}
+.control-group input[type=range]{width:50px;height:3px;-webkit-appearance:none;appearance:none;background:linear-gradient(90deg,#4a5a6a,#f7c68b);border-radius:4px;outline:none}
+.control-group input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:8px;height:8px;background:#f7e1c0;border-radius:50%;box-shadow:0 0 8px #f7b87e66;border:1px solid #ffdbb5;cursor:pointer}
+.control-value{color:#f7dec0;font-size:11px;font-weight:600;min-width:20px;text-align:center}
+.control-group select{padding:2px 5px;border-radius:30px;background:rgba(255,255,255,.06);border:1px solid rgba(255,215,150,.1);color:#b8ad9a;font-size:10px;cursor:pointer;outline:none;font-family:inherit}
+.control-group select:hover{background:rgba(255,255,255,.1)}
+.control-group select option{background:#1a2639;color:#d4c9b8}
+.btn{padding:3px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.04);color:#b8ad9a;cursor:pointer;font-size:11px;transition:all .2s;display:inline-flex;align-items:center;gap:2px}
+.btn:hover{background:rgba(255,255,255,.08);color:#f7dec0}
+.btn.playing{background:rgba(200,70,70,.15);border-color:rgba(200,70,70,.2);color:#d46a6a}
+.btn-slot{background:rgba(70,200,200,.08);border-color:rgba(70,200,200,.15);color:#7ac8c8;padding:2px 8px;font-size:10px}
+.btn-slot:hover{background:rgba(70,200,200,.2)}
+.metro-btn{background:rgba(100,100,100,.3);border:none;color:#8a8a8a;padding:2px 8px;border-radius:40px;font-size:10px;cursor:pointer;transition:all .25s}
+.metro-btn.on{background:rgba(70,200,100,.25);color:#7acf8a;box-shadow:0 0 12px rgba(70,200,100,.15)}
+.status-text{padding:2px 8px;border-radius:30px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.03);font-size:10px;color:#6a7a7a;min-width:70px;text-align:center;transition:all .2s;white-space:nowrap}
+.status-text.playing{color:#f7c68b;border-color:#f7c68b44}
+.slot-controls{display:flex;justify-content:center;align-items:center;gap:4px;padding:3px 10px;background:rgba(12,18,30,.85);backdrop-filter:blur(8px);border-bottom:1px solid rgba(255,215,150,.04);flex-shrink:0;z-index:40}
+.slot-controls .btn{font-size:10px;padding:2px 8px}
+.slot-controls span{color:#6a7a7a;font-size:10px}
+.scroll-wrapper{flex:1;overflow-x:scroll;overflow-y:hidden;padding:6px 12px 16px 12px;position:relative;scroll-behavior:smooth;scrollbar-width:auto}
+.scroll-wrapper::-webkit-scrollbar{width:16px;height:16px}
+.scroll-wrapper::-webkit-scrollbar-track{background:rgba(255,255,255,.08);border-radius:8px;margin:0 12px;border:1px solid rgba(255,255,255,.08)}
+.scroll-wrapper::-webkit-scrollbar-thumb{background:rgba(255,215,150,.4);border-radius:8px;border:2px solid rgba(255,255,255,.06);min-width:50px}
+.scroll-wrapper::-webkit-scrollbar-thumb:hover{background:rgba(255,215,150,.6)}
+.slot-row{display:flex;flex-wrap:nowrap;gap:10px;padding:4px 4px 8px 4px;min-height:100%;align-items:flex-start}
+.slot{flex:0 0 180px;background:rgba(26,38,60,.5);border-radius:12px;padding:6px 8px 8px;border:2px solid rgba(255,215,150,.06);transition:border-color .2s,opacity .2s;position:relative}
+.slot.disabled{opacity:.35}
+.slot.disabled .cell{pointer-events:none}
+.slot-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px;cursor:pointer;padding:1px 3px;border-radius:4px;transition:background .15s}
+.slot-header:hover{background:rgba(255,255,255,.04)}
+.slot-number{font-size:10px;font-weight:600;color:#8a7e6b;background:rgba(255,215,150,.08);padding:1px 8px;border-radius:40px;border:1px solid rgba(255,215,150,.06)}
+.slot-status{font-size:9px;color:#6fcf97;background:rgba(0,0,0,.2);padding:1px 6px;border-radius:40px}
+.slot-status.inactive{color:#6b7a93}
+.remove-btn{position:absolute;top:3px;right:3px;background:rgba(200,80,60,.15);border:none;color:#8a6a5a;font-size:9px;cursor:pointer;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:all .2s;opacity:.3;font-family:inherit}
+.remove-btn:hover{background:rgba(200,80,60,.4);color:#f7a080;opacity:1}
+.remove-btn.hidden{opacity:0;pointer-events:none}
+.row-wrapper{display:flex;align-items:center;gap:4px;margin-top:2px}
+.drop-dot{width:13px;height:13px;min-width:13px;border-radius:50%;background:#3d7ec9;border:2px solid #5f9cf0;cursor:grab;transition:all .15s ease;box-shadow:0 0 6px rgba(61,126,201,.3);flex-shrink:0}
+.drop-dot:hover{transform:scale(1.1);box-shadow:0 0 12px rgba(61,126,201,.6)}
+.drop-dot.drag-over{background:#5fc8c8;border-color:#7ae0e0;box-shadow:0 0 16px rgba(95,200,200,.5);transform:scale(1.15)}
+.drop-dot.active{background:#7ac8ff;border-color:#a8e0ff;box-shadow:0 0 20px rgba(122,200,255,.8),0 0 40px rgba(122,200,255,.3);transform:scale(1.12);transition:all .05s ease}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:2px;flex:1}
+.cell{aspect-ratio:1;background:rgba(50,60,80,.4);border-radius:3px;border:1px solid rgba(255,255,255,.03);cursor:pointer;transition:all .08s ease;min-height:20px;position:relative}
+.cell:hover{transform:scale(1.05);border-color:rgba(255,215,150,.15)}
+.cell.accent{background:#d48c4a;border-color:#f7c68b66;box-shadow:0 0 6px rgba(247,198,139,.2)}
+.cell.light{background:rgba(50,60,80,.5)}
+.cell.triplet{background:#3d7ec9;border-color:#5f9cf0;box-shadow:0 0 8px rgba(74,154,212,.4)}
+.cell.quintuplet{background:#c9a84c;border-color:#eac761;box-shadow:0 0 8px rgba(212,160,74,.4)}
+.cell.sextuplet{background:#3ba87a;border-color:#4fd3a0;box-shadow:0 0 8px rgba(106,184,122,.4)}
+.cell.septuplet{background:#9b6fc0;border-color:#c28dee;box-shadow:0 0 8px rgba(180,106,212,.4)}
+.cell.octuplet{background:#c95f5f;border-color:#e67a7a;box-shadow:0 0 8px rgba(212,106,138,.4)}
+.cell.merge-start{border-left:2px solid #f7c68b;border-radius:3px 0 0 3px}
+.cell.merge-end{border-right:2px solid #f7c68b;border-radius:0 3px 3px 0}
+.cell .tuplet-label{position:absolute;bottom:1px;left:50%;transform:translateX(-50%);font-size:7px;color:#fff;opacity:.9;font-weight:700;pointer-events:none;text-shadow:0 0 4px #000}
+.cell.playing{transform:scale(1.15);box-shadow:0 0 16px #f7c68b;border-color:#ffe1b0;background:#f7c68b !important;z-index:2;position:relative}
+.toolbar{position:fixed;bottom:0;left:0;right:0;background:rgba(12,18,30,.92);backdrop-filter:blur(16px);border-top:1px solid rgba(255,215,150,.08);padding:3px 10px;display:flex;flex-direction:column;gap:2px;z-index:100}
+.toolbar-label{color:#8a9a8a;font-size:8px;text-align:center;opacity:.5}
+.toolbar-group{display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:3px}
+.tool-btn{padding:3px 10px;border-radius:30px;border:1px solid rgba(255,255,255,.06);background:rgba(255,255,255,.04);color:#b8ad9a;font-size:10px;cursor:grab;transition:all .2s;display:inline-flex;align-items:center;gap:2px;min-height:24px;user-select:none}
+.tool-btn:hover{background:rgba(255,255,255,.08);color:#f7dec0}
+.tool-btn:active{transform:scale(.94);cursor:grabbing}
+.tool-btn.active{background:rgba(70,200,200,.15);border-color:#5fc8c8;color:#7ac8c8;box-shadow:0 0 12px rgba(70,200,200,.15)}
+.drag-ghost{position:fixed;pointer-events:none;z-index:9999;background:rgba(70,200,200,.15);border:2px solid #5fc8c8;border-radius:30px;padding:3px 10px;font-size:10px;color:#7ac8c8;backdrop-filter:blur(8px);box-shadow:0 8px 30px rgba(0,0,0,.5);opacity:0;transition:opacity .1s;white-space:nowrap}
+.drag-ghost.visible{opacity:.9}
+.rhythm-picker{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10000;background:rgba(16,24,42,.96);backdrop-filter:blur(16px);border:1px solid rgba(255,215,150,.15);border-radius:12px;padding:10px 14px;box-shadow:0 30px 60px rgba(0,0,0,.7);min-width:220px;max-width:340px;color:#d4c9b8}
+.rhythm-picker .picker-title{font-size:12px;font-weight:500;color:#f7dec0;text-align:center;margin-bottom:6px}
+.rhythm-picker .picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px}
+.rhythm-picker .picker-item{padding:5px 8px;border-radius:30px;background:rgba(255,255,255,.03);border:1px solid rgba(255,215,150,.06);cursor:pointer;text-align:center;font-size:10px;font-family:monospace;letter-spacing:1px;transition:all .15s;color:#b8ad9a}
+.rhythm-picker .picker-item:hover{background:rgba(255,215,150,.1);border-color:rgba(255,215,150,.2);color:#f7dec0}
+.rhythm-picker .picker-cancel{margin-top:6px;text-align:center;padding:5px;border-radius:30px;background:rgba(200,80,60,.1);border:1px solid rgba(200,80,60,.1);cursor:pointer;font-size:10px;color:#8a6a5a;transition:all .15s}
+.rhythm-picker .picker-cancel:hover{background:rgba(200,80,60,.2)}
+.tuplet-picker{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10000;background:rgba(16,24,42,.96);backdrop-filter:blur(16px);border:1px solid rgba(255,215,150,.15);border-radius:12px;padding:10px 14px;box-shadow:0 30px 60px rgba(0,0,0,.7);min-width:240px;max-width:340px;color:#d4c9b8}
+.tuplet-picker .picker-title{font-size:12px;font-weight:500;color:#f7dec0;text-align:center;margin-bottom:3px}
+.tuplet-picker .picker-subtitle{font-size:9px;color:#6a7a7a;text-align:center;margin-bottom:6px}
+.tuplet-picker .picker-section-label{font-size:9px;color:#6a7a7a;text-align:center;padding:3px 0 2px;border-top:1px solid rgba(255,215,150,.05);margin-top:3px}
+.tuplet-picker .picker-section-label:first-of-type{border-top:none;margin-top:0}
+.tuplet-picker .picker-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px}
+.tuplet-picker .picker-item{padding:3px 5px;border-radius:30px;background:rgba(255,255,255,.03);border:1px solid rgba(255,215,150,.06);cursor:pointer;text-align:center;font-size:9px;transition:all .15s;color:#b8ad9a}
+.tuplet-picker .picker-item:hover{background:rgba(255,215,150,.1);border-color:rgba(255,215,150,.2);color:#f7dec0}
+.tuplet-picker .picker-item.merge-up{border-color:rgba(70,200,200,.15);color:#7ac8c8}
+.tuplet-picker .picker-item.merge-up:hover{border-color:rgba(70,200,200,.3);color:#a0e0e0}
+.tuplet-picker .picker-item.merge-down{border-color:rgba(247,198,139,.15);color:#f7c68b}
+.tuplet-picker .picker-item.merge-down:hover{border-color:rgba(247,198,139,.3);color:#f7d8a0}
+.tuplet-picker .picker-item.disabled{opacity:.3;cursor:not-allowed}
+.tuplet-picker .picker-item.disabled:hover{background:rgba(255,255,255,.03);border-color:rgba(255,215,150,.06);color:#b8ad9a}
+.tuplet-picker .picker-cancel{margin-top:5px;text-align:center;padding:4px;border-radius:30px;background:rgba(200,80,60,.1);border:1px solid rgba(200,80,60,.1);cursor:pointer;font-size:9px;color:#8a6a5a;transition:all .15s}
+.tuplet-picker .picker-cancel:hover{background:rgba(200,80,60,.2)}
+@media(max-width:768px){.slot{flex:0 0 160px}.top-bar{gap:2px 5px;padding:3px 6px}.control-group input[type=range]{width:40px}.scroll-wrapper{padding:4px 6px}}
+@media(max-width:480px){.slot{flex:0 0 140px}.top-bar .btn{font-size:9px;padding:2px 6px}.slot-controls .btn{font-size:9px}}
+</style>
 </head>
 <body>
-    <div class="app">
-        <div class="app-title">🥁 <span>節奏卡片</span> · 固定卡槽</div>
 
-        <!-- ============================================================
-            卡槽行
-            ============================================================ -->
-        <div class="slot-row">
+<div class="app">
 
-            <!-- 卡槽 ① -->
-            <div class="slot">
-                <div class="slot-header">
-                    <span class="slot-number">①</span>
-                    <span class="slot-status">✓</span>
-                </div>
-                <div class="grid">
-                    <div class="cell accent" data-row="0" data-col="0"></div>
-                    <div class="cell light" data-row="0" data-col="1"></div>
-                    <div class="cell light" data-row="0" data-col="2"></div>
-                    <div class="cell light" data-row="0" data-col="3"></div>
-                    <div class="cell light" data-row="1" data-col="0"></div>
-                    <div class="cell accent" data-row="1" data-col="1"></div>
-                    <div class="cell light" data-row="1" data-col="2"></div>
-                    <div class="cell light" data-row="1" data-col="3"></div>
-                    <div class="cell light" data-row="2" data-col="0"></div>
-                    <div class="cell light" data-row="2" data-col="1"></div>
-                    <div class="cell accent" data-row="2" data-col="2"></div>
-                    <div class="cell light" data-row="2" data-col="3"></div>
-                    <div class="cell light" data-row="3" data-col="0"></div>
-                    <div class="cell light" data-row="3" data-col="1"></div>
-                    <div class="cell light" data-row="3" data-col="2"></div>
-                    <div class="cell accent" data-row="3" data-col="3"></div>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">1</span>
-                    <span class="beat-hint">◉ ○ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">2</span>
-                    <span class="beat-hint">○ ◉ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">3</span>
-                    <span class="beat-hint">○ ○ ◉ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">4</span>
-                    <span class="beat-hint">○ ○ ○ ◉</span>
-                </div>
-            </div>
+    <div class="title">🥁 <span>節奏卡片</span> · 恢復版</div>
 
-            <!-- 卡槽 ② -->
-            <div class="slot">
-                <div class="slot-header">
-                    <span class="slot-number">②</span>
-                    <span class="slot-status inactive">✕</span>
-                </div>
-                <div class="grid">
-                    <div class="cell light" data-row="0" data-col="0"></div>
-                    <div class="cell light" data-row="0" data-col="1"></div>
-                    <div class="cell light" data-row="0" data-col="2"></div>
-                    <div class="cell light" data-row="0" data-col="3"></div>
-                    <div class="cell light" data-row="1" data-col="0"></div>
-                    <div class="cell light" data-row="1" data-col="1"></div>
-                    <div class="cell light" data-row="1" data-col="2"></div>
-                    <div class="cell light" data-row="1" data-col="3"></div>
-                    <div class="cell light" data-row="2" data-col="0"></div>
-                    <div class="cell light" data-row="2" data-col="1"></div>
-                    <div class="cell light" data-row="2" data-col="2"></div>
-                    <div class="cell light" data-row="2" data-col="3"></div>
-                    <div class="cell light" data-row="3" data-col="0"></div>
-                    <div class="cell light" data-row="3" data-col="1"></div>
-                    <div class="cell light" data-row="3" data-col="2"></div>
-                    <div class="cell light" data-row="3" data-col="3"></div>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">1</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">2</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">3</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">4</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-            </div>
+    <div class="top-bar">
+        <div class="control-group">
+            <label>BPM</label>
+            <input type="range" id="bpmSlider" min="40" max="200" value="120" step="1">
+            <span class="control-value" id="bpmDisplay">120</span>
+        </div>
+        <div class="control-group">
+            <label>🔊</label>
+            <input type="range" id="volumeSlider" min="0" max="100" value="80" step="1">
+            <span class="control-value" id="volumeDisplay">80%</span>
+        </div>
+        <div class="control-group">
+            <label>🔔</label>
+            <button class="metro-btn" id="metroToggleBtn">關</button>
+        </div>
+        <div class="control-group">
+            <label>🔊</label>
+            <input type="range" id="metroVolumeSlider" min="0" max="100" value="50" step="1">
+            <span class="control-value" id="metroVolDisplay">50%</span>
+        </div>
+        <div class="control-group">
+            <label>次數</label>
+            <select id="loopCountSelect">
+                <option value="4">4</option>
+                <option value="8">8</option>
+                <option value="16" selected>16</option>
+                <option value="32">32</option>
+                <option value="64">64</option>
+            </select>
+        </div>
+        <button class="btn" id="randomBtn">🎲</button>
+        <button class="btn" id="playBtn">▶ <span id="playLabel">播放</span></button>
+        <button class="btn" id="clearBtn">🗑</button>
+        <button class="btn" id="selectAllBtn">☑ 全選</button>
+        <span class="status-text" id="statusText">⏸ 就緒</span>
+    </div>
 
-            <!-- 卡槽 ③ -->
-            <div class="slot">
-                <div class="slot-header">
-                    <span class="slot-number">③</span>
-                    <span class="slot-status">✓</span>
-                </div>
-                <div class="grid">
-                    <div class="cell accent" data-row="0" data-col="0"></div>
-                    <div class="cell accent" data-row="0" data-col="1"></div>
-                    <div class="cell light" data-row="0" data-col="2"></div>
-                    <div class="cell light" data-row="0" data-col="3"></div>
-                    <div class="cell accent" data-row="1" data-col="0"></div>
-                    <div class="cell light" data-row="1" data-col="1"></div>
-                    <div class="cell accent" data-row="1" data-col="2"></div>
-                    <div class="cell light" data-row="1" data-col="3"></div>
-                    <div class="cell light" data-row="2" data-col="0"></div>
-                    <div class="cell accent" data-row="2" data-col="1"></div>
-                    <div class="cell accent" data-row="2" data-col="2"></div>
-                    <div class="cell light" data-row="2" data-col="3"></div>
-                    <div class="cell light" data-row="3" data-col="0"></div>
-                    <div class="cell accent" data-row="3" data-col="1"></div>
-                    <div class="cell light" data-row="3" data-col="2"></div>
-                    <div class="cell accent" data-row="3" data-col="3"></div>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">1</span>
-                    <span class="beat-hint">◉ ◉ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">2</span>
-                    <span class="beat-hint">◉ ○ ◉ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">3</span>
-                    <span class="beat-hint">○ ◉ ◉ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">4</span>
-                    <span class="beat-hint">○ ◉ ○ ◉</span>
-                </div>
-            </div>
+    <div class="slot-controls">
+        <button class="btn btn-slot" id="addSlotBtn">＋ 增加卡槽</button>
+        <button class="btn btn-slot" id="removeSlotBtn">－ 刪除卡槽</button>
+        <span id="slotCountDisplay">共 4 個卡槽</span>
+    </div>
 
-            <!-- 卡槽 ④ -->
-            <div class="slot">
-                <div class="slot-header">
-                    <span class="slot-number">④</span>
-                    <span class="slot-status inactive">✕</span>
-                </div>
-                <div class="grid">
-                    <div class="cell light" data-row="0" data-col="0"></div>
-                    <div class="cell light" data-row="0" data-col="1"></div>
-                    <div class="cell light" data-row="0" data-col="2"></div>
-                    <div class="cell light" data-row="0" data-col="3"></div>
-                    <div class="cell light" data-row="1" data-col="0"></div>
-                    <div class="cell light" data-row="1" data-col="1"></div>
-                    <div class="cell light" data-row="1" data-col="2"></div>
-                    <div class="cell light" data-row="1" data-col="3"></div>
-                    <div class="cell light" data-row="2" data-col="0"></div>
-                    <div class="cell light" data-row="2" data-col="1"></div>
-                    <div class="cell light" data-row="2" data-col="2"></div>
-                    <div class="cell light" data-row="2" data-col="3"></div>
-                    <div class="cell light" data-row="3" data-col="0"></div>
-                    <div class="cell light" data-row="3" data-col="1"></div>
-                    <div class="cell light" data-row="3" data-col="2"></div>
-                    <div class="cell light" data-row="3" data-col="3"></div>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">1</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">2</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">3</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-                <div class="row-label">
-                    <span class="beat-number">4</span>
-                    <span class="beat-hint">○ ○ ○ ○</span>
-                </div>
-            </div>
+    <div class="scroll-wrapper" id="scrollWrapper">
+        <div class="slot-row" id="slotRow"></div>
+    </div>
 
-        </div><!-- /slot-row -->
-
-        <div class="footer-hint">
-            🟨 金色 = 重拍 &nbsp;·&nbsp; ⬜ 灰色 = 輕拍 &nbsp;·&nbsp; <strong>點擊格子切換</strong>
+    <div class="toolbar">
+        <div class="toolbar-label">⬇️ 拖拉「常符」到藍色圓點 | 拖拉「連音組合」到格子</div>
+        <div class="toolbar-group">
+            <button class="tool-btn" id="rhythmToolBtn">🎵 常符</button>
+            <button class="tool-btn" id="tupletToolBtn">🔀 連音組合</button>
         </div>
     </div>
 
-    <script>
-        document.querySelectorAll('.cell').forEach(cell => {
-            cell.addEventListener('click', function(e) {
-                e.stopPropagation();
-                if (this.classList.contains('accent')) {
-                    this.classList.remove('accent');
-                    this.classList.add('light');
-                } else {
-                    this.classList.remove('light');
-                    this.classList.add('accent');
-                }
-                updateRowHint(this);
-            });
-        });
+    <div class="drag-ghost" id="dragGhost">🎵 常符</div>
 
-        function updateRowHint(cell) {
-            const grid = cell.closest('.grid');
-            if (!grid) return;
-            const row = parseInt(cell.dataset.row);
-            if (isNaN(row)) return;
+    <div class="rhythm-picker" id="rhythmPicker">
+        <div class="picker-title">🎵 選擇節奏型</div>
+        <div class="picker-grid" id="rhythmPickerGrid"></div>
+        <div class="picker-cancel" id="rhythmPickerCancel">✕ 取消</div>
+    </div>
 
-            const rowCells = grid.querySelectorAll(`.cell[data-row="${row}"]`);
-            if (rowCells.length !== 4) return;
+    <div class="tuplet-picker" id="tupletPicker">
+        <div class="picker-title" id="tupletPickerTitle">🔀 選擇連音</div>
+        <div class="picker-subtitle" id="tupletPickerSubtitle">僅影響當前格與上/下一子拍</div>
+        <div class="picker-section-label">— 單格連音 —</div>
+        <div class="picker-grid" id="tupletPickerGrid"></div>
+        <div class="picker-section-label">— 向上合併（與上一子拍） —</div>
+        <div class="picker-grid" id="mergeUpPickerGrid"></div>
+        <div class="picker-section-label">— 向下合併（與下一子拍） —</div>
+        <div class="picker-grid" id="mergeDownPickerGrid"></div>
+        <div class="picker-cancel" id="tupletPickerCancel">✕ 取消</div>
+    </div>
+</div>
 
-            const slot = grid.closest('.slot');
-            const labels = slot.querySelectorAll('.row-label');
-            if (row >= labels.length) return;
+<script>
+// ================================================================
+// 恢復版：恢復節點記錄 + 恢復噪音層
+// ================================================================
 
-            const hintSpan = labels[row].querySelector('.beat-hint');
-            if (!hintSpan) return;
+// ===== 常數 =====
+var ROWS = 4;
+var COLS = 4;
 
-            let pattern = '';
-            rowCells.forEach((c, idx) => {
-                if (c.classList.contains('accent')) pattern += '◉';
-                else pattern += '○';
-                if (idx < rowCells.length - 1) pattern += ' ';
-            });
-            hintSpan.textContent = pattern;
+var RHYTHM_LIBRARY = [
+    ['light','light','light','light'],
+    ['accent','light','light','light'],
+    ['light','accent','light','light'],
+    ['light','light','accent','light'],
+    ['light','light','light','accent'],
+    ['accent','accent','light','light'],
+    ['accent','light','accent','light'],
+    ['accent','light','light','accent'],
+    ['light','accent','accent','light'],
+    ['light','accent','light','accent'],
+    ['light','light','accent','accent'],
+    ['accent','accent','accent','light'],
+    ['accent','accent','light','accent'],
+    ['accent','light','accent','accent'],
+    ['light','accent','accent','accent'],
+    ['accent','accent','accent','accent']
+];
+
+var TUPLET_TYPES = [
+    { id: 'triplet', label: '3', css: 'triplet' },
+    { id: 'quintuplet', label: '5', css: 'quintuplet' },
+    { id: 'sextuplet', label: '6', css: 'sextuplet' },
+    { id: 'septuplet', label: '7', css: 'septuplet' },
+    { id: 'octuplet', label: '8', css: 'octuplet' }
+];
+
+// ===== 資料 =====
+var slotData = [];
+var slotEnabled = [];
+for (var s = 0; s < 4; s++) {
+    var grid = [];
+    for (var r = 0; r < ROWS; r++) {
+        var row = [];
+        for (var c = 0; c < COLS; c++) {
+            row.push(false);
         }
-    </script>
+        grid.push(row);
+    }
+    slotData.push(grid);
+    slotEnabled.push(true);
+}
+
+var beatTuplets = {};
+var mergePairs = {};
+
+// ===== 狀態 =====
+var isPlaying = false;
+var prepTimerId = null;
+var bpm = 120;
+var volume = 0.8;
+var metronomeOn = false;
+var metroVolume = 0.5;
+var loopCount = 16;
+var totalPositions = 0;
+
+var lastScrolledSlot = -1;
+var isUserScrolling = false;
+var scrollTimeout = null;
+
+var playState = {
+    isActive: false,
+    events: [],
+    eventIndex: 0,
+    startTime: 0,
+    rafId: null,
+    scheduledNodes: []  // 恢復：記錄所有節點
+};
+
+var rhythmDrag = { isDragging: false, active: false };
+var tupletDrag = { isDragging: false, active: false };
+var tupletTargetSlot = null;
+var tupletTargetRow = null;
+var tupletTargetCol = null;
+
+var audioCtx = null;
+var masterGain = null;
+
+// ===== DOM =====
+var slotRow = document.getElementById('slotRow');
+var scrollWrapper = document.getElementById('scrollWrapper');
+var playBtn = document.getElementById('playBtn');
+var playLabel = document.getElementById('playLabel');
+var metroToggleBtn = document.getElementById('metroToggleBtn');
+var bpmSlider = document.getElementById('bpmSlider');
+var bpmDisplay = document.getElementById('bpmDisplay');
+var volumeSlider = document.getElementById('volumeSlider');
+var volumeDisplay = document.getElementById('volumeDisplay');
+var metroVolumeSlider = document.getElementById('metroVolumeSlider');
+var metroVolDisplay = document.getElementById('metroVolDisplay');
+var randomBtn = document.getElementById('randomBtn');
+var clearBtn = document.getElementById('clearBtn');
+var selectAllBtn = document.getElementById('selectAllBtn');
+var statusText = document.getElementById('statusText');
+var rhythmToolBtn = document.getElementById('rhythmToolBtn');
+var tupletToolBtn = document.getElementById('tupletToolBtn');
+var dragGhost = document.getElementById('dragGhost');
+var rhythmPicker = document.getElementById('rhythmPicker');
+var rhythmPickerGrid = document.getElementById('rhythmPickerGrid');
+var rhythmPickerCancel = document.getElementById('rhythmPickerCancel');
+var tupletPicker = document.getElementById('tupletPicker');
+var tupletPickerTitle = document.getElementById('tupletPickerTitle');
+var tupletPickerSubtitle = document.getElementById('tupletPickerSubtitle');
+var tupletPickerGrid = document.getElementById('tupletPickerGrid');
+var mergeUpPickerGrid = document.getElementById('mergeUpPickerGrid');
+var mergeDownPickerGrid = document.getElementById('mergeDownPickerGrid');
+var tupletPickerCancel = document.getElementById('tupletPickerCancel');
+var addSlotBtn = document.getElementById('addSlotBtn');
+var removeSlotBtn = document.getElementById('removeSlotBtn');
+var slotCountDisplay = document.getElementById('slotCountDisplay');
+var loopCountSelect = document.getElementById('loopCountSelect');
+
+// ================================================================
+// 音效（恢復噪音層 + 記錄節點）
+// ================================================================
+function initAudio() {
+    if (!audioCtx) {
+        audioCtx = new(window.AudioContext || window.webkitAudioContext)();
+        masterGain = audioCtx.createGain();
+        masterGain.gain.value = volume;
+        masterGain.connect(audioCtx.destination);
+    }
+    if (audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+}
+
+function updateMasterGain() {
+    if (masterGain) masterGain.gain.value = volume;
+}
+
+// ===== 恢復鼓聲（振盪器 + 噪音層） =====
+function playKickAtTime(time) {
+    try {
+        var ctx = initAudio();
+        var now = ctx.currentTime;
+        var t = Math.max(now + 0.001, time);
+
+        // 振盪器
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(120, t);
+        osc.frequency.exponentialRampToValueAtTime(55, t + 0.08);
+        gain.gain.setValueAtTime(volume, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.1);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + 0.1);
+
+        // 噪音層
+        var bufSize = ctx.sampleRate * 0.04;
+        var buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+        var data = buf.getChannelData(0);
+        for (var i = 0; i < bufSize; i++) {
+            data[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufSize * 0.3));
+        }
+        var noise = ctx.createBufferSource();
+        noise.buffer = buf;
+        var ng = ctx.createGain();
+        ng.gain.setValueAtTime(volume * 0.3, t);
+        ng.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+        noise.connect(ng);
+        ng.connect(masterGain);
+        noise.start(t);
+        noise.stop(t + 0.04);
+
+        // 記錄節點（停止時取消）
+        if (playState.isActive) {
+            playState.scheduledNodes.push({ osc: osc, gain: gain, noise: noise, ng: ng });
+        }
+
+        return { osc: osc, gain: gain, noise: noise, ng: ng };
+    } catch (e) { return null; }
+}
+
+function playTickAtTime(time) {
+    try {
+        var ctx = initAudio();
+        var now = ctx.currentTime;
+        var t = Math.max(now + 0.001, time);
+
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1500, t);
+        gain.gain.setValueAtTime(0.3, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + 0.04);
+
+        if (playState.isActive) {
+            playState.scheduledNodes.push({ osc: osc, gain: gain });
+        }
+        return { osc: osc, gain: gain };
+    } catch (e) { return null; }
+}
+
+function playMetroAtTime(time) {
+    try {
+        var ctx = initAudio();
+        var now = ctx.currentTime;
+        var t = Math.max(now + 0.001, time);
+
+        var osc = ctx.createOscillator();
+        var gain = ctx.createGain();
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(1500, t);
+        var vol = Math.max(0, Math.min(1, metroVolume));
+        gain.gain.setValueAtTime(vol * 0.4, t);
+        gain.gain.exponentialRampToValueAtTime(0.001, t + 0.04);
+        osc.connect(gain);
+        gain.connect(masterGain);
+        osc.start(t);
+        osc.stop(t + 0.04);
+
+        if (playState.isActive) {
+            playState.scheduledNodes.push({ osc: osc, gain: gain });
+        }
+        return { osc: osc, gain: gain };
+    } catch (e) { return null; }
+}
+
+// ================================================================
+// 滾動功能
+// ================================================================
+scrollWrapper.addEventListener('scroll', function() {
+    isUserScrolling = true;
+    clearTimeout(scrollTimeout);
+    scrollTimeout = setTimeout(function() {
+        isUserScrolling = false;
+    }, 800);
+});
+
+function scrollToSlot(slotIndex) {
+    if (isUserScrolling) return;
+    if (slotIndex === lastScrolledSlot) return;
+    var slotEl = slotRow.querySelector('.slot[data-slot="' + slotIndex + '"]');
+    if (!slotEl) return;
+    lastScrolledSlot = slotIndex;
+    var slotLeft = slotEl.offsetLeft;
+    scrollWrapper.scrollTo({ left: slotLeft, behavior: 'smooth' });
+}
+
+// ================================================================
+// 連音/合併輔助
+// ================================================================
+function getCellTuplet(slot, row, col) {
+    if (beatTuplets[slot] && beatTuplets[slot][row] && beatTuplets[slot][row][col] !== undefined) {
+        return beatTuplets[slot][row][col];
+    }
+    return null;
+}
+
+function getMergePair(slot, row, col) {
+    if (!mergePairs[slot]) return null;
+    for (var i = 0; i < mergePairs[slot].length; i++) {
+        var p = mergePairs[slot][i];
+        if ((p.row1 === row && p.col1 === col) || (p.row2 === row && p.col2 === col)) {
+            return p;
+        }
+    }
+    return null;
+}
+
+function addMergePair(slot, row1, col1, row2, col2, type) {
+    if (!mergePairs[slot]) mergePairs[slot] = [];
+    for (var i = 0; i < mergePairs[slot].length; i++) {
+        var p = mergePairs[slot][i];
+        if ((p.row1 === row1 && p.col1 === col1 && p.row2 === row2 && p.col2 === col2) ||
+            (p.row1 === row2 && p.col1 === col2 && p.row2 === row1 && p.col2 === col1)) {
+            return;
+        }
+    }
+    mergePairs[slot].push({ row1: row1, col1: col1, row2: row2, col2: col2, type: type });
+}
+
+function removeMergePair(slot, row, col) {
+    if (!mergePairs[slot]) return false;
+    for (var i = 0; i < mergePairs[slot].length; i++) {
+        var p = mergePairs[slot][i];
+        if ((p.row1 === row && p.col1 === col) || (p.row2 === row && p.col2 === col)) {
+            mergePairs[slot].splice(i, 1);
+            if (mergePairs[slot].length === 0) delete mergePairs[slot];
+            return true;
+        }
+    }
+    return false;
+}
+
+function removeMergePairWithCells(slot, row1, col1, row2, col2) {
+    if (!mergePairs[slot]) return false;
+    for (var i = 0; i < mergePairs[slot].length; i++) {
+        var p = mergePairs[slot][i];
+        if ((p.row1 === row1 && p.col1 === col1) || (p.row2 === row1 && p.col2 === col1) ||
+            (p.row1 === row2 && p.col1 === col2) || (p.row2 === row2 && p.col2 === col2)) {
+            mergePairs[slot].splice(i, 1);
+            if (mergePairs[slot].length === 0) delete mergePairs[slot];
+            return true;
+        }
+    }
+    return false;
+}
+
+// ================================================================
+// 渲染（與之前相同）
+// ================================================================
+function renderSlots() {
+    slotRow.innerHTML = '';
+    for (var s = 0; s < slotData.length; s++) {
+        var enabled = slotEnabled[s];
+        var slot = document.createElement('div');
+        slot.className = 'slot' + (enabled ? '' : ' disabled');
+        slot.setAttribute('data-slot', s);
+
+        var rmBtn = document.createElement('button');
+        rmBtn.className = 'remove-btn' + (slotData.length <= 1 ? ' hidden' : '');
+        rmBtn.textContent = '✕';
+        rmBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var si = parseInt(this.parentElement.getAttribute('data-slot'));
+            removeSlot(si);
+        });
+        slot.appendChild(rmBtn);
+
+        var header = document.createElement('div');
+        header.className = 'slot-header';
+        header.addEventListener('click', function(e) {
+            e.stopPropagation();
+            var si = parseInt(this.parentElement.getAttribute('data-slot'));
+            toggleSlot(si);
+        });
+        var num = document.createElement('span');
+        num.className = 'slot-number';
+        num.textContent = ['①','②','③','④'][s] || (s + 1);
+        var statusEl = document.createElement('span');
+        statusEl.className = 'slot-status' + (enabled ? '' : ' inactive');
+        statusEl.textContent = enabled ? '✓' : '✕';
+        header.appendChild(num);
+        header.appendChild(statusEl);
+        slot.appendChild(header);
+
+        for (var r = 0; r < ROWS; r++) {
+            var rowWrapper = document.createElement('div');
+            rowWrapper.className = 'row-wrapper';
+
+            var dot = document.createElement('div');
+            dot.className = 'drop-dot';
+            dot.setAttribute('data-slot', s);
+            dot.setAttribute('data-row', r);
+            dot.title = '拖拉「常符」到此';
+            dot.addEventListener('mouseenter', function(e) {
+                if (rhythmDrag.active) this.classList.add('drag-over');
+            });
+            dot.addEventListener('mouseleave', function(e) {
+                this.classList.remove('drag-over');
+            });
+            rowWrapper.appendChild(dot);
+
+            var gridDiv = document.createElement('div');
+            gridDiv.className = 'grid';
+            for (var c = 0; c < COLS; c++) {
+                var cell = document.createElement('div');
+                var isAcc = slotData[s][r][c];
+                var tuplet = getCellTuplet(s, r, c);
+                var merge = getMergePair(s, r, c);
+
+                var cellClass = 'cell ';
+                if (merge) {
+                    var info = TUPLET_TYPES.find(function(t) { return t.id === merge.type; });
+                    if (info) cellClass += info.css + ' ';
+                    var isStart = (r === merge.row1 && c === merge.col1);
+                    var isEnd = (r === merge.row2 && c === merge.col2);
+                    if (isStart) cellClass += 'merge-start ';
+                    else if (isEnd) cellClass += 'merge-end ';
+                } else if (tuplet) {
+                    var info2 = TUPLET_TYPES.find(function(t) { return t.id === tuplet; });
+                    if (info2) cellClass += info2.css + ' ';
+                } else {
+                    cellClass += (isAcc ? 'accent' : 'light');
+                }
+                cell.className = cellClass.trim();
+                cell.setAttribute('data-slot', s);
+                cell.setAttribute('data-row', r);
+                cell.setAttribute('data-col', c);
+
+                var label = document.createElement('span');
+                label.className = 'tuplet-label';
+                var labelText = '';
+                if (merge) {
+                    var info3 = TUPLET_TYPES.find(function(t) { return t.id === merge.type; });
+                    labelText = info3 ? ('-' + info3.label + '-') : '';
+                } else if (tuplet) {
+                    var info4 = TUPLET_TYPES.find(function(t) { return t.id === tuplet; });
+                    labelText = info4 ? ('-' + info4.label + '-') : '';
+                }
+                if (labelText) {
+                    label.textContent = labelText;
+                    cell.appendChild(label);
+                }
+
+                cell.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    if (isPlaying) return;
+                    var si = parseInt(this.getAttribute('data-slot'));
+                    var ri = parseInt(this.getAttribute('data-row'));
+                    var ci = parseInt(this.getAttribute('data-col'));
+
+                    var mergeCheck = getMergePair(si, ri, ci);
+                    if (mergeCheck) {
+                        removeMergePair(si, ri, ci);
+                        renderSlots();
+                        statusText.textContent = '↺ 已清除合併';
+                        return;
+                    }
+
+                    if (beatTuplets[si] && beatTuplets[si][ri] && beatTuplets[si][ri][ci] !== undefined) {
+                        delete beatTuplets[si][ri][ci];
+                        if (Object.keys(beatTuplets[si][ri]).length === 0) {
+                            delete beatTuplets[si][ri];
+                        }
+                        if (Object.keys(beatTuplets[si]).length === 0) {
+                            delete beatTuplets[si];
+                        }
+                        renderSlots();
+                        statusText.textContent = '↺ 已清除連音';
+                        return;
+                    }
+
+                    slotData[si][ri][ci] = !slotData[si][ri][ci];
+                    renderSlots();
+                });
+
+                gridDiv.appendChild(cell);
+            }
+            rowWrapper.appendChild(gridDiv);
+            slot.appendChild(rowWrapper);
+        }
+
+        slotRow.appendChild(slot);
+    }
+    updateSelectAllButton();
+    updateSlotCount();
+    lastScrolledSlot = -1;
+}
+
+function toggleSlot(slotIdx) {
+    if (isPlaying) return;
+    slotEnabled[slotIdx] = !slotEnabled[slotIdx];
+    renderSlots();
+    var count = 0;
+    for (var i = 0; i < slotEnabled.length; i++) {
+        if (slotEnabled[i]) count++;
+    }
+    statusText.textContent = '已選取 ' + count + ' 個卡槽';
+}
+
+function updateSelectAllButton() {
+    var allEnabled = true;
+    for (var i = 0; i < slotEnabled.length; i++) {
+        if (!slotEnabled[i]) { allEnabled = false; break; }
+    }
+    selectAllBtn.textContent = allEnabled ? '☑ 全選' : '☐ 全選';
+}
+
+function updateSlotCount() {
+    slotCountDisplay.textContent = '共 ' + slotData.length + ' 個卡槽';
+}
+
+function removeSlot(index) {
+    if (slotData.length <= 1) {
+        statusText.textContent = '⚠️ 至少保留 1 個卡槽';
+        return;
+    }
+    if (isPlaying) stopPlayback();
+    slotData.splice(index, 1);
+    slotEnabled.splice(index, 1);
+    if (beatTuplets[index]) delete beatTuplets[index];
+    if (mergePairs[index]) delete mergePairs[index];
+    renderSlots();
+}
+
+function addSlot() {
+    if (isPlaying) stopPlayback();
+    var grid = [];
+    for (var r = 0; r < ROWS; r++) {
+        var row = [];
+        for (var c = 0; c < COLS; c++) {
+            row.push(false);
+        }
+        grid.push(row);
+    }
+    slotData.push(grid);
+    slotEnabled.push(true);
+    renderSlots();
+    statusText.textContent = '✅ 已新增卡槽 ' + slotData.length;
+    setTimeout(function() {
+        scrollToSlot(slotData.length - 1);
+    }, 50);
+}
+
+function applyRhythmPattern(slotIdx, row, pattern) {
+    for (var c = 0; c < COLS; c++) {
+        slotData[slotIdx][row][c] = (pattern[c] === 'accent');
+    }
+    if (beatTuplets[slotIdx]) {
+        delete beatTuplets[slotIdx][row];
+        if (Object.keys(beatTuplets[slotIdx]).length === 0) delete beatTuplets[slotIdx];
+    }
+    if (mergePairs[slotIdx]) {
+        mergePairs[slotIdx] = mergePairs[slotIdx].filter(function(p) {
+            return p.row1 !== row && p.row2 !== row;
+        });
+        if (mergePairs[slotIdx].length === 0) delete mergePairs[slotIdx];
+    }
+    renderSlots();
+    statusText.textContent = '✅ 卡槽 ' + (slotIdx + 1) + ' 第 ' + (row + 1) + ' 拍已設定';
+}
+
+// ================================================================
+// 核心：事件生成
+// ================================================================
+function getSubInterval() { return (60000 / bpm) / 4 / 1000; }
+
+function getBeatInterval() { return (60000 / bpm) / 1000; }
+
+function getEnabledPositions() {
+    var positions = [];
+    for (var s = 0; s < slotData.length; s++) {
+        if (!slotEnabled[s]) continue;
+        for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) {
+                positions.push({ slot: s, row: r, col: c });
+            }
+        }
+    }
+    return positions;
+}
+
+function isAccent(slot, row, col) {
+    return slotData[slot] && slotData[slot][row] && slotData[slot][row][col];
+}
+
+function getLoopMultiplier() { return loopCount; }
+
+function generateEvents(positions, startTime) {
+    var events = [];
+    var interval = getSubInterval();
+    var totalPositions = positions.length;
+    var multiplier = getLoopMultiplier();
+    var totalEvents = totalPositions * multiplier;
+
+    for (var i = 0; i < totalEvents; i++) {
+        var posIdx = i % totalPositions;
+        var pos = positions[posIdx];
+        var time = startTime + i * interval;
+
+        var slot = pos.slot;
+        var row = pos.row;
+        var col = pos.col;
+
+        var mergePair = getMergePair(slot, row, col);
+        if (mergePair) {
+            var isStart = (row === mergePair.row1 && col === mergePair.col1);
+            var isEnd = (row === mergePair.row2 && col === mergePair.col2);
+
+            if (isStart) {
+                var info = TUPLET_TYPES.find(function(t) { return t.id === mergePair.type; });
+                var divisions = info ? parseInt(info.label) : 3;
+                var totalDuration = interval * 2;
+                var subDuration = totalDuration / divisions;
+
+                events.push({
+                    time: time,
+                    slot: slot,
+                    row: row,
+                    col: col,
+                    type: 'merge',
+                    divisions: divisions,
+                    subDuration: subDuration,
+                    totalDuration: totalDuration,
+                    idx1: mergePair.row1 * COLS + mergePair.col1,
+                    idx2: mergePair.row2 * COLS + mergePair.col2
+                });
+                continue;
+            }
+            if (isEnd) {
+                continue;
+            }
+        }
+
+        var tuplet = getCellTuplet(slot, row, col);
+        if (tuplet) {
+            var info2 = TUPLET_TYPES.find(function(t) { return t.id === tuplet; });
+            var divisions2 = info2 ? parseInt(info2.label) : 3;
+            var subDuration2 = interval / divisions2;
+
+            events.push({
+                time: time,
+                slot: slot,
+                row: row,
+                col: col,
+                type: 'tuplet',
+                divisions: divisions2,
+                subDuration: subDuration2,
+                cellIdx: row * COLS + col,
+                hasSound: isAccent(slot, row, col)
+            });
+            continue;
+        }
+
+        events.push({
+            time: time,
+            slot: slot,
+            row: row,
+            col: col,
+            type: 'normal',
+            cellIdx: row * COLS + col,
+            hasSound: isAccent(slot, row, col)
+        });
+    }
+
+    return events;
+}
+
+// ================================================================
+// 高亮系統
+// ================================================================
+function clearAllHighlights() {
+    document.querySelectorAll('.cell.playing').forEach(function(el) {
+        el.classList.remove('playing');
+    });
+    document.querySelectorAll('.drop-dot.active').forEach(function(el) {
+        el.classList.remove('active');
+    });
+}
+
+function applyHighlight(event) {
+    var slot = event.slot;
+    var slotEl = slotRow.querySelector('.slot[data-slot="' + slot + '"]');
+    if (!slotEl) return;
+
+    clearAllHighlights();
+
+    if (isPlaying && !isUserScrolling) {
+        scrollToSlot(slot);
+    }
+
+    var cells = slotEl.querySelectorAll('.cell');
+
+    if (event.type === 'merge') {
+        if (event.idx1 < cells.length) cells[event.idx1].classList.add('playing');
+        if (event.idx2 < cells.length) cells[event.idx2].classList.add('playing');
+        var dots = slotEl.querySelectorAll('.drop-dot');
+        for (var d = 0; d < dots.length; d++) {
+            if (parseInt(dots[d].getAttribute('data-row')) === event.row) {
+                dots[d].classList.add('active');
+                break;
+            }
+        }
+        return;
+    }
+
+    if (event.cellIdx !== undefined && event.cellIdx < cells.length) {
+        cells[event.cellIdx].classList.add('playing');
+    }
+
+    if (event.col === 0) {
+        var dots2 = slotEl.querySelectorAll('.drop-dot');
+        for (var d2 = 0; d2 < dots2.length; d2++) {
+            if (parseInt(dots2[d2].getAttribute('data-row')) === event.row) {
+                dots2[d2].classList.add('active');
+                break;
+            }
+        }
+    }
+}
+
+// ================================================================
+// 渲染循環
+// ================================================================
+function renderLoop() {
+    if (!playState.isActive) return;
+
+    var now = audioCtx.currentTime;
+    var events = playState.events;
+    var index = playState.eventIndex;
+
+    while (index < events.length && events[index].time < now + 0.01) {
+        applyHighlight(events[index]);
+        index++;
+    }
+
+    playState.eventIndex = index;
+
+    if (isPlaying && totalPositions > 0) {
+        var currentLoop = Math.floor(index / totalPositions) + 1;
+        if (currentLoop <= loopCount) {
+            statusText.textContent = '▶ 播放中... ' + currentLoop + '/' + loopCount + ' 輪';
+            statusText.className = 'status-text playing';
+        }
+    }
+
+    if (index < events.length) {
+        playState.rafId = requestAnimationFrame(renderLoop);
+    } else {
+        playState.isActive = false;
+        if (isPlaying) {
+            isPlaying = false;
+            playBtn.textContent = '▶ 播放';
+            playBtn.classList.remove('playing');
+            statusText.textContent = '⏹ 播放完成 (' + loopCount + ' 輪)';
+            statusText.className = 'status-text';
+            clearAllHighlights();
+        }
+    }
+}
+
+// ================================================================
+// 播放控制
+// ================================================================
+function playFromStart() {
+    if (isPlaying) stopPlayback();
+    initAudio();
+
+    var positions = getEnabledPositions();
+    if (positions.length === 0) {
+        statusText.textContent = '⚠️ 沒有啟用的卡槽';
+        return;
+    }
+
+    totalPositions = positions.length;
+
+    var hasSound = false;
+    for (var i = 0; i < positions.length; i++) {
+        var p = positions[i];
+        if (isAccent(p.slot, p.row, p.col) ||
+            getCellTuplet(p.slot, p.row, p.col) ||
+            getMergePair(p.slot, p.row, p.col)) {
+            hasSound = true;
+            break;
+        }
+    }
+    if (!hasSound) {
+        statusText.textContent = '⚠️ 沒有重拍或連音';
+        return;
+    }
+
+    isPlaying = true;
+    playBtn.textContent = '⏹ 停止';
+    playBtn.classList.add('playing');
+    statusText.textContent = '▶ 播放中... 1/' + loopCount + ' 輪';
+    statusText.className = 'status-text playing';
+
+    var ctx = audioCtx;
+    var beatInterval = getBeatInterval();
+
+    var prepCount = 0;
+    if (prepTimerId) clearInterval(prepTimerId);
+
+    prepTimerId = setInterval(function() {
+        if (prepCount >= 4) {
+            clearInterval(prepTimerId);
+            prepTimerId = null;
+
+            var startTime = ctx.currentTime + 0.1;
+            var events = generateEvents(positions, startTime);
+
+            playState.events = events;
+            playState.eventIndex = 0;
+            playState.startTime = startTime;
+            playState.isActive = true;
+            playState.scheduledNodes = [];  // 重置節點記錄
+
+            // 排程所有音效（恢復噪音層）
+            for (var e = 0; e < events.length; e++) {
+                var ev = events[e];
+                if (ev.type === 'merge') {
+                    for (var k = 0; k < ev.divisions; k++) {
+                        var subTime = ev.time + k * ev.subDuration;
+                        playKickAtTime(subTime);
+                    }
+                } else if (ev.type === 'tuplet' && ev.hasSound) {
+                    for (var k2 = 0; k2 < ev.divisions; k2++) {
+                        var subTime2 = ev.time + k2 * ev.subDuration;
+                        playKickAtTime(subTime2);
+                    }
+                } else if (ev.type === 'normal' && ev.hasSound) {
+                    playKickAtTime(ev.time);
+                }
+            }
+
+            if (metronomeOn) {
+                var metroStartTime = startTime;
+                var metroInterval = getBeatInterval();
+                var totalMetroEvents = Math.floor(events.length / 4);
+                for (var m = 0; m < totalMetroEvents; m++) {
+                    var metroTime = metroStartTime + m * metroInterval;
+                    playMetroAtTime(metroTime);
+                }
+            }
+
+            clearAllHighlights();
+            playState.rafId = requestAnimationFrame(renderLoop);
+
+            return;
+        }
+        playTickAtTime(ctx.currentTime);
+        prepCount++;
+    }, beatInterval * 1000);
+}
+
+// ================================================================
+// 恢復：停止時取消所有節點
+// ================================================================
+function stopPlayback() {
+    isPlaying = false;
+    playState.isActive = false;
+
+    if (playState.rafId) {
+        cancelAnimationFrame(playState.rafId);
+        playState.rafId = null;
+    }
+
+    // 恢復：停止所有已排程的節點
+    if (playState.scheduledNodes) {
+        for (var i = 0; i < playState.scheduledNodes.length; i++) {
+            var nodes = playState.scheduledNodes[i];
+            try {
+                if (nodes.osc) {
+                    nodes.osc.stop(0);
+                    nodes.osc.disconnect();
+                }
+                if (nodes.gain) nodes.gain.disconnect();
+                if (nodes.noise) {
+                    nodes.noise.stop(0);
+                    nodes.noise.disconnect();
+                }
+                if (nodes.ng) nodes.ng.disconnect();
+            } catch (e) {}
+        }
+        playState.scheduledNodes = [];
+    }
+
+    if (prepTimerId) {
+        clearInterval(prepTimerId);
+        prepTimerId = null;
+    }
+
+    clearAllHighlights();
+    playBtn.textContent = '▶ 播放';
+    playBtn.classList.remove('playing');
+    statusText.textContent = '⏹ 已停止';
+    statusText.className = 'status-text';
+
+    playState.events = [];
+    playState.eventIndex = 0;
+    totalPositions = 0;
+}
+
+function togglePlay() {
+    if (isPlaying) { stopPlayback(); } else { playFromStart(); }
+}
+
+function toggleMetro() {
+    metronomeOn = !metronomeOn;
+    metroToggleBtn.textContent = metronomeOn ? '開' : '關';
+    metroToggleBtn.classList.toggle('on', metronomeOn);
+}
+
+// ================================================================
+// 常符拖拉（精簡版）
+// ================================================================
+function initRhythmDrag() {
+    rhythmToolBtn.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        rhythmStartDrag(e.clientX, e.clientY);
+    });
+    rhythmToolBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        var touch = e.touches[0];
+        rhythmStartDrag(touch.clientX, touch.clientY);
+    }, { passive: false });
+}
+
+function rhythmStartDrag(x, y) {
+    rhythmDrag.isDragging = true;
+    rhythmDrag.active = true;
+    rhythmToolBtn.classList.add('active');
+    dragGhost.textContent = '🎵 常符';
+    dragGhost.classList.add('visible');
+    dragGhost.style.left = (x + 12) + 'px';
+    dragGhost.style.top = (y + 12) + 'px';
+
+    document.addEventListener('mousemove', rhythmOnDragMove);
+    document.addEventListener('mouseup', rhythmOnDragEnd);
+    document.addEventListener('touchmove', rhythmOnDragMove, { passive: false });
+    document.addEventListener('touchend', rhythmOnDragEnd, { passive: false });
+
+    statusText.textContent = '🖱️ 拖拉「常符」到藍色圓點';
+}
+
+function rhythmOnDragMove(e) {
+    e.preventDefault();
+    var x, y;
+    if (e.touches) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+    dragGhost.style.left = (x + 12) + 'px';
+    dragGhost.style.top = (y + 12) + 'px';
+
+    document.querySelectorAll('.drop-dot.drag-over').forEach(function(el) {
+        el.classList.remove('drag-over');
+    });
+
+    var target = document.elementFromPoint(x, y);
+    if (target) {
+        var dot = target.closest('.drop-dot');
+        if (dot && rhythmDrag.active) {
+            dot.classList.add('drag-over');
+        }
+    }
+}
+
+function rhythmOnDragEnd(e) {
+    document.removeEventListener('mousemove', rhythmOnDragMove);
+    document.removeEventListener('mouseup', rhythmOnDragEnd);
+    document.removeEventListener('touchmove', rhythmOnDragMove);
+    document.removeEventListener('touchend', rhythmOnDragEnd);
+
+    document.querySelectorAll('.drop-dot.drag-over').forEach(function(el) {
+        el.classList.remove('drag-over');
+    });
+    dragGhost.classList.remove('visible');
+    rhythmToolBtn.classList.remove('active');
+
+    var x, y;
+    if (e.changedTouches) {
+        x = e.changedTouches[0].clientX;
+        y = e.changedTouches[0].clientY;
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+
+    setTimeout(function() {
+        var target = document.elementFromPoint(x, y);
+        if (target) {
+            var dot = target.closest('.drop-dot');
+            if (dot) {
+                var slotIdx = parseInt(dot.getAttribute('data-slot'));
+                var row = parseInt(dot.getAttribute('data-row'));
+                if (!isNaN(slotIdx) && !isNaN(row) && slotEnabled[slotIdx]) {
+                    showRhythmPicker(slotIdx, row);
+                }
+            }
+        }
+        rhythmDrag.active = false;
+        rhythmDrag.isDragging = false;
+    }, 10);
+}
+
+// ================================================================
+// 連音拖拉
+// ================================================================
+function initTupletDrag() {
+    tupletToolBtn.addEventListener('mousedown', function(e) {
+        e.preventDefault();
+        tupletStartDrag(e.clientX, e.clientY);
+    });
+    tupletToolBtn.addEventListener('touchstart', function(e) {
+        e.preventDefault();
+        var touch = e.touches[0];
+        tupletStartDrag(touch.clientX, touch.clientY);
+    }, { passive: false });
+}
+
+function tupletStartDrag(x, y) {
+    tupletDrag.isDragging = true;
+    tupletDrag.active = true;
+    tupletTargetSlot = null;
+    tupletTargetRow = null;
+    tupletTargetCol = null;
+
+    tupletToolBtn.classList.add('active');
+    dragGhost.textContent = '🔀 連音組合';
+    dragGhost.classList.add('visible');
+    dragGhost.style.left = (x + 12) + 'px';
+    dragGhost.style.top = (y + 12) + 'px';
+
+    document.addEventListener('mousemove', tupletOnDragMove);
+    document.addEventListener('mouseup', tupletOnDragEnd);
+    document.addEventListener('touchmove', tupletOnDragMove, { passive: false });
+    document.addEventListener('touchend', tupletOnDragEnd, { passive: false });
+
+    statusText.textContent = '🖱️ 拖拉「連音組合」到單個格子';
+}
+
+function tupletOnDragMove(e) {
+    e.preventDefault();
+    var x, y;
+    if (e.touches) {
+        x = e.touches[0].clientX;
+        y = e.touches[0].clientY;
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+    dragGhost.style.left = (x + 12) + 'px';
+    dragGhost.style.top = (y + 12) + 'px';
+
+    document.querySelectorAll('.cell.drag-highlight').forEach(function(el) {
+        el.classList.remove('drag-highlight');
+    });
+
+    var target = document.elementFromPoint(x, y);
+    if (target) {
+        var cell = target.closest('.cell');
+        if (cell && tupletDrag.active) {
+            var slotIdx = parseInt(cell.getAttribute('data-slot'));
+            var row = parseInt(cell.getAttribute('data-row'));
+            var col = parseInt(cell.getAttribute('data-col'));
+            if (!isNaN(slotIdx) && !isNaN(row) && !isNaN(col) && slotEnabled[slotIdx]) {
+                tupletTargetSlot = slotIdx;
+                tupletTargetRow = row;
+                tupletTargetCol = col;
+                cell.classList.add('drag-highlight');
+                statusText.textContent = '🔀 目標: 卡槽 ' + (slotIdx + 1) + ' 第 ' + (row + 1) + ' 拍第 ' + (col + 1) + ' 格';
+            }
+        }
+    }
+}
+
+function tupletOnDragEnd(e) {
+    document.removeEventListener('mousemove', tupletOnDragMove);
+    document.removeEventListener('mouseup', tupletOnDragEnd);
+    document.removeEventListener('touchmove', tupletOnDragMove);
+    document.removeEventListener('touchend', tupletOnDragEnd);
+
+    document.querySelectorAll('.cell.drag-highlight').forEach(function(el) {
+        el.classList.remove('drag-highlight');
+    });
+    dragGhost.classList.remove('visible');
+    tupletToolBtn.classList.remove('active');
+
+    var x, y;
+    if (e.changedTouches) {
+        x = e.changedTouches[0].clientX;
+        y = e.changedTouches[0].clientY;
+    } else {
+        x = e.clientX;
+        y = e.clientY;
+    }
+
+    setTimeout(function() {
+        if (tupletTargetSlot !== null && tupletTargetRow !== null && tupletTargetCol !== null) {
+            showTupletPicker(tupletTargetSlot, tupletTargetRow, tupletTargetCol);
+        }
+        tupletTargetSlot = null;
+        tupletTargetRow = null;
+        tupletTargetCol = null;
+        tupletDrag.active = false;
+        tupletDrag.isDragging = false;
+    }, 10);
+}
+
+// ================================================================
+// 彈窗
+// ================================================================
+function showRhythmPicker(slotIdx, row) {
+    rhythmPickerGrid.innerHTML = '';
+    RHYTHM_LIBRARY.forEach(function(pattern, idx) {
+        var item = document.createElement('div');
+        item.className = 'picker-item';
+        var patternStr = pattern.map(function(p) { return p === 'accent' ? '◉' : '○'; }).join(' ');
+        item.textContent = patternStr;
+        item.setAttribute('data-idx', idx);
+        item.addEventListener('click', function() {
+            var selectedIdx = parseInt(this.getAttribute('data-idx'));
+            applyRhythmPattern(slotIdx, row, RHYTHM_LIBRARY[selectedIdx]);
+            rhythmPicker.style.display = 'none';
+        });
+        rhythmPickerGrid.appendChild(item);
+    });
+    rhythmPicker.style.display = 'block';
+    statusText.textContent = '🎵 選擇節奏 (卡槽 ' + (slotIdx + 1) + ' 第 ' + (row + 1) + ' 拍)';
+}
+
+rhythmPickerCancel.addEventListener('click', function() {
+    rhythmPicker.style.display = 'none';
+});
+
+function showTupletPicker(slotIdx, row, col) {
+    tupletPickerGrid.innerHTML = '';
+    mergeUpPickerGrid.innerHTML = '';
+    mergeDownPickerGrid.innerHTML = '';
+
+    tupletPickerTitle.textContent = '🔀 連音設定 (卡槽 ' + (slotIdx + 1) + ' · 第 ' + (row + 1) + ' 拍第 ' + (col + 1) + ' 格)';
+    tupletPickerSubtitle.textContent = '僅影響當前格與上/下一子拍';
+
+    TUPLET_TYPES.forEach(function(t) {
+        var item = document.createElement('div');
+        item.className = 'picker-item';
+        item.textContent = t.label + ' 連音';
+        item.setAttribute('data-id', t.id);
+        item.addEventListener('click', function() {
+            applyBeatTuplet(slotIdx, row, col, this.getAttribute('data-id'));
+        });
+        tupletPickerGrid.appendChild(item);
+    });
+
+    var canMergeUp = false;
+    var upRow = row,
+        upCol = col - 1;
+    if (col > 0) {
+        canMergeUp = true;
+    } else if (row > 0) {
+        canMergeUp = true;
+        upRow = row - 1;
+        upCol = COLS - 1;
+    }
+
+    if (canMergeUp) {
+        TUPLET_TYPES.forEach(function(t) {
+            var item = document.createElement('div');
+            item.className = 'picker-item merge-up';
+            item.textContent = '↑ ' + t.label;
+            item.setAttribute('data-id', t.id);
+            item.addEventListener('click', function() {
+                applyMergeUp(slotIdx, row, col, upRow, upCol, this.getAttribute('data-id'));
+            });
+            mergeUpPickerGrid.appendChild(item);
+        });
+    } else {
+        var itemDisabled = document.createElement('div');
+        itemDisabled.className = 'picker-item disabled';
+        itemDisabled.textContent = '🚫 無法向上';
+        mergeUpPickerGrid.appendChild(itemDisabled);
+    }
+
+    var canMergeDown = false;
+    var downRow = row,
+        downCol = col + 1;
+    if (col < COLS - 1) {
+        canMergeDown = true;
+    } else if (row < ROWS - 1) {
+        canMergeDown = true;
+        downRow = row + 1;
+        downCol = 0;
+    }
+
+    if (canMergeDown) {
+        TUPLET_TYPES.forEach(function(t) {
+            var item = document.createElement('div');
+            item.className = 'picker-item merge-down';
+            item.textContent = '↓ ' + t.label;
+            item.setAttribute('data-id', t.id);
+            item.addEventListener('click', function() {
+                applyMergeDown(slotIdx, row, col, downRow, downCol, this.getAttribute('data-id'));
+            });
+            mergeDownPickerGrid.appendChild(item);
+        });
+    } else {
+        var itemDisabled2 = document.createElement('div');
+        itemDisabled2.className = 'picker-item disabled';
+        itemDisabled2.textContent = '🚫 無法向下';
+        mergeDownPickerGrid.appendChild(itemDisabled2);
+    }
+
+    tupletPicker.style.display = 'block';
+    statusText.textContent = '🔀 選擇連音 (卡槽 ' + (slotIdx + 1) + ' 第 ' + (row + 1) + ' 拍第 ' + (col + 1) + ' 格)';
+}
+
+function applyBeatTuplet(slotIdx, row, col, tupletId) {
+    removeMergePair(slotIdx, row, col);
+    if (!beatTuplets[slotIdx]) beatTuplets[slotIdx] = {};
+    if (!beatTuplets[slotIdx][row]) beatTuplets[slotIdx][row] = {};
+    beatTuplets[slotIdx][row][col] = tupletId;
+    slotData[slotIdx][row][col] = true;
+    renderSlots();
+    tupletPicker.style.display = 'none';
+    var info = TUPLET_TYPES.find(function(t) { return t.id === tupletId; });
+    statusText.textContent = '✅ 卡槽 ' + (slotIdx + 1) + ' 第 ' + (row + 1) + ' 拍第 ' + (col + 1) + ' 格 → ' + (info ? info.label : '') + ' 連音';
+}
+
+function applyMergeUp(slotIdx, row, col, upRow, upCol, tupletId) {
+    if (beatTuplets[slotIdx]) {
+        if (beatTuplets[slotIdx][row] && beatTuplets[slotIdx][row][col] !== undefined) {
+            delete beatTuplets[slotIdx][row][col];
+        }
+        if (beatTuplets[slotIdx][upRow] && beatTuplets[slotIdx][upRow][upCol] !== undefined) {
+            delete beatTuplets[slotIdx][upRow][upCol];
+        }
+    }
+    removeMergePairWithCells(slotIdx, row, col, upRow, upCol);
+    var r1, c1, r2, c2;
+    if (row < upRow || (row === upRow && col < upCol)) {
+        r1 = row;
+        c1 = col;
+        r2 = upRow;
+        c2 = upCol;
+    } else {
+        r1 = upRow;
+        c1 = upCol;
+        r2 = row;
+        c2 = col;
+    }
+    addMergePair(slotIdx, r1, c1, r2, c2, tupletId);
+    slotData[slotIdx][row][col] = true;
+    slotData[slotIdx][upRow][upCol] = true;
+    renderSlots();
+    tupletPicker.style.display = 'none';
+    var info = TUPLET_TYPES.find(function(t) { return t.id === tupletId; });
+    statusText.textContent = '✅ 卡槽 ' + (slotIdx + 1) + ' 第 ' + (row + 1) + ' 拍第 ' + (col + 1) + ' 格 ↔ 第 ' + (upRow + 1) + ' 拍第 ' + (upCol + 1) + ' 格 → ' + (info ? info.label : '') + ' 連音 (向上合併)';
+}
+
+function applyMergeDown(slotIdx, row, col, downRow, downCol, tupletId) {
+    if (beatTuplets[slotIdx]) {
+        if (beatTuplets[slotIdx][row] && beatTuplets[slotIdx][row][col] !== undefined) {
+            delete beatTuplets[slotIdx][row][col];
+        }
+        if (beatTuplets[slotIdx][downRow] && beatTuplets[slotIdx][downRow][downCol] !== undefined) {
+            delete beatTuplets[slotIdx][downRow][downCol];
+        }
+    }
+    removeMergePairWithCells(slotIdx, row, col, downRow, downCol);
+    var r1, c1, r2, c2;
+    if (row < downRow || (row === downRow && col < downCol)) {
+        r1 = row;
+        c1 = col;
+        r2 = downRow;
+        c2 = downCol;
+    } else {
+        r1 = downRow;
+        c1 = downCol;
+        r2 = row;
+        c2 = col;
+    }
+    addMergePair(slotIdx, r1, c1, r2, c2, tupletId);
+    slotData[slotIdx][row][col] = true;
+    slotData[slotIdx][downRow][downCol] = true;
+    renderSlots();
+    tupletPicker.style.display = 'none';
+    var info = TUPLET_TYPES.find(function(t) { return t.id === tupletId; });
+    statusText.textContent = '✅ 卡槽 ' + (slotIdx + 1) + ' 第 ' + (row + 1) + ' 拍第 ' + (col + 1) + ' 格 ↔ 第 ' + (downRow + 1) + ' 拍第 ' + (downCol + 1) + ' 格 → ' + (info ? info.label : '') + ' 連音 (向下合併)';
+}
+
+tupletPickerCancel.addEventListener('click', function() {
+    tupletPicker.style.display = 'none';
+});
+
+document.addEventListener('click', function(e) {
+    if (rhythmPicker.style.display === 'block' && !rhythmPicker.contains(e.target)) {
+        rhythmPicker.style.display = 'none';
+    }
+    if (tupletPicker.style.display === 'block' && !tupletPicker.contains(e.target)) {
+        tupletPicker.style.display = 'none';
+    }
+});
+
+// ================================================================
+// ESC / 空白鍵
+// ================================================================
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        if (rhythmDrag.isDragging) {
+            document.removeEventListener('mousemove', rhythmOnDragMove);
+            document.removeEventListener('mouseup', rhythmOnDragEnd);
+            document.removeEventListener('touchmove', rhythmOnDragMove);
+            document.removeEventListener('touchend', rhythmOnDragEnd);
+            document.querySelectorAll('.drop-dot.drag-over').forEach(function(el) {
+                el.classList.remove('drag-over');
+            });
+            dragGhost.classList.remove('visible');
+            rhythmToolBtn.classList.remove('active');
+            rhythmDrag.active = false;
+            rhythmDrag.isDragging = false;
+            statusText.textContent = '⏹ 已取消拖拉';
+        }
+        if (tupletDrag.isDragging) {
+            document.removeEventListener('mousemove', tupletOnDragMove);
+            document.removeEventListener('mouseup', tupletOnDragEnd);
+            document.removeEventListener('touchmove', tupletOnDragMove);
+            document.removeEventListener('touchend', tupletOnDragEnd);
+            document.querySelectorAll('.cell.drag-highlight').forEach(function(el) {
+                el.classList.remove('drag-highlight');
+            });
+            dragGhost.classList.remove('visible');
+            tupletToolBtn.classList.remove('active');
+            tupletDrag.active = false;
+            tupletDrag.isDragging = false;
+            statusText.textContent = '⏹ 已取消拖拉';
+        }
+        rhythmPicker.style.display = 'none';
+        tupletPicker.style.display = 'none';
+    }
+    if (e.key === ' ' || e.code === 'Space') {
+        e.preventDefault();
+        togglePlay();
+    }
+});
+
+// ================================================================
+// 隨機 / 清空 / 全選
+// ================================================================
+function randomGrid() {
+    if (isPlaying) stopPlayback();
+    beatTuplets = {};
+    mergePairs = {};
+    for (var s = 0; s < slotData.length; s++) {
+        for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) {
+                slotData[s][r][c] = Math.random() > 0.5;
+            }
+        }
+    }
+    renderSlots();
+    statusText.textContent = '🎲 已隨機';
+}
+
+function clearGrid() {
+    if (isPlaying) stopPlayback();
+    beatTuplets = {};
+    mergePairs = {};
+    for (var s = 0; s < slotData.length; s++) {
+        for (var r = 0; r < ROWS; r++) {
+            for (var c = 0; c < COLS; c++) {
+                slotData[s][r][c] = false;
+            }
+        }
+    }
+    renderSlots();
+    statusText.textContent = '🗑 已清空';
+}
+
+function toggleAllSlots() {
+    if (isPlaying) return;
+    var allEnabled = true;
+    for (var i = 0; i < slotEnabled.length; i++) {
+        if (!slotEnabled[i]) { allEnabled = false; break; }
+    }
+    for (var i = 0; i < slotEnabled.length; i++) {
+        slotEnabled[i] = !allEnabled;
+    }
+    renderSlots();
+    var count = 0;
+    for (var i = 0; i < slotEnabled.length; i++) {
+        if (slotEnabled[i]) count++;
+    }
+    statusText.textContent = allEnabled ? '已取消全選' : '已選取 ' + count + ' 個卡槽';
+}
+
+// ================================================================
+// 控制項事件
+// ================================================================
+playBtn.addEventListener('click', togglePlay);
+metroToggleBtn.addEventListener('click', toggleMetro);
+randomBtn.addEventListener('click', randomGrid);
+clearBtn.addEventListener('click', clearGrid);
+selectAllBtn.addEventListener('click', toggleAllSlots);
+addSlotBtn.addEventListener('click', addSlot);
+removeSlotBtn.addEventListener('click', function() {
+    if (slotData.length <= 1) {
+        statusText.textContent = '⚠️ 至少保留 1 個卡槽';
+        return;
+    }
+    if (isPlaying) stopPlayback();
+    var lastIdx = slotData.length - 1;
+    slotData.pop();
+    slotEnabled.pop();
+    if (beatTuplets[lastIdx]) delete beatTuplets[lastIdx];
+    if (mergePairs[lastIdx]) delete mergePairs[lastIdx];
+    renderSlots();
+    statusText.textContent = '🗑 已刪除最後一個卡槽';
+});
+
+loopCountSelect.addEventListener('change', function() {
+    loopCount = parseInt(this.value);
+});
+
+bpmSlider.addEventListener('input', function() {
+    bpm = parseInt(this.value);
+    bpmDisplay.textContent = bpm;
+    if (isPlaying) {
+        stopPlayback();
+        playFromStart();
+    }
+});
+
+volumeSlider.addEventListener('input', function() {
+    volume = parseInt(this.value) / 100;
+    volumeDisplay.textContent = Math.round(volume * 100) + '%';
+    updateMasterGain();
+});
+
+metroVolumeSlider.addEventListener('input', function() {
+    metroVolume = parseInt(this.value) / 100;
+    metroVolDisplay.textContent = Math.round(metroVolume * 100) + '%';
+});
+
+document.addEventListener('click', function() {
+    initAudio();
+}, { once: true });
+
+// ================================================================
+// 啟動
+// ================================================================
+initRhythmDrag();
+initTupletDrag();
+renderSlots();
+statusText.textContent = '⏸ 就緒';
+console.log('✅ 恢復版已啟動');
+</script>
 </body>
 </html>
