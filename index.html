@@ -116,12 +116,12 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 .cell.light{background:rgba(50,60,80,.6)}
 /* 狀態 1: 重拍 */
 .cell.accent{background:#d48c4a;border-color:#f7c68b66;box-shadow:0 0 6px rgba(247,198,139,.2)}
-/* 狀態 2: 延音 (灰底 + 中央金色粗橫線) */
+/* 狀態 2: 延音 (灰底 + 中央金色粗橫線貫穿) */
 .cell.sustain{background:rgba(50,60,80,.6)}
 .cell.sustain::after{
     content:''; position:absolute;
-    width:60%; height:4px;
-    background:#d48c4a; border-radius:2px;
+    width:100%; height:4px;
+    background:#d48c4a;
     box-shadow:0 0 5px rgba(212,140,74,.5);
 }
 
@@ -214,7 +214,7 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
         <span class="status-text" id="statusText">⏸ 就緒</span>
     </div>
 
-    <!-- 新增：獨立的卡槽啟用鍵行 -->
+    <!-- 獨立的卡槽啟用鍵行 -->
     <div class="slot-toggles-bar" id="slotTogglesBar"></div>
 
     <div class="slot-row-container" id="slotRowContainer"></div>
