@@ -26,19 +26,64 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 .status-text{padding:4px 14px;border-radius:30px;background:rgba(0,0,0,.2);border:1px solid rgba(255,255,255,.03);font-size:13px;color:#6a7a7a;min-width:100px;text-align:center;transition:all .2s}
 .status-text.playing{color:#f7c68b;border-color:#f7c68b44}
 
+/* 上方獨立一行的卡槽啟用鍵 */
+.slot-toggles-bar {
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    margin-bottom: 16px;
+    padding: 10px;
+    background: rgba(18,28,46,.6);
+    backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255,215,150,.06);
+}
+.top-toggle-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 18px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all .2s;
+    border: 2px solid rgba(255,215,150,.04);
+    background: rgba(255,215,150,.04);
+    color: #8a7e6b;
+    user-select: none;
+}
+.top-toggle-btn:hover {
+    background: rgba(255,215,150,.08);
+}
+.top-toggle-btn.active {
+    border-color: rgba(61,126,201,.5);
+    background: rgba(61,126,201,.1);
+    color: #f7dec0;
+}
+.top-toggle-btn.inactive {
+    opacity: 0.4;
+    filter: grayscale(1);
+}
+.top-toggle-btn .card-num {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 0;
+}
+.top-toggle-btn .card-status {
+    font-size: 12px;
+    color: #6fcf97;
+    background: rgba(0,0,0,.2);
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+.top-toggle-btn.inactive .card-status {
+    color: #6b7a93;
+}
+
 /* 垂直排列的卡片行 */
 .slot-row-container{display:flex;flex-direction:column;gap:16px;margin-bottom:12px}
 .slot-row{display:flex;align-items:stretch;gap:12px;background:rgba(26,38,60,.4);border-radius:16px;padding:12px;border:1px solid rgba(255,215,150,.06);transition:opacity .2s}
 .slot-row.disabled{opacity:.35}
 .slot-row.disabled .frame{pointer-events:none}
-
-/* 左側卡片標籤 */
-.card-label{flex:0 0 80px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(255,215,150,.04);border-radius:12px;cursor:pointer;border:2px solid transparent;transition:all .2s}
-.card-label:hover{background:rgba(255,215,150,.08)}
-.card-label.active{border-color:rgba(61,126,201,.5);background:rgba(61,126,201,.1)}
-.card-num{font-size:18px;font-weight:bold;color:#8a7e6b;margin-bottom:6px}
-.card-status{font-size:12px;color:#6fcf97;background:rgba(0,0,0,.2);padding:2px 8px;border-radius:20px}
-.card-status.inactive{color:#6b7a93}
 
 /* 右側圖框容器 */
 .frames-wrapper{display:flex;gap:10px;flex:1;overflow-x:auto;padding-bottom:4px}
@@ -122,9 +167,8 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 .picker-item.disabled{opacity:.3;cursor:not-allowed}
 
 @media(max-width:768px){
-    .slot-row{flex-direction:column;gap:8px}
-    .card-label{flex:0 0 auto;flex-direction:row;padding:6px 12px;gap:8px}
-    .card-num{margin-bottom:0}
+    .slot-toggles-bar{gap:8px;padding:8px;}
+    .top-toggle-btn{padding:4px 10px;font-size:12px;}
 }
 </style>
 </head>
@@ -170,6 +214,9 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
         <span class="status-text" id="statusText">⏸ 就緒</span>
     </div>
 
+    <!-- 新增：獨立的卡槽啟用鍵行 -->
+    <div class="slot-toggles-bar" id="slotTogglesBar"></div>
+
     <div class="slot-row-container" id="slotRowContainer"></div>
 
     <div class="toolbar">
@@ -209,7 +256,6 @@ var ROWS = 4;
 var COLS = 4;
 var TOTAL_SLOTS = 4;
 
-// 節奏庫擴充：加入包含延音 ('sustain') 的節奏型
 var RHYTHM_LIBRARY = [
     ['light', 'light', 'light', 'light'],       // 空
     ['accent', 'light', 'light', 'light'],      // 首拍
@@ -237,7 +283,6 @@ var TUPLET_TYPES = [
     { id: 'octuplet', label: '8', css: 'octuplet' }
 ];
 
-// slotData 改為 0(空), 1(重拍), 2(延音)
 var slotData = [];
 var slotEnabled = [];
 var frameImages = [];
@@ -276,7 +321,9 @@ var tupletDrag = { isDragging: false, active: false };
 var tupletTargetSlot = null, tupletTargetRow = null, tupletTargetCol = null;
 var audioCtx = null, masterGain = null, metroGain = null;
 
+// DOM
 var slotRowContainer = document.getElementById('slotRowContainer');
+var slotTogglesBar = document.getElementById('slotTogglesBar');
 var playBtn = document.getElementById('playBtn');
 var metroToggleBtn = document.getElementById('metroToggleBtn');
 var bpmSlider = document.getElementById('bpmSlider');
@@ -305,7 +352,7 @@ var tupletPickerCancel = document.getElementById('tupletPickerCancel');
 var loopCountSelect = document.getElementById('loopCountSelect');
 
 // ================================================================
-// 音效 (與之前相同)
+// 音效
 // ================================================================
 function initAudio() {
     if (!audioCtx) {
@@ -422,8 +469,21 @@ function removeMergePair(slot, row, col) {
 }
 
 // ================================================================
-// 渲染 (三態格子)
+// 渲染 (上方啟用鍵 + 三態格子)
 // ================================================================
+function renderTopToggles() {
+    slotTogglesBar.innerHTML = '';
+    for (var s = 0; s < TOTAL_SLOTS; s++) {
+        var btn = document.createElement('div');
+        btn.className = 'top-toggle-btn ' + (slotEnabled[s] ? 'active' : 'inactive');
+        btn.innerHTML = '<span class="card-num">' + ['①','②','③','④'][s] + '</span><span class="card-status">' + (slotEnabled[s] ? '啟用' : '停用') + '</span>';
+        btn.onclick = (function(idx) {
+            return function() { toggleSlot(idx); };
+        })(s);
+        slotTogglesBar.appendChild(btn);
+    }
+}
+
 function renderSlots() {
     slotRowContainer.innerHTML = '';
     
@@ -432,22 +492,6 @@ function renderSlots() {
         var rowEl = document.createElement('div');
         rowEl.className = 'slot-row' + (enabled ? '' : ' disabled');
         rowEl.setAttribute('data-slot', s);
-
-        var labelEl = document.createElement('div');
-        labelEl.className = 'card-label' + (enabled ? ' active' : '');
-        labelEl.onclick = function() {
-            var si = parseInt(this.parentElement.getAttribute('data-slot'));
-            toggleSlot(si);
-        };
-        var numEl = document.createElement('div');
-        numEl.className = 'card-num';
-        numEl.textContent = ['①','②','③','④'][s];
-        var statusEl = document.createElement('div');
-        statusEl.className = 'card-status' + (enabled ? '' : ' inactive');
-        statusEl.textContent = enabled ? '啟用' : '停用';
-        labelEl.appendChild(numEl);
-        labelEl.appendChild(statusEl);
-        rowEl.appendChild(labelEl);
 
         var framesWrapper = document.createElement('div');
         framesWrapper.className = 'frames-wrapper';
@@ -608,12 +652,15 @@ function updateImageArea(slotIdx, rowIdx, areaEl) {
 function toggleSlot(slotIdx) {
     if (isPlaying) return;
     slotEnabled[slotIdx] = !slotEnabled[slotIdx];
-    renderSlots();
+    renderTopToggles(); // 更新上方按鈕狀態
+    renderSlots();      // 更新下方圖框狀態
     statusText.textContent = '已選取 ' + slotEnabled.filter(Boolean).length + ' 個卡槽';
 }
+
 function updateSelectAllButton() {
     selectAllBtn.textContent = slotEnabled.every(Boolean) ? '☑ 全選' : '☐ 全選';
 }
+
 function applyRhythmPattern(slotIdx, row, pattern) {
     for (var c = 0; c < COLS; c++) {
         var p = pattern[c];
@@ -1107,7 +1154,9 @@ function toggleAllSlots() {
     if (isPlaying) return;
     var allEnabled = slotEnabled.every(Boolean);
     for (var i = 0; i < TOTAL_SLOTS; i++) slotEnabled[i] = !allEnabled;
-    renderSlots(); statusText.textContent = allEnabled ? '已取消全選' : '已全選';
+    renderTopToggles();
+    renderSlots(); 
+    statusText.textContent = allEnabled ? '已取消全選' : '已全選';
 }
 
 playBtn.onclick = togglePlay;
@@ -1121,8 +1170,10 @@ volumeSlider.oninput = function() { volume = parseInt(this.value) / 100; volumeD
 metroVolumeSlider.oninput = function() { metroVolume = parseInt(this.value) / 100; metroVolDisplay.textContent = Math.round(metroVolume * 100) + '%'; if(metroGain) metroGain.gain.value = metroVolume * 0.4; };
 document.addEventListener('click', function() { initAudio(); }, { once: true });
 
+// 初始化
 initRhythmDrag();
 initTupletDrag();
+renderTopToggles(); // 渲染上方啟用鍵
 renderSlots();
 statusText.textContent = '⏸ 就緒';
 </script>
