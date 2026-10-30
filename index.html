@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>節奏卡片 · 圖框垂直版</title>
+<title>節奏卡片 · 圖庫自動配對版</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;font-family:'Segoe UI',system-ui,sans-serif;padding:10px 10px 100px;color:#d4c9b8}
@@ -48,16 +48,13 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 .frame{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;border:1.5px solid #f7c68b;border-radius:6px;padding:3px;background:rgba(16,24,42,.6);transition:all .2s;position:relative}
 .frame.playing-frame{border-color:#ffe1b0;box-shadow:0 0 10px rgba(247,198,139,.4);background:rgba(247,198,139,.1)}
 
-/* 圖片上傳區 */
-.image-area{flex:1;min-height:50px;background:rgba(0,0,0,.2);border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:background .2s}
-.image-area:hover{background:rgba(0,0,0,.4)}
+/* 圖片顯示區 */
+.image-area{flex:1;min-height:50px;background:#000;border-radius:3px;display:flex;align-items:center;justify-content:center;cursor:pointer;overflow:hidden;position:relative;transition:background .2s}
+.image-area:hover{background:#111}
 .image-area img{width:100%;height:100%;object-fit:contain;display:block}
 .image-area .placeholder{font-size:9px;color:#5a6a7a;text-align:center;line-height:1.2}
-.delete-img-btn{position:absolute;top:2px;right:2px;width:14px;height:14px;background:rgba(200,80,60,.8);color:#fff;border:none;border-radius:50%;font-size:9px;cursor:pointer;display:none;align-items:center;justify-content:center;z-index:10}
-.image-area:hover .delete-img-btn{display:flex}
-.delete-img-btn:hover{background:rgba(200,80,60,1)}
 
-/* 藍點 - 永遠固定在左上角 */
+/* 藍點 */
 .drop-dot{width:14px;height:14px;border-radius:50%;background:#3d7ec9;border:1.5px solid #5f9cf0;cursor:grab;transition:all .15s ease;box-shadow:0 0 4px rgba(61,126,201,.3);position:absolute;top:4px;left:4px;z-index:5}
 .drop-dot:hover{transform:scale(1.1);box-shadow:0 0 8px rgba(61,126,201,.6)}
 .drop-dot.drag-over{background:#5fc8c8;border-color:#7ae0e0;box-shadow:0 0 10px rgba(95,200,200,.5);transform:scale(1.2)}
@@ -99,15 +96,24 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 .drag-ghost{position:fixed;pointer-events:none;z-index:9999;background:rgba(70,200,200,.15);border:1.5px solid #5fc8c8;border-radius:20px;padding:4px 12px;font-size:12px;color:#7ac8c8;backdrop-filter:blur(8px);box-shadow:0 4px 15px rgba(0,0,0,.5);opacity:0;transition:opacity .1s;white-space:nowrap}
 .drag-ghost.visible{opacity:.9}
 
-.rhythm-picker,.tuplet-picker{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10000;background:rgba(16,24,42,.96);backdrop-filter:blur(16px);border:1px solid rgba(255,215,150,.15);border-radius:16px;padding:16px 20px;box-shadow:0 30px 60px rgba(0,0,0,.7);color:#d4c9b8;width:90%;max-width:360px}
+/* 選擇器 (節奏、連音、圖庫) */
+.rhythm-picker,.tuplet-picker,.image-picker{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:10000;background:rgba(16,24,42,.96);backdrop-filter:blur(16px);border:1px solid rgba(255,215,150,.15);border-radius:16px;padding:16px 20px;box-shadow:0 30px 60px rgba(0,0,0,.7);color:#d4c9b8;width:90%;max-width:380px}
 .picker-title{font-size:14px;font-weight:500;color:#f7dec0;text-align:center;margin-bottom:8px}
 .picker-subtitle{font-size:10px;color:#6a7a7a;text-align:center;margin-bottom:8px}
 .picker-section-label{font-size:10px;color:#6a7a7a;text-align:center;padding:4px 0;border-top:1px solid rgba(255,215,150,.05);margin-top:4px}
 .rhythm-picker .picker-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px}
 .tuplet-picker .picker-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px}
+
+/* 圖片庫專用 Grid */
+.image-picker .picker-grid{display:grid;grid-template-columns:repeat(4, 1fr);gap:6px}
+.image-picker .img-item{background:#000;border:1px solid rgba(255,255,255,.1);border-radius:6px;padding:4px;cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;justify-content:center;aspect-ratio:1.2}
+.image-picker .img-item:hover{border-color:#f7c68b;background:#111;transform:scale(1.05)}
+.image-picker .img-item img{width:100%;height:70%;object-fit:contain}
+.image-picker .img-item span{font-size:9px;color:#6a7a7a;margin-top:2px;font-family:monospace}
+
 .picker-item{padding:6px 8px;border-radius:20px;background:rgba(255,255,255,.03);border:1px solid rgba(255,215,150,.06);cursor:pointer;text-align:center;font-size:12px;transition:all .15s;color:#b8ad9a}
 .picker-item:hover{background:rgba(255,215,150,.1);border-color:rgba(255,215,150,.2);color:#f7dec0}
-.picker-cancel{margin-top:8px;text-align:center;padding:6px;border-radius:20px;background:rgba(200,80,60,.1);border:1px solid rgba(200,80,60,.1);cursor:pointer;font-size:12px;color:#8a6a5a;transition:all .15s}
+.picker-cancel{margin-top:10px;text-align:center;padding:6px;border-radius:20px;background:rgba(200,80,60,.1);border:1px solid rgba(200,80,60,.1);cursor:pointer;font-size:12px;color:#8a6a5a;transition:all .15s}
 .picker-cancel:hover{background:rgba(200,80,60,.2)}
 .picker-item.merge-up{border-color:rgba(70,200,200,.15);color:#7ac8c8}
 .picker-item.merge-down{border-color:rgba(247,198,139,.15);color:#f7c68b}
@@ -135,7 +141,7 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
     .cell.sustain::after{height:4px}
     .cell .tuplet-label{font-size:8px;bottom:0}
     .tool-btn{padding:6px 16px;border-radius:30px;min-height:34px;font-size:13px}
-    .rhythm-picker,.tuplet-picker{max-width:400px}
+    .rhythm-picker,.tuplet-picker,.image-picker{max-width:420px}
     .picker-title{font-size:15px}
     .picker-item{font-size:13px;padding:8px 12px}
 }
@@ -144,7 +150,7 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 <body>
 
 <div class="app">
-    <div class="title">🥁 <span>節奏卡片</span> · 圖框垂直版</div>
+    <div class="title">🥁 <span>節奏卡片</span> · 圖庫自動配對版</div>
 
     <div class="top-bar">
         <div class="control-group">
@@ -196,12 +202,14 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 
     <div class="drag-ghost" id="dragGhost">🎵 常符</div>
 
+    <!-- 節奏型選擇器 -->
     <div class="rhythm-picker" id="rhythmPicker">
         <div class="picker-title">🎵 選擇節奏型</div>
         <div class="picker-grid" id="rhythmPickerGrid"></div>
         <div class="picker-cancel" id="rhythmPickerCancel">✕ 取消</div>
     </div>
 
+    <!-- 連音選擇器 -->
     <div class="tuplet-picker" id="tupletPicker">
         <div class="picker-title" id="tupletPickerTitle">🔀 選擇連音</div>
         <div class="picker-subtitle" id="tupletPickerSubtitle">僅影響當前格與上/下一子拍</div>
@@ -213,9 +221,41 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
         <div class="picker-grid" id="mergeDownPickerGrid"></div>
         <div class="picker-cancel" id="tupletPickerCancel">✕ 取消</div>
     </div>
+
+    <!-- 圖片庫選擇器 -->
+    <div class="image-picker" id="imagePicker">
+        <div class="picker-title">🖼️ 選擇音符圖片</div>
+        <div class="picker-subtitle">點擊圖片自動套用節奏</div>
+        <div class="picker-grid" id="imagePickerGrid"></div>
+        <div class="picker-cancel" id="imagePickerCancel">✕ 取消</div>
+    </div>
 </div>
 
 <script>
+// ================================================================
+// 圖片庫設定（請確認您的 GitHub Pages 路徑是否正確）
+// ================================================================
+var BASE_URL = 'https://vizaimeb.github.io/Rhythm-Cards/Notes/';
+
+const IMAGE_LIBRARY = [
+    { name: '1111', url: BASE_URL + '1111.png' }, // 4 個十六分音符
+    { name: '1110', url: BASE_URL + '1110.png' }, // 附點八分音符
+    { name: '1100', url: BASE_URL + '1100.png' }, // 八分音符
+    { name: '1000', url: BASE_URL + '1000.png' }, // 四分音符
+    { name: '110x', url: BASE_URL + '110x.png' }, // 兩個十六分 + 八分休止
+    { name: '11x0', url: BASE_URL + '11x0.png' },
+    { name: '11xx', url: BASE_URL + '11xx.png' },
+    { name: '1x10', url: BASE_URL + '1x10.png' },
+    { name: 'x110', url: BASE_URL + 'x110.png' },
+    { name: 'x11x', url: BASE_URL + 'x11x.png' },
+    { name: '1x1x', url: BASE_URL + '1x1x.png' }, // 切分音
+    { name: '1xx1', url: BASE_URL + '1xx1.png' },
+    { name: '0x0x', url: BASE_URL + '0x0x.png' },
+    { name: 'xxx1', url: BASE_URL + 'xxx1.png' }, // 最後一拍
+    { name: 'x1xx', url: BASE_URL + 'x1xx.png' },
+    { name: 'xxxx', url: BASE_URL + 'xxxx.png' }  // 全休止
+];
+
 // ================================================================
 // 資料結構與狀態
 // ================================================================
@@ -244,7 +284,7 @@ var TUPLET_TYPES = [
 
 var slotData = [];
 var slotEnabled = [];
-var frameImages = [];
+var frameImages = []; // 儲存圖片的 URL
 
 for (var s = 0; s < TOTAL_SLOTS; s++) {
     var grid = [];
@@ -273,6 +313,8 @@ var metroVolume = 0.5;
 var loopCount = 16;
 var totalPositions = 0;
 var metroBeatCounter = 0;
+var currentTargetSlot = null;
+var currentTargetRow = null;
 
 var playState = { isActive: false, events: [], eventIndex: 0, startTime: 0, rafId: null, scheduledNodes: [] };
 var rhythmDrag = { isDragging: false, active: false };
@@ -280,6 +322,7 @@ var tupletDrag = { isDragging: false, active: false };
 var tupletTargetSlot = null, tupletTargetRow = null, tupletTargetCol = null;
 var audioCtx = null, masterGain = null, metroGain = null;
 
+// DOM
 var slotRowContainer = document.getElementById('slotRowContainer');
 var slotTogglesBar = document.getElementById('slotTogglesBar');
 var playBtn = document.getElementById('playBtn');
@@ -307,6 +350,9 @@ var tupletPickerGrid = document.getElementById('tupletPickerGrid');
 var mergeUpPickerGrid = document.getElementById('mergeUpPickerGrid');
 var mergeDownPickerGrid = document.getElementById('mergeDownPickerGrid');
 var tupletPickerCancel = document.getElementById('tupletPickerCancel');
+var imagePicker = document.getElementById('imagePicker');
+var imagePickerGrid = document.getElementById('imagePickerGrid');
+var imagePickerCancel = document.getElementById('imagePickerCancel');
 var loopCountSelect = document.getElementById('loopCountSelect');
 
 // ================================================================
@@ -425,6 +471,55 @@ function removeMergePair(slot, row, col) {
 }
 
 // ================================================================
+// 圖片選擇與自動配對邏輯
+// ================================================================
+function showImagePicker(slotIdx, rowIdx) {
+    currentTargetSlot = slotIdx;
+    currentTargetRow = rowIdx;
+    imagePickerGrid.innerHTML = '';
+    
+    IMAGE_LIBRARY.forEach(function(item) {
+        var el = document.createElement('div');
+        el.className = 'img-item';
+        el.innerHTML = `<img src="${item.url}" alt="${item.name}"><span>${item.name}</span>`;
+        el.onclick = function() {
+            applyImagePattern(slotIdx, rowIdx, item.name, item.url);
+            imagePicker.style.display = 'none';
+        };
+        imagePickerGrid.appendChild(el);
+    });
+    
+    imagePicker.style.display = 'block';
+    statusText.textContent = '🖼️ 選擇圖片 (卡槽 ' + (slotIdx + 1) + ' 第 ' + (rowIdx + 1) + ' 拍)';
+}
+
+function applyImagePattern(slotIdx, rowIdx, name, url) {
+    // 解析名稱：1=重拍(1), 0=延音(2), x=空白(0)
+    var newPattern = [0, 0, 0, 0];
+    for (var i = 0; i < 4; i++) {
+        var char = name[i] || 'x';
+        if (char === '1') newPattern[i] = 1;
+        else if (char === '0') newPattern[i] = 2;
+        else newPattern[i] = 0;
+    }
+    
+    slotData[slotIdx][rowIdx] = newPattern;
+    frameImages[slotIdx][rowIdx] = url;
+    
+    // 清除該拍上的連音與合併
+    if (beatTuplets[slotIdx] && beatTuplets[slotIdx][rowIdx]) delete beatTuplets[slotIdx][rowIdx];
+    if (mergePairs[slotIdx]) {
+        mergePairs[slotIdx] = mergePairs[slotIdx].filter(function(p) { return p.row1 !== rowIdx && p.row2 !== rowIdx; });
+        if (mergePairs[slotIdx].length === 0) delete mergePairs[slotIdx];
+    }
+    
+    renderSlots();
+    statusText.textContent = '✅ 已套用圖片與節奏: ' + name;
+}
+
+imagePickerCancel.onclick = function() { imagePicker.style.display = 'none'; };
+
+// ================================================================
 // 渲染
 // ================================================================
 function renderTopToggles() {
@@ -461,34 +556,15 @@ function renderSlots() {
             var imgArea = document.createElement('div');
             imgArea.className = 'image-area';
             
-            var fileInput = document.createElement('input');
-            fileInput.type = 'file';
-            fileInput.accept = 'image/*';
-            fileInput.style.display = 'none';
-            
-            fileInput.onchange = (function(slotIdx, rowIdx, areaEl) {
+            imgArea.onclick = (function(sIdx, rIdx) {
                 return function(e) {
-                    var file = e.target.files[0];
-                    if (!file) return;
-                    var reader = new FileReader();
-                    reader.onload = function(evt) {
-                        frameImages[slotIdx][rowIdx] = evt.target.result;
-                        updateImageArea(slotIdx, rowIdx, areaEl);
-                    };
-                    reader.readAsDataURL(file);
-                    this.value = '';
+                    if (e.target.classList.contains('drop-dot')) return;
+                    if (isPlaying) return;
+                    showImagePicker(sIdx, rIdx);
                 };
-            })(s, r, imgArea);
-            
-            imgArea.onclick = function(e) {
-                if (e.target.classList.contains('delete-img-btn')) return;
-                var input = this.querySelector('input[type="file"]');
-                if (input) input.click();
-            };
-            
-            imgArea.appendChild(fileInput);
+            })(s, r);
 
-            // 藍點永遠放在圖片區左上角
+            // 藍點
             var dot = document.createElement('div');
             dot.className = 'drop-dot';
             dot.setAttribute('data-slot', s);
@@ -497,7 +573,23 @@ function renderSlots() {
             dot.addEventListener('mouseleave', function() { this.classList.remove('drag-over'); });
             imgArea.appendChild(dot);
 
-            updateImageArea(s, r, imgArea);
+            // 圖片或佔位符
+            var imgData = frameImages[s][r];
+            if (imgData) {
+                var img = document.createElement('img');
+                img.src = imgData;
+                // 處理載入失敗的備用樣式
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    this.parentElement.innerHTML += '<div class="placeholder" style="color:#d46a6a;">載入失敗<br>請檢查網址</div>';
+                };
+                imgArea.appendChild(img);
+            } else {
+                var placeholder = document.createElement('div');
+                placeholder.className = 'placeholder';
+                placeholder.innerHTML = '點擊選擇<br>音符圖片';
+                imgArea.appendChild(placeholder);
+            }
 
             var controlsEl = document.createElement('div');
             controlsEl.className = 'frame-controls';
@@ -575,38 +667,6 @@ function renderSlots() {
         slotRowContainer.appendChild(rowEl);
     }
     updateSelectAllButton();
-}
-
-function updateImageArea(slotIdx, rowIdx, areaEl) {
-    var fileInput = areaEl.querySelector('input[type="file"]');
-    var dot = areaEl.querySelector('.drop-dot');
-    
-    // 清除舊內容，保留 input 和 藍點
-    areaEl.innerHTML = '';
-    if (fileInput) areaEl.appendChild(fileInput);
-    if (dot) areaEl.appendChild(dot);
-
-    var imgData = frameImages[slotIdx][rowIdx];
-    if (imgData) {
-        var img = document.createElement('img');
-        img.src = imgData;
-        areaEl.appendChild(img);
-
-        var delBtn = document.createElement('button');
-        delBtn.className = 'delete-img-btn';
-        delBtn.innerHTML = '✕';
-        delBtn.onclick = function(e) {
-            e.stopPropagation();
-            frameImages[slotIdx][rowIdx] = null;
-            updateImageArea(slotIdx, rowIdx, areaEl);
-        };
-        areaEl.appendChild(delBtn);
-    } else {
-        var placeholder = document.createElement('div');
-        placeholder.className = 'placeholder';
-        placeholder.innerHTML = '點擊上傳<br>圖片';
-        areaEl.appendChild(placeholder);
-    }
 }
 
 function toggleSlot(slotIdx) {
@@ -853,7 +913,7 @@ function toggleMetro() {
 }
 
 // ================================================================
-// 拖曳邏輯
+// 拖曳邏輯 (常符、連音)
 // ================================================================
 function initRhythmDrag() {
     rhythmToolBtn.addEventListener('mousedown', function(e) { e.preventDefault(); rhythmStartDrag(e.clientX, e.clientY); });
@@ -1076,11 +1136,12 @@ function applyMergeDown(slotIdx, row, col, downRow, downCol, tupletId) {
 document.addEventListener('click', function(e) {
     if (rhythmPicker.style.display === 'block' && !rhythmPicker.contains(e.target)) rhythmPicker.style.display = 'none';
     if (tupletPicker.style.display === 'block' && !tupletPicker.contains(e.target)) tupletPicker.style.display = 'none';
+    if (imagePicker.style.display === 'block' && !imagePicker.contains(e.target)) imagePicker.style.display = 'none';
 });
 
 document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') {
-        rhythmPicker.style.display = 'none'; tupletPicker.style.display = 'none';
+        rhythmPicker.style.display = 'none'; tupletPicker.style.display = 'none'; imagePicker.style.display = 'none';
     }
     if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); togglePlay(); }
 });
@@ -1103,9 +1164,11 @@ function clearGrid() {
     if (isPlaying) stopPlayback();
     beatTuplets = {}; mergePairs = {};
     for (var s = 0; s < TOTAL_SLOTS; s++)
-        for (var r = 0; r < ROWS; r++)
+        for (var r = 0; r < ROWS; r++) {
             for (var c = 0; c < COLS; c++) slotData[s][r][c] = 0;
-    renderSlots(); statusText.textContent = '🗑 已清空節奏';
+            frameImages[s][r] = null;
+        }
+    renderSlots(); statusText.textContent = '🗑 已清空節奏與圖片';
 }
 
 function toggleAllSlots() {
