@@ -238,22 +238,22 @@ body{background:#1a2639;min-height:100vh;display:flex;justify-content:center;fon
 var BASE_URL = 'https://vizaimeb.github.io/Rhythm-Cards/Notes/';
 
 const IMAGE_LIBRARY = [
-    { name: '1111', url: BASE_URL + '1111.png' }, // 4 個十六分音符
-    { name: '1110', url: BASE_URL + '1110.png' }, // 附點八分音符
-    { name: '1100', url: BASE_URL + '1100.png' }, // 八分音符
-    { name: '1000', url: BASE_URL + '1000.png' }, // 四分音符
-    { name: '110x', url: BASE_URL + '110x.png' }, // 兩個十六分 + 八分休止
+    { name: '1111', url: BASE_URL + '1111.png' },
+    { name: '1110', url: BASE_URL + '1110.png' },
+    { name: '1100', url: BASE_URL + '1100.png' },
+    { name: '1000', url: BASE_URL + '1000.png' },
+    { name: '110x', url: BASE_URL + '110x.png' },
     { name: '11x0', url: BASE_URL + '11x0.png' },
     { name: '11xx', url: BASE_URL + '11xx.png' },
     { name: '1x10', url: BASE_URL + '1x10.png' },
     { name: 'x110', url: BASE_URL + 'x110.png' },
     { name: 'x11x', url: BASE_URL + 'x11x.png' },
-    { name: '1x1x', url: BASE_URL + '1x1x.png' }, // 切分音
+    { name: '1x1x', url: BASE_URL + '1x1x.png' },
     { name: '1xx1', url: BASE_URL + '1xx1.png' },
     { name: '0x0x', url: BASE_URL + '0x0x.png' },
-    { name: 'xxx1', url: BASE_URL + 'xxx1.png' }, // 最後一拍
+    { name: 'xxx1', url: BASE_URL + 'xxx1.png' },
     { name: 'x1xx', url: BASE_URL + 'x1xx.png' },
-    { name: 'xxxx', url: BASE_URL + 'xxxx.png' }  // 全休止
+    { name: 'xxxx', url: BASE_URL + 'xxxx.png' }
 ];
 
 // ================================================================
@@ -284,7 +284,7 @@ var TUPLET_TYPES = [
 
 var slotData = [];
 var slotEnabled = [];
-var frameImages = []; // 儲存圖片的 URL
+var frameImages = []; 
 
 for (var s = 0; s < TOTAL_SLOTS; s++) {
     var grid = [];
@@ -494,19 +494,17 @@ function showImagePicker(slotIdx, rowIdx) {
 }
 
 function applyImagePattern(slotIdx, rowIdx, name, url) {
-    // 解析名稱：1=重拍(1), 0=延音(2), x=空白(0)
     var newPattern = [0, 0, 0, 0];
     for (var i = 0; i < 4; i++) {
         var char = name[i] || 'x';
-        if (char === '1') newPattern[i] = 1;
-        else if (char === '0') newPattern[i] = 2;
-        else newPattern[i] = 0;
+        if (char === '1') newPattern[i] = 1;      // 重拍
+        else if (char === '0') newPattern[i] = 2; // 延音
+        else newPattern[i] = 0;                   // 空白
     }
     
     slotData[slotIdx][rowIdx] = newPattern;
     frameImages[slotIdx][rowIdx] = url;
     
-    // 清除該拍上的連音與合併
     if (beatTuplets[slotIdx] && beatTuplets[slotIdx][rowIdx]) delete beatTuplets[slotIdx][rowIdx];
     if (mergePairs[slotIdx]) {
         mergePairs[slotIdx] = mergePairs[slotIdx].filter(function(p) { return p.row1 !== rowIdx && p.row2 !== rowIdx; });
@@ -556,8 +554,10 @@ function renderSlots() {
             var imgArea = document.createElement('div');
             imgArea.className = 'image-area';
             
+            // ★★★ 修正：加入 e.stopPropagation() 防止彈窗剛打開就被全域點擊事件關閉 ★★★
             imgArea.onclick = (function(sIdx, rIdx) {
                 return function(e) {
+                    e.stopPropagation(); 
                     if (e.target.classList.contains('drop-dot')) return;
                     if (isPlaying) return;
                     showImagePicker(sIdx, rIdx);
@@ -578,7 +578,6 @@ function renderSlots() {
             if (imgData) {
                 var img = document.createElement('img');
                 img.src = imgData;
-                // 處理載入失敗的備用樣式
                 img.onerror = function() {
                     this.style.display = 'none';
                     this.parentElement.innerHTML += '<div class="placeholder" style="color:#d46a6a;">載入失敗<br>請檢查網址</div>';
