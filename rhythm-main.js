@@ -79,8 +79,18 @@ function initAudio() {
         masterGain = audioCtx.createGain(); masterGain.gain.value = volume; masterGain.connect(audioCtx.destination);
         metroGain = audioCtx.createGain(); metroGain.gain.value = metroVolume * 0.4; metroGain.connect(masterGain);
     }
-    if (audioCtx.state === 'suspended') audioCtx.resume();
     return audioCtx;
+}
+
+function ensureAudioRunning() {
+    if (!audioCtx) initAudio();
+    if (!audioCtx) return Promise.resolve(false);
+    if (audioCtx.state === 'running') return Promise.resolve(true);
+    return audioCtx.resume().then(function() {
+        return audioCtx.state === 'running';
+    }).catch(function() {
+        return false;
+    });
 }
 function playKickAtTime(time) {
     try {
@@ -404,8 +414,6 @@ function stopMetro() {
 }
 function playFromStart() {
     if (isPlaying) stopPlayback();
-
-    // 先確保 AudioContext 存在（initAudio 內部會嘗試 resume，但我們不等待它）
     initAudio();
 
     var positions = getEnabledPositions();
@@ -419,36 +427,41 @@ function playFromStart() {
     playBtn.innerHTML = '⏹ <span id="playLabel">Stop</span>'; playBtn.classList.add('playing');
     statusText.textContent = '▶ Preparing...'; statusText.className = 'status-text playing';
 
-    var ctx = audioCtx, beatInterval = getBeatInterval(), prepCount = 0;
-    if (prepTimerId) clearInterval(prepTimerId);
-
-    prepTimerId = setInterval(function() {
-        if (prepCount >= 4) {
-            clearInterval(prepTimerId); prepTimerId = null;
-            setTimeout(function() {
-                if (!isPlaying) return;
-                // 真正開始前，再嘗試一次 resume（不等待）
-                if (audioCtx && audioCtx.state !== 'running') {
-                    try { audioCtx.resume(); } catch (e) {}
-                }
-                var startTime = ctx.currentTime + 0.05;
-                playState.events = generateEvents(positions, startTime);
-                playState.eventIndex = 0; playState.startTime = startTime; playState.isActive = true; playState.scheduledNodes = [];
-                playState.events.forEach(function(ev) {
-                    if (ev.type === 'merge') { for (var k = 0; k < ev.divisions; k++) playKickAtTime(ev.time + k * ev.subDuration); }
-                    else if (ev.type === 'tuplet' && ev.hasSound) { for (var k2 = 0; k2 < ev.divisions; k2++) playKickAtTime(ev.time + k2 * ev.subDuration); }
-                    else if (ev.type === 'normal' && ev.hasSound) { playKickAtTime(ev.time); }
-                });
-                if (metronomeOn) startMetro();
-                clearAllHighlights();
-                statusText.textContent = '▶ Playing... 1/' + loopCount; statusText.className = 'status-text playing';
-                playState.rafId = requestAnimationFrame(renderLoop);
-            }, 80);
+    ensureAudioRunning().then(function(ok) {
+        if (!isPlaying) return;
+        if (!ok) {
+            isPlaying = false;
+            playBtn.innerHTML = '▶ <span id="playLabel">Play</span>'; playBtn.classList.remove('playing');
+            statusText.textContent = '⚠️ Audio blocked, tap again'; statusText.className = 'status-text';
             return;
         }
-        playTickAtTime(ctx.currentTime); prepCount++;
-        statusText.textContent = '▶ Prep ' + prepCount + '/4';
-    }, beatInterval * 1000);
+        var ctx = audioCtx, beatInterval = getBeatInterval(), prepCount = 0;
+        if (prepTimerId) clearInterval(prepTimerId);
+
+        prepTimerId = setInterval(function() {
+            if (prepCount >= 4) {
+                clearInterval(prepTimerId); prepTimerId = null;
+                setTimeout(function() {
+                    if (!isPlaying) return;
+                    var startTime = ctx.currentTime + 0.05;
+                    playState.events = generateEvents(positions, startTime);
+                    playState.eventIndex = 0; playState.startTime = startTime; playState.isActive = true; playState.scheduledNodes = [];
+                    playState.events.forEach(function(ev) {
+                        if (ev.type === 'merge') { for (var k = 0; k < ev.divisions; k++) playKickAtTime(ev.time + k * ev.subDuration); }
+                        else if (ev.type === 'tuplet' && ev.hasSound) { for (var k2 = 0; k2 < ev.divisions; k2++) playKickAtTime(ev.time + k2 * ev.subDuration); }
+                        else if (ev.type === 'normal' && ev.hasSound) { playKickAtTime(ev.time); }
+                    });
+                    if (metronomeOn) startMetro();
+                    clearAllHighlights();
+                    statusText.textContent = '▶ Playing... 1/' + loopCount; statusText.className = 'status-text playing';
+                    playState.rafId = requestAnimationFrame(renderLoop);
+                }, 80);
+                return;
+            }
+            playTickAtTime(ctx.currentTime); prepCount++;
+            statusText.textContent = '▶ Prep ' + prepCount + '/4';
+        }, beatInterval * 1000);
+    });
 }
 function stopPlayback() {
     isPlaying = false; playState.isActive = false;
@@ -657,13 +670,8 @@ document.addEventListener('keydown', function(e) {
 
 document.addEventListener('visibilitychange', function() {
     if (document.hidden) return;
-    // 页面重新可见时，检查 AudioContext 状态
-    if (audioCtx && (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted')) {
-        audioCtx.resume().then(function() {
-            console.log('AudioContext resumed after visibility change');
-        }).catch(function(e) {
-            console.warn('Resume failed, may need user gesture:', e);
-        });
+    if (audioCtx && audioCtx.state !== 'running') {
+        console.log('AudioContext not running after visibility change; will resume on next Play tap');
     }
 });
 
