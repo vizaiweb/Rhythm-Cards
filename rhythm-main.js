@@ -404,7 +404,14 @@ function stopMetro() {
 }
 function playFromStart() {
     if (isPlaying) stopPlayback();
-    initAudio();
+    initAudio();// 这里会 resume，但不保证已完成
+    // 显式检查：如果还没 running，先等 resume 完成再继续
+    if (audioCtx && audioCtx.state !== 'running') {
+        audioCtx.resume().then(function() {
+            playFromStart(); // 恢复后再走一次播放逻辑
+        });
+        return;
+    }
     var positions = getEnabledPositions();
     if (positions.length === 0) { statusText.textContent = '⚠️ No enabled slots'; return; }
     totalPositions = positions.length;
@@ -643,6 +650,19 @@ document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') { rhythmPicker.style.display = 'none'; tupletPicker.style.display = 'none'; imagePicker.style.display = 'none'; }
     if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); togglePlay(); }
 });
+
+document.addEventListener('visibilitychange', function() {
+    if (document.hidden) return;
+    // 页面重新可见时，检查 AudioContext 状态
+    if (audioCtx && (audioCtx.state === 'suspended' || audioCtx.state === 'interrupted')) {
+        audioCtx.resume().then(function() {
+            console.log('AudioContext resumed after visibility change');
+        }).catch(function(e) {
+            console.warn('Resume failed, may need user gesture:', e);
+        });
+    }
+});
+
 function randomGrid() {
     if (isPlaying) stopPlayback();
     beatTuplets = {}; mergePairs = {};
