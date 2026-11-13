@@ -404,29 +404,33 @@ function stopMetro() {
 }
 function playFromStart() {
     if (isPlaying) stopPlayback();
-    initAudio();// 这里会 resume，但不保证已完成
-    // 显式检查：如果还没 running，先等 resume 完成再继续
-    if (audioCtx && audioCtx.state !== 'running') {
-        audioCtx.resume().then(function() {
-            playFromStart(); // 恢复后再走一次播放逻辑
-        });
-        return;
-    }
+
+    // 先確保 AudioContext 存在（initAudio 內部會嘗試 resume，但我們不等待它）
+    initAudio();
+
     var positions = getEnabledPositions();
     if (positions.length === 0) { statusText.textContent = '⚠️ No enabled slots'; return; }
     totalPositions = positions.length;
+
     var hasSound = positions.some(function(p) { return isAccent(p.slot, p.row, p.col) || getCellTuplet(p.slot, p.row, p.col) || getMergePair(p.slot, p.row, p.col); });
     if (!hasSound) { statusText.textContent = '⚠️ No accents or tuplets'; return; }
+
     isPlaying = true;
     playBtn.innerHTML = '⏹ <span id="playLabel">Stop</span>'; playBtn.classList.add('playing');
     statusText.textContent = '▶ Preparing...'; statusText.className = 'status-text playing';
+
     var ctx = audioCtx, beatInterval = getBeatInterval(), prepCount = 0;
     if (prepTimerId) clearInterval(prepTimerId);
+
     prepTimerId = setInterval(function() {
         if (prepCount >= 4) {
             clearInterval(prepTimerId); prepTimerId = null;
             setTimeout(function() {
                 if (!isPlaying) return;
+                // 真正開始前，再嘗試一次 resume（不等待）
+                if (audioCtx && audioCtx.state !== 'running') {
+                    try { audioCtx.resume(); } catch (e) {}
+                }
                 var startTime = ctx.currentTime + 0.05;
                 playState.events = generateEvents(positions, startTime);
                 playState.eventIndex = 0; playState.startTime = startTime; playState.isActive = true; playState.scheduledNodes = [];
